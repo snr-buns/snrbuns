@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Burger Shot - Inventory</title>
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fff4d6;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      color: #333;
+    }
+    .sidebar {
+      background-color: #c82333;
+      width: 220px;
+      color: white;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      user-select: none;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.75rem 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #a71d2a;
+      text-decoration: none;
+    }
+    main {
+      flex-grow: 1;
+      padding: 2rem 3rem;
+      background-color: #fff4d6;
+      overflow-y: auto;
+    }
+    h1 {
+      color: #c82333;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-weight: 600;
+      user-select: none;
+    }
+    th {
+      background: #ffc107;
+      color: #000;
+    }
+    .packs-leftover {
+      color: #555;
+      font-weight: 400;
+      font-size: 0.9rem;
+      user-select: none;
+    }
+    button#refreshInventory,
+    button#reportExpiredBtn {
+      margin-top: 1.5rem;
+      background-color: #c82333;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s;
+      margin-right: 10px;
+    }
+    button#refreshInventory:hover,
+    button#reportExpiredBtn:hover {
+      background-color: #a71d2a;
+    }
+
+    /* Modal styles */
+    #expiredModal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+    }
+    #expiredModal .modal-content {
+      background: #fff4d6;
+      padding: 20px 30px;
+      border-radius: 12px;
+      max-width: 320px;
+      text-align: center;
+      font-weight: 600;
+      color: #333;
+      user-select: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    #expiredModal label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: 700;
+      color: #c82333;
+    }
+    #expiredModal select,
+    #expiredModal input[type="number"] {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    #expiredModal button {
+      margin-top: 20px;
+      background-color: #c82333;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    #expiredModal button:hover {
+      background-color: #a71d2a;
+    }
+    #expiredModal .close-btn {
+      background: #999;
+      margin-left: 10px;
+    }
+
+    /* Notification styling */
+    #notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c82333;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      display: none;
+      z-index: 1200;
+      max-width: 90vw;
+      text-align: center;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>🍔 Burger Shot</h2>
+    <nav>
+      <ul class="list-unstyled">
+        <li><a href="home.html">🏠 Home</a></li>
+        <li><a href="register.html">🖋️ Register</a></li>
+        <li><a href="orders.html">📋 Orders</a></li>
+        <li><a href="inventory.html" class="active">📦 Inventory</a></li>
+        <li><a href="market.html">🏪 Market Run</a></li>
+        <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+        <li><a href="loyalty.html">🎁 Customers</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main>
+    <h1>📦 Inventory</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Ingredient</th>
+          <th>Total Units</th>
+          <th>Packs + Leftover Units</th>
+        </tr>
+      </thead>
+      <tbody id="inventoryTableBody">
+        <!-- Filled by JS -->
+      </tbody>
+    </table>
+
+    <div style="margin-top: 20px;">
+      <button id="refreshInventory">Refresh Inventory</button>
+      <button id="reportExpiredBtn">Report Expired Ingredients</button>
+    </div>
+  </main>
+
+  <!-- Expired Ingredients Modal -->
+  <div id="expiredModal" role="dialog" aria-modal="true" aria-labelledby="expiredModalTitle" aria-describedby="expiredModalDesc">
+    <div class="modal-content">
+      <div id="expiredModalTitle" style="font-size:1.25rem; margin-bottom: 15px; font-weight:700; color:#c82333;">Report Expired Ingredients</div>
+
+      <label for="expiredIngredientSelect">Ingredient</label>
+      <select id="expiredIngredientSelect" aria-label="Select expired ingredient">
+        <option value="burger_buns">Burger Buns</option>
+        <option value="burger_patties">Burger Patties</option>
+        <option value="ground_beef">Packaged Ground Beef</option>
+        <option value="lettuce">Lettuce</option>
+        <option value="sugar">Sugar</option>
+        <option value="flour">Flour</option>
+        <option value="cheese_slices">Cheddar Cheese Slices</option>
+        <option value="corn_syrup">Corn Syrup</option>
+        <option value="potato">Potatoes</option>
+      </select>
+
+      <label for="expiredTypeSelect">Type</label>
+      <select id="expiredTypeSelect" aria-label="Select expired ingredient type">
+        <option value="loose">Loose Units</option>
+        <option value="pack">Pack(s) of 5 Units</option>
+      </select>
+
+      <label for="expiredQuantityInput">Quantity Expired</label>
+      <input type="number" id="expiredQuantityInput" min="1" value="1" aria-label="Quantity of expired ingredient" />
+
+      <div style="margin-top: 20px; display: flex; justify-content: center;">
+        <button id="submitExpiredBtn">Submit</button>
+        <button id="closeExpiredBtn" class="close-btn">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification"></div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      updateDoc,
+      onSnapshot,
+      setDoc
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+      authDomain: "burgershotorders.firebaseapp.com",
+      projectId: "burgershotorders",
+      storageBucket: "burgershotorders.appspot.com",
+      messagingSenderId: "244133569976",
+      appId: "1:244133569976:web:0dcca3439958188439db4d",
+      measurementId: "G-2X69N31D9Q"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const UNIT_PER_PACK = 5;
+    const inventoryDocRef = doc(db, "inventory", "current");
+
+    async function fetchInventory() {
+      try {
+        const docSnap = await getDoc(inventoryDocRef);
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          renderInventoryFromData(data);
+        } else {
+          console.log("No inventory document found, initializing empty.");
+          const emptyData = {};
+          await setDoc(inventoryDocRef, emptyData);
+          renderInventoryFromData(emptyData);
+        }
+      } catch (error) {
+        console.error("Error fetching inventory:", error);
+        showNotification("Failed to load inventory from server.");
+      }
+    }
+
+    onSnapshot(inventoryDocRef, (docSnap) => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        renderInventoryFromData(data);
+      }
+    });
+
+    function formatPacks(units) {
+      const packs = Math.floor(units / UNIT_PER_PACK);
+      const leftover = units % UNIT_PER_PACK;
+      let text = '';
+      if (packs > 0) text += `${packs} pack${packs > 1 ? 's' : ''}`;
+      if (leftover > 0) {
+        if (packs > 0) text += ` + ${leftover} loose`;
+        else text += `${leftover} loose`;
+      }
+      if (text === '') text = '0';
+      return text;
+    }
+
+    function renderInventoryFromData(inventory) {
+      const tbody = document.getElementById('inventoryTableBody');
+      tbody.innerHTML = '';
+
+      const ingredients = [
+        { key: 'burger_buns', label: 'Burger Buns' },
+        { key: 'burger_patties', label: 'Burger Patties' },
+        { key: 'ground_beef', label: 'Packaged Ground Beef' },
+        { key: 'sugar', label: 'Sugar Packs' },
+        { key: 'flour', label: 'Flour Packs' },
+        { key: 'corn_syrup', label: 'Corn Syrup Bottles' },
+        { key: 'lettuce', label: 'Lettuce' },
+        { key: 'cheese_slices', label: 'Cheddar Cheese Slices' },
+        { key: 'potato', label: 'Potato Sack' }
+      ];
+
+      ingredients.forEach(({ key, label }) => {
+        const units = inventory[key] || 0;
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${label}</td>
+          <td>${units}</td>
+          <td class="packs-leftover">${formatPacks(units)}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function showNotification(message, duration = 4000) {
+      const notification = document.getElementById('notification');
+      notification.textContent = message;
+      notification.style.display = 'block';
+      notification.style.opacity = '1';
+
+      if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
+
+      showNotification.timeoutId = setTimeout(() => {
+        notification.style.transition = 'opacity 0.5s ease';
+        notification.style.opacity = '0';
+
+        notification.addEventListener('transitionend', () => {
+          notification.style.display = 'none';
+          notification.style.transition = '';
+        }, { once: true });
+      }, duration);
+    }
+
+    document.getElementById('refreshInventory').addEventListener('click', fetchInventory);
+
+    document.getElementById('reportExpiredBtn').addEventListener('click', () => {
+      document.getElementById('expiredModal').style.display = 'flex';
+      document.getElementById('expiredQuantityInput').value = 1;
+      document.getElementById('expiredIngredientSelect').focus();
+    });
+
+    document.getElementById('closeExpiredBtn').addEventListener('click', () => {
+      document.getElementById('expiredModal').style.display = 'none';
+    });
+
+    document.getElementById('submitExpiredBtn').addEventListener('click', async () => {
+      const ingredientKey = document.getElementById('expiredIngredientSelect').value;
+      const expiredType = document.getElementById('expiredTypeSelect').value;
+      let expiredQty = parseInt(document.getElementById('expiredQuantityInput').value);
+
+      if (isNaN(expiredQty) || expiredQty < 1) {
+        showNotification("Please enter a valid expired quantity (1 or more).");
+        return;
+      }
+
+      const docSnap = await getDoc(inventoryDocRef);
+      if (!docSnap.exists()) {
+      showNotification("No inventory to update.");
+      return;
+      }
+const currentInventory = docSnap.data();
+      const currentQty = currentInventory[ingredientKey] || 0;
+      const unitsToRemove = expiredType === 'pack' ? expiredQty * UNIT_PER_PACK : expiredQty;
+
+      if (unitsToRemove > currentQty) {
+        showNotification("Expired quantity cannot exceed current inventory.");
+        return;
+      }
+
+      currentInventory[ingredientKey] = currentQty - unitsToRemove;
+
+      try {
+        await updateDoc(inventoryDocRef, currentInventory);
+        showNotification(`Removed ${unitsToRemove} expired unit${unitsToRemove !== 1 ? 's' : ''} from inventory.`);
+      } catch (error) {
+        console.error("Failed to update inventory in Firestore:", error);
+        showNotification("Failed to update inventory on server.");
+      }
+
+      document.getElementById('expiredModal').style.display = 'none';
+    });
+
+    // Initial fetch
+    fetchInventory();
+  </script>
+</body>
+</html>

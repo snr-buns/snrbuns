@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Burger Shot - Orders View</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background: #fff4d6;
+      color: #333;
+    }
+    h1 {
+      color: #c82333;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      max-width: 1000px;
+      margin: 0 auto 20px auto;
+      background: white;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 8px;
+      text-align: center;
+      word-break: break-word;
+    }
+    th {
+      background-color: #ffc107;
+      color: #333;
+    }
+    #downloadCSV {
+      display: block;
+      margin: 0 auto 15px auto;
+      padding: 10px 20px;
+      background: #c82333;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      max-width: 250px;
+      text-align: center;
+    }
+    #downloadCSV:hover {
+      background: #a71d2a;
+    }
+  </style>
+</head>
+<body>
+  <h1>🍔 Burger Shot - All Orders</h1>
+
+  <button id="downloadCSV">⬇️ Download Orders CSV</button>
+
+  <table id="ordersTable">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Employee</th>
+        <th>Customer</th>
+        <th>Bleeder</th>
+        <th>Double Shot</th>
+        <th>Soda</th>
+        <th>Fries</th>
+        <th>Rim Job</th>
+        <th>Cream Pie</th>
+        <th>Total</th>
+        <th>Free Dessert?</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      onSnapshot,
+      query,
+      orderBy
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+      authDomain: "burgershotorders.firebaseapp.com",
+      projectId: "burgershotorders",
+      storageBucket: "burgershotorders.firebasestorage.app",
+      messagingSenderId: "244133569976",
+      appId: "1:244133569976:web:0dcca3439958188439db4d",
+      measurementId: "G-2X69N31D9Q"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ✅ Updated product list
+    const PRODUCTS = [
+      "Burgershot Bleeder",
+      "The Double Shot",
+      "Burgershot Soda",
+      "Fries",
+      "Rim Job",
+      "Cream Pie"
+    ];
+
+    // ✅ Updated combo definition
+    const comboDetails = {
+      "Bleeder Box Combo": [
+        { name: "Burgershot Bleeder", quantity: 10 },
+        { name: "Burgershot Soda", quantity: 15 }
+      ]
+    };
+
+    function formatEST(timestamp) {
+      if (!timestamp) return "";
+      const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+      return d.toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).replace(",", "");
+    }
+
+    function parseItems(items) {
+      const counts = {};
+      PRODUCTS.forEach(p => counts[p] = 0);
+
+      (items || []).forEach(item => {
+        if (comboDetails[item.name]) {
+          comboDetails[item.name].forEach(comp => {
+            counts[comp.name] += comp.quantity * item.quantity;
+          });
+        } else if (counts[item.name] !== undefined) {
+          counts[item.name] += item.quantity;
+        }
+      });
+
+      return counts;
+    }
+
+    const tbody = document.querySelector("#ordersTable tbody");
+    let ordersData = [];
+
+    function renderOrders(orders) {
+      tbody.innerHTML = "";
+      if (orders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="10">No orders found.</td></tr>`;
+        return;
+      }
+
+      orders.forEach(order => {
+        const counts = parseItems(order.items);
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${formatEST(order.timestamp)}</td>
+          <td>${order.employee || "-"}</td>
+          <td>${order.customer || "-"}</td>
+          <td>${counts["Burgershot Bleeder"] || 0}</td>
+          <td>${counts["The Double Shot"] || 0}</td>
+          <td>${counts["Burgershot Soda"] || 0}</td>
+          <td>${counts["Fries"] || 0}</td>
+          <td>${counts["Rim Job"] || 0}</td>
+          <td>${counts["Cream Pie"] || 0}</td>
+          <td>$${order.total?.toFixed(2) || "0.00"}</td>
+          <td>${order.freeDessert ? "Yes 🍰" : ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    const q = query(
+      collection(db, "orders"),
+      orderBy("timestamp", "desc")
+    );
+
+    onSnapshot(q, (snapshot) => {
+      ordersData = [];
+      snapshot.forEach(doc => {
+        ordersData.push(doc.data());
+      });
+      renderOrders(ordersData);
+    });
+
+    document.getElementById("downloadCSV").addEventListener("click", () => {
+      if (ordersData.length === 0) {
+        alert("No orders to export!");
+        return;
+      }
+      const csv = convertOrdersToCSV(ordersData);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `BurgerShot_Orders_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
+    function convertOrdersToCSV(orders) {
+      const header = ["Date", "Employee", "Customer", ...PRODUCTS, "Total", "Free Dessert?"];
+      const rows = orders.map(order => {
+        const counts = parseItems(order.items);
+        return [
+          formatEST(order.timestamp),
+          order.employee,
+          order.customer,
+          ...PRODUCTS.map(p => counts[p] || 0),
+          order.total?.toFixed(2),
+          order.freeDessert ? "Yes" : "No"
+        ];
+      });
+      return [header.join(","), ...rows.map(r => r.map(v => `"${v}"`).join(","))].join("\n");
+    }
+  </script>
+</body>
+</html>

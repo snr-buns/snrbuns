@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Burger Shot - Register</title>
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fff4d6;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      color: #333;
+    }
+    .sidebar {
+      background-color: #c82333;
+      width: 220px;
+      color: white;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      user-select: none;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.75rem 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      background-color: #a71d2a;
+      text-decoration: none;
+    }
+    main.register-content {
+      flex-grow: 1;
+      padding: 2rem 2.5rem;
+      background-color: #fff4d6;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+      flex-direction: column;
+    }
+    .category-filter {
+      width: 100%;
+      display: flex;
+      gap: 10px;
+      margin-bottom: 1rem;
+      align-items: center;
+    }
+    .category {
+      all: unset;
+      background-color: #ffc107;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      color: #333;
+      padding: 0.25rem 1rem;
+      height: 32px;
+      min-height: 32px;
+      line-height: 1;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      font-size: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .category.active,
+    .category:hover {
+      background-color: #ff8800;
+      color: #fff;
+    }
+    #searchBar {
+      flex-grow: 1;
+      font-size: 1rem;
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      user-select: text;
+    }
+    .item-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      width: 100%;
+    }
+    .item-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 320px;
+      text-align: center;
+      user-select: none;
+    }
+    .item-card img {
+      max-height: 75px;
+      object-fit: contain;
+      margin-bottom: 1rem;
+      pointer-events: none;
+    }
+    .item-card h3 {
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+      font-size: 1.25rem;
+    }
+    .item-card p {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 1.2rem;
+    }
+    .add-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      width: 100%;
+    }
+    .quantity-input {
+      width: 60px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.25rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      user-select: none;
+    }
+    .add-btn {
+      background-color: #c82333;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .add-btn:hover {
+      background-color: #a71d2a;
+    }
+    aside.order-summary {
+      width: 300px;
+      height: 700px;
+      background: white;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      font-weight: 600;
+      user-select: none;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    aside.order-summary h2 {
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      user-select: none;
+    }
+    .order-info label {
+      font-weight: 700;
+      margin-top: 1rem;
+      display: block;
+    }
+    .order-info select,
+    .order-info input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.4rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-weight: 600;
+      font-size: 1rem;
+      user-select: text;
+    }
+    #orderList {
+      list-style-type: none;
+      padding-left: 0;
+      margin-bottom: 1.2rem;
+      margin-top: 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      font-weight: 600;
+      flex-grow: 1;
+    }
+    #orderList li {
+      margin-bottom: 0.35rem;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 0.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      user-select: none;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .item-details {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #ffc107;
+      border-radius: 999px;
+      padding: 2px 6px;
+      height: 28px;
+      min-width: 85px;
+      user-select: none;
+    }
+    .qty-btn {
+      background: none;
+      border: none;
+      color: #000;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      user-select: none;
+      line-height: 1;
+    }
+    .qty-number {
+      font-size: 14px;
+      font-weight: bold;
+      color: #000;
+      text-align: center;
+      width: 20px;
+      user-select: none;
+    }
+    .remove-btn {
+      color: #d32f2f;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: underline;
+      user-select: none;
+      white-space: nowrap;
+    }
+    p {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin: 0.25rem 0;
+      user-select: none;
+    }
+    #submitOrder {
+      width: 100%;
+      font-weight: 700;
+      padding: 0.6rem;
+      background-color: #c82333;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      user-select: none;
+      margin-bottom: 10px;
+    }
+    #submitOrder:hover {
+      background-color: #a71d2a;
+    }
+    .discount-btn {
+      width: 100%;
+      font-weight: 700;
+      padding: 0.5rem;
+      background-color: #ffc107;
+      border: none;
+      border-radius: 8px;
+      color: #333;
+      cursor: pointer;
+      transition: background-color 0.3s;
+      user-select: none;
+      margin-bottom: 8px;
+    }
+    .discount-btn:hover {
+      background-color: #ffb300;
+    }
+    .discount-btn.active {
+      background-color: #ff9800;
+      color: white;
+    }
+    #notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c82333;
+      color: white;
+      padding: 15px 25px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      display: none;
+      z-index: 1000;
+      max-width: 90vw;
+      text-align: center;
+      white-space: pre-line;
+    }
+    #discountModal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+    }
+    #discountModal .modal-content {
+      background: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      max-width: 320px;
+      text-align: center;
+      font-weight: 600;
+      color: #333;
+      user-select: none;
+    }
+    #discountModal button {
+      margin: 15px 10px 0 10px;
+      padding: 0.5rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      font-size: 1rem;
+    }
+    #discountModal .yes-btn {
+      background-color: #4caf50;
+      color: white;
+    }
+    #discountModal .no-btn {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
+    <aside class="sidebar">
+      <h2>🍔 Burger Shot</h2>
+      <nav>
+        <ul class="list-unstyled">
+          <li><a href="home.html">🏠 Home</a></li>
+          <li><a href="register.html" class="active">🖋️ Register</a></li>
+          <li><a href="orders.html">📋 Orders</a></li>
+          <li><a href="inventory.html">📦 Inventory</a></li>
+          <li><a href="market.html">🏪 Market Run</a></li>
+          <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+          <li><a href="loyalty.html">🎁 Customers</a></li>
+        </ul>
+      </nav>
+    </aside>
+    <main class="register-content">
+      <div class="category-filter">
+        <button class="category active">All</button>
+        <button class="category">Combo Deals</button>
+        <button class="category">Food</button>
+        <button class="category">Drinks</button>
+        <button class="category">Desserts</button>
+        <input type="search" id="searchBar" placeholder="Search menu items..." aria-label="Search menu items" />
+      </div>
+
+      <div class="item-grid">
+  <!-- Combo: Bleeder Box -->
+  <div class="item-card" data-name="Bleeder Box Combo" data-price="1000" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/bleederbox.png" alt="Bleeder Box Combo" />
+    <h3>The Bleeder Box</h3>
+    <p>$1000</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <div class="item-card" data-name="Patty Pounder Combo" data-price="650" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/bleederbox.png" alt="Patty Pounder Combo" />
+    <h3>Patty Pounder Combo</h3>
+    <p>$650</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- Burgershot Bleeder -->
+  <div class="item-card" data-name="Burgershot Bleeder" data-price="150" data-category="Food" data-image="assets/images/bleeder.png">
+    <img src="assets/images/bleeder.png" alt="Burgershot Bleeder" />
+    <h3>Burgershot Bleeder</h3>
+    <p>$85</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- The Double Shot -->
+  <div class="item-card" data-name="The Double Shot" data-price="150" data-category="Food" data-image="assets/images/doubleshot.png">
+    <img src="assets/images/doubleshot.png" alt="The Double Shot" />
+    <h3>The Double Shot</h3>
+    <p>$85</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- Burgershot Soda -->
+  <div class="item-card" data-name="Burgershot Soda" data-price="75" data-category="Drinks" data-image="assets/images/soda.png">
+    <img src="assets/images/soda.png" alt="Burgershot Soda" />
+    <h3>Burgershot Soda</h3>
+    <p>$50</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- Fries -->
+  <div class="item-card" data-name="Fries" data-price="150" data-category="Food" data-image="assets/images/fries.png">
+    <img src="assets/images/fries.png" alt="Fries" />
+    <h3>Fries</h3>
+    <p>$50</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- Rim Job -->
+  <div class="item-card" data-name="Rim Job" data-price="150" data-category="Desserts" data-image="assets/images/rimjob.png">
+    <img src="assets/images/rimjob.png" alt="Rim Job" />
+    <h3>Rim Job</h3>
+    <p>$50</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
+  <!-- Cream Pie -->
+  <div class="item-card" data-name="Cream Pie" data-price="150" data-category="Desserts" data-image="assets/images/creampie.png">
+    <img src="assets/images/creampie.png" alt="Cream Pie" />
+    <h3>Cream Pie</h3>
+    <p>$50</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+</div>
+
+    </main>
+
+    <aside class="order-summary">
+      <h2>🧾 New Order</h2>
+      <div class="order-info">
+        <label for="employeeName">Employee Name</label>
+        <select id="employeeName" required>
+          <option value="" disabled selected>Select employee</option>
+          <option value="Savannah">Savannah</option>
+          <option value="Munch">Munch</option>
+        </select>
+        <label for="customerName">Customer Name</label>
+        <input type="text" id="customerName" placeholder="Enter customer name" required />
+      </div>
+      <ul id="orderList"></ul>
+      <p>Subtotal: $<span id="subtotal">0</span></p>
+      <p><strong>Total: $<span id="total">0</span></strong></p>
+      <button id="pdDiscount" class="discount-btn">Apply PD Discount (20%)</button>
+      <button id="emsDiscount" class="discount-btn">Apply EMS Discount (20%)</button>
+      <button id="submitOrder">Place Order</button>
+    </aside>
+  </div>
+
+  <div id="notification" role="alert"></div>
+
+  <!-- Discount confirmation modal -->
+  <div id="discountModal" role="dialog" aria-modal="true">
+    <div class="modal-content">
+      <div style="font-size:1.2rem; margin-bottom: 10px;">Is the customer in uniform?</div>
+      <button class="yes-btn">Yes</button>
+      <button class="no-btn">No</button>
+    </div>
+  </div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+  authDomain: "burgershotorders.firebaseapp.com",
+  projectId: "burgershotorders",
+  storageBucket: "burgershotorders.firebasestorage.app",
+  messagingSenderId: "244133569976",
+  appId: "1:244133569976:web:0dcca3439958188439db4d",
+  measurementId: "G-2X69N31D9Q"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// 🔑 Anonymous sign-in
+const auth = getAuth(app);
+signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err));
+
+// --- Ingredient setup ---
+const productIngredients = {
+  "Burgershot Bleeder": { burger_buns: 1, burger_patties: 1, cheese_slices: 2 },
+  "The Double Shot": { burger_buns: 1, burger_patties: 1, lettuce: 1 },
+  "Burgershot Soda": { corn_syrup: 1 },
+  "Fries": { potato: 2 },
+  "Rim Job": { sugar: 1, flour: 1 },
+  "Cream Pie": { sugar: 1, flour: 1 }
+};
+const comboDetails = {
+  "The Bleeder Box": {
+    price: 1000,
+    components: [
+      { name: "Burgershot Bleeder", quantity: 5 },
+      { name: "Fries", quantity: 5 },
+      { name: "Burgershot Soda", quantity: 10 }
+    ]
+  },
+  "Patty Pounder Combo": {
+    price: 650,
+    components: [
+      { name: "The Double Shot", quantity: 5 },
+      { name: "Burgershot Soda", quantity: 5 }
+    ]
+  }
+};
+
+// ✅ Readable ingredient labels
+const ingredientLabels = {
+  burger_buns: "burger buns",
+  burger_patties: "burger patties",
+  ground_beef: "ground beef",
+  sugar: "sugar",
+  flour: "flour",
+  lettuce: "lettuce",
+  cheese_slices: "cheddar cheese slices",
+  corn_syrup: "corn syrup",
+  potato: "potatoes"
+};
+
+
+// --- Inventory (Firestore) ---
+async function getInventory() {
+  const snap = await getDoc(doc(db, "inventory", "current"));
+  return snap.exists() ? snap.data() : {};
+}
+async function saveInventory(data) {
+  await setDoc(doc(db, "inventory", "current"), data, { merge: true });
+}
+
+// --- Loyalty (Firestore) ---
+async function updateLoyalty(customer) {
+  const key = customer.toLowerCase();
+  const ref = doc(db, "loyalty", key);
+  const snap = await getDoc(ref);
+  const oldVisits = snap.exists() ? snap.data().visits : 0;
+  const newVisits = oldVisits + 1;
+  await setDoc(ref, { visits: newVisits }, { merge: true });
+  return newVisits;
+}
+
+// --- UI + Orders ---
+let order = [];
+let activeDiscount = null;
+
+const orderList = document.getElementById("orderList");
+const subtotalSpan = document.getElementById("subtotal");
+const totalSpan = document.getElementById("total");
+const categoryButtons = document.querySelectorAll(".category");
+const itemCards = document.querySelectorAll(".item-card");
+const searchBar = document.getElementById("searchBar");
+const discountModal = document.getElementById("discountModal");
+const yesBtn = discountModal.querySelector(".yes-btn");
+const noBtn = discountModal.querySelector(".no-btn");
+let discountToApply = null;
+
+function showNotification(message, duration = 4000) {
+  const n = document.getElementById("notification");
+  n.textContent = message;
+  n.style.display = "block";
+  setTimeout(() => n.style.display = "none", duration);
+}
+
+// ✅ Update order list (+, −, Remove working)
+function updateOrderList() {
+  orderList.innerHTML = "";
+  let subtotal = 0;
+
+  order.forEach((item, idx) => {
+    subtotal += item.price * item.quantity;
+
+    const li = document.createElement("li");
+    li.innerHTML = `
+      <div class="item-details">${item.name} - $${(item.price * item.quantity).toFixed(2)}</div>
+      <div class="quantity-controls">
+        <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
+        <span class="qty-number">${item.quantity}</span>
+        <button class="qty-btn" data-action="plus" data-index="${idx}">+</button>
+      </div>
+      <div class="remove-btn" data-index="${idx}">Remove</div>
+    `;
+    orderList.appendChild(li);
+  });
+
+  subtotalSpan.textContent = subtotal.toFixed(2);
+  totalSpan.textContent = (activeDiscount ? subtotal * 0.8 : subtotal).toFixed(2);
+
+  // reattach listeners
+  document.querySelectorAll(".qty-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const index = parseInt(e.target.dataset.index, 10);
+      const action = e.target.dataset.action;
+      if (action === "plus") {
+        order[index].quantity++;
+      } else if (action === "minus") {
+        order[index].quantity = Math.max(1, order[index].quantity - 1);
+      }
+      updateOrderList();
+    });
+  });
+  document.querySelectorAll(".remove-btn").forEach(btn => {
+    btn.addEventListener("click", e => {
+      const index = parseInt(e.target.dataset.index, 10);
+      order.splice(index, 1);
+      updateOrderList();
+    });
+  });
+}
+
+// 🔎 Category + Search filter
+function filterItems() {
+  const selectedCategory = [...categoryButtons].find(btn => btn.classList.contains("active")).textContent.trim();
+  const searchText = searchBar.value.trim().toLowerCase();
+
+  itemCards.forEach(card => {
+    const itemCategory = card.getAttribute("data-category");
+    const itemName = card.getAttribute("data-name").toLowerCase();
+    const categoryMatch = (selectedCategory === "All" || selectedCategory === itemCategory);
+    const searchMatch = itemName.includes(searchText);
+    card.style.display = (categoryMatch && searchMatch) ? "block" : "none";
+  });
+}
+categoryButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    filterItems();
+  });
+});
+searchBar.addEventListener("input", filterItems);
+
+// ➕ Add items
+document.querySelectorAll(".add-btn").forEach(button => {
+  button.addEventListener("click", e => {
+    const card = e.target.closest(".item-card");
+    const name = card.dataset.name;
+    const price = parseFloat(card.dataset.price);
+    const quantity = parseInt(card.querySelector(".quantity-input").value) || 1;
+    const image = card.dataset.image;
+
+    const existingItem = order.find(item => item.name === name);
+    if (existingItem) {
+      existingItem.quantity += quantity;
+    } else {
+      order.push({ name, price, quantity, image }); // ✅ include image
+    }
+    updateOrderList();
+  });
+});
+
+// 🎟 Discount buttons
+const pdBtn = document.getElementById("pdDiscount");
+const emsBtn = document.getElementById("emsDiscount");
+
+function resetDiscountButtons() {
+  pdBtn.classList.remove("active");
+  emsBtn.classList.remove("active");
+}
+function applyDiscount(type) {
+  activeDiscount = type;
+  resetDiscountButtons();
+  if (type === "PD") pdBtn.classList.add("active");
+  if (type === "EMS") emsBtn.classList.add("active");
+  updateOrderList();
+}
+
+pdBtn.addEventListener("click", () => {
+  discountToApply = "PD";
+  discountModal.style.display = "flex";
+});
+emsBtn.addEventListener("click", () => {
+  discountToApply = "EMS";
+  discountModal.style.display = "flex";
+});
+yesBtn.addEventListener("click", () => {
+  applyDiscount(discountToApply);
+  discountModal.style.display = "none";
+  showNotification(`✅ ${discountToApply} discount applied!`);
+  discountToApply = null;
+});
+noBtn.addEventListener("click", () => {
+  discountModal.style.display = "none";
+  showNotification("No discount applied.");
+  discountToApply = null;
+});
+
+// 📝 Submit Order
+document.getElementById("submitOrder").addEventListener("click", async () => {
+  const employee = document.getElementById("employeeName").value;
+  const customerRaw = document.getElementById("customerName").value.trim();
+  if (!employee || !customerRaw || order.length === 0) {
+    showNotification("Please fill all fields and add items.");
+    return;
+  }
+
+  // Inventory check
+  const inventory = await getInventory();
+  const totalNeeded = {};
+  order.forEach(item => {
+    if (comboDetails[item.name]) {
+      comboDetails[item.name].components.forEach(comp => {
+        const needed = productIngredients[comp.name];
+        for (const ing in needed) {
+          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
+        }
+      });
+    } else {
+      const needed = productIngredients[item.name];
+      if (!needed) return;
+      for (const ing in needed) {
+        totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+      }
+    }
+  });
+
+// 🔹 Auto-convert ground beef packages → patties BEFORE missing check
+if (totalNeeded["burger_patties"]) {
+  let pattiesAvailable = Number(inventory.burger_patties || 0);
+
+  while (pattiesAvailable < totalNeeded["burger_patties"] && Number(inventory.ground_beef || 0) > 0) {
+    inventory.ground_beef--;   // use 1 package
+    pattiesAvailable += 5;     // add 5 patties
+  }
+
+  inventory.burger_patties = pattiesAvailable;
+}
+
+// 🔹 Now check missing AFTER conversion
+const missing = [];
+for (const ing in totalNeeded) {
+  const invVal = Number(inventory[ing] || 0);
+  if (invVal < totalNeeded[ing]) {
+    const label = ingredientLabels[ing] || ing;
+    missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
+  }
+}
+
+if (missing.length > 0) {
+  showNotification("Cannot add. Missing: " + missing.join(", "));
+  return; // ✅ stop order if missing
+}
+
+if (missing.length > 0) {
+  showNotification("Cannot add. Missing: " + missing.join(", "));
+  return; // ✅ STOP the order if ingredients aren’t there
+}
+
+  // Deduct inventory
+  for (const ing in totalNeeded) {
+    inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+    if (inventory[ing] < 0) inventory[ing] = 0;
+  }
+  await saveInventory(inventory);
+
+  // Loyalty update
+  const newVisits = await updateLoyalty(customerRaw);
+  const freeDessert = newVisits % 5 === 0;
+  if (freeDessert) {
+    showNotification(`🎉 ${customerRaw} reached ${newVisits} visits! Free dessert!`);
+  } else {
+    showNotification("Order saved!");
+  }
+
+  // Save order
+  const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const total = activeDiscount ? subtotal * 0.8 : subtotal;
+  const orderData = {
+    employee,
+    customer: customerRaw,
+    items: order,
+    total,
+    discountApplied: activeDiscount,
+    freeDessert,
+    timestamp: Timestamp.now(),
+    done: false,
+    deleted: false
+  };
+  await addDoc(collection(db, "orders"), orderData);
+
+  // Reset
+  order = [];
+  updateOrderList();
+  document.getElementById("customerName").value = "";
+  document.getElementById("employeeName").value = "";
+  resetDiscountButtons();
+  activeDiscount = null;
+});
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Burger Shot - Market Run</title>
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fff4d6;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      color: #333;
+    }
+    .sidebar {
+      background-color: #c82333;
+      width: 220px;
+      color: white;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      user-select: none;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.75rem 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #a71d2a;
+      text-decoration: none;
+    }
+    main {
+      flex-grow: 1;
+      padding: 2rem 3rem;
+      background-color: #fff4d6;
+      overflow-y: auto;
+    }
+    h1 {
+      color: #c82333;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      user-select: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+      font-weight: 600;
+      user-select: none;
+    }
+    th {
+      background: #ffc107;
+      color: #000;
+    }
+    input[type=number] {
+      width: 80px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-weight: 600;
+    }
+    input[type=number]:focus {
+      outline: 2px solid #c82333;
+    }
+    .price-input {
+      width: 100px;
+    }
+    #totalCost {
+      font-weight: 700;
+      font-size: 1.25rem;
+      margin-top: 1rem;
+      user-select: none;
+    }
+    button#confirmPurchase {
+      margin-top: 1.5rem;
+      background-color: #c82333;
+      color: white;
+      font-weight: 700;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s;
+    }
+    button#confirmPurchase:hover {
+      background-color: #a71d2a;
+    }
+    .notification {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #c82333;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-family: 'Montserrat', sans-serif;
+      display: none;
+      z-index: 1000;
+      max-width: 90vw;
+      text-align: center;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>🍔 Burger Shot</h2>
+    <nav>
+      <ul class="list-unstyled">
+        <li><a href="home.html">🏠 Home</a></li>
+        <li><a href="register.html">🖋️ Register</a></li>
+        <li><a href="orders.html">📋 Orders</a></li>
+        <li><a href="inventory.html">📦 Inventory</a></li>
+        <li><a href="market.html" class="active">🏪 Market Run</a></li>
+        <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+        <li><a href="loyalty.html">🎁 Customers</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main>
+    <h1>🏪 Market Run</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Ingredient</th>
+          <th>Pack Quantity</th>
+          <th>Price Per Pack ($)</th>
+          <th>Subtotal ($)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Package of Buns</td>
+          <td><input type="number" min="0" value="0" data-ingredient="burger_buns" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Packaged Ground Beef</td>
+          <td><input type="number" min="0" value="0" data-ingredient="ground_beef" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Sugar Pack</td>
+          <td><input type="number" min="0" value="0" data-ingredient="sugar" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Flour Pack</td>
+          <td><input type="number" min="0" value="0" data-ingredient="flour" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Corn Syrup Bottles</td>
+          <td><input type="number" min="0" value="0" data-ingredient="corn_syrup" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Potato Sack</td>
+          <td><input type="number" min="0" value="0" data-ingredient="potato" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Cheddar Cheese Slices</td>
+          <td><input type="number" min="0" value="0" data-ingredient="cheese_slices" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Lettuce Head</td>
+          <td><input type="number" min="0" value="0" data-ingredient="lettuce" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div id="totalCost">Total Cost: $0.00</div>
+
+    <button id="confirmPurchase">Confirm Purchase</button>
+
+    <div class="notification" id="notification"></div>
+  </main>
+
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    updateDoc,
+    getDoc,
+    setDoc,
+    collection,
+    addDoc
+  } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+    authDomain: "burgershotorders.firebaseapp.com",
+    projectId: "burgershotorders",
+    storageBucket: "burgershotorders.appspot.com",
+    messagingSenderId: "244133569976",
+    appId: "1:244133569976:web:0dcca3439958188439db4d",
+    measurementId: "G-2X69N31D9Q"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const inventoryDocRef = doc(db, "inventory", "current");
+  const UNIT_PER_PACK = 5;
+  const notification = document.getElementById('notification');
+
+  function showNotification(message, duration=3000) {
+    notification.textContent = message;
+    notification.style.display = 'block';
+    notification.style.opacity = '1';
+    if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
+    showNotification.timeoutId = setTimeout(() => {
+      notification.style.transition = 'opacity 0.5s ease';
+      notification.style.opacity = '0';
+      notification.addEventListener('transitionend', () => {
+        notification.style.display = 'none';
+        notification.style.transition = '';
+      }, { once: true });
+    }, duration);
+  }
+
+  async function getLiveInventory() {
+    const docSnap = await getDoc(inventoryDocRef);
+    return docSnap.exists() ? docSnap.data() : {};
+  }
+
+  async function updateInventoryInFirestore(updatedInventory) {
+    try {
+      const docSnap = await getDoc(inventoryDocRef);
+      if (docSnap.exists()) {
+        await updateDoc(inventoryDocRef, updatedInventory);
+      } else {
+        await setDoc(inventoryDocRef, updatedInventory);
+      }
+      showNotification("Inventory updated.");
+    } catch (error) {
+      console.error("Firestore update failed:", error);
+      showNotification("Failed to update inventory.");
+    }
+  }
+
+  function updateCosts() {
+    const rows = document.querySelectorAll('tbody tr');
+    let total = 0;
+    rows.forEach(row => {
+      const qtyInput = row.querySelector('.pack-qty');
+      const priceInput = row.querySelector('.price-per-pack');
+      const subtotalCell = row.querySelector('.subtotal');
+      const qty = parseInt(qtyInput.value) || 0;
+      const price = parseFloat(priceInput.value) || 0;
+      const subtotal = qty * price;
+      subtotalCell.textContent = '$' + subtotal.toFixed(2);
+      total += subtotal;
+    });
+    document.getElementById('totalCost').textContent = 'Total Cost: $' + total.toFixed(2);
+  }
+
+  document.getElementById('confirmPurchase').addEventListener('click', async () => {
+    const rows = document.querySelectorAll('tbody tr');
+    let inventory = await getLiveInventory();
+    let anyPurchase = false;
+
+    for (const row of rows) {
+      const qtyInput = row.querySelector('.pack-qty');
+      const ingredient = qtyInput.getAttribute('data-ingredient');
+      const qty = parseInt(qtyInput.value) || 0;
+      const price = parseFloat(row.querySelector('.price-per-pack').value) || 0;
+
+      if (qty > 0) {
+        anyPurchase = true;
+
+        // ✅ Ground beef stored as packages, everything else as units
+        if (ingredient === "ground_beef") {
+          inventory[ingredient] = (inventory[ingredient] || 0) + qty;
+        } else {
+          const unitsToAdd = qty * UNIT_PER_PACK;
+          inventory[ingredient] = (inventory[ingredient] || 0) + unitsToAdd;
+        }
+
+        const run = {
+          timestamp: new Date().toISOString(),
+          ingredient: ingredient,
+          packsBought: qty,
+          pricePerPack: price
+        };
+
+        try {
+          await addDoc(collection(db, "market_runs"), run);
+          console.log(`Market run added for ${ingredient}`);
+        } catch (error) {
+          console.error("Error adding market run to Firestore:", error);
+          showNotification("Failed to save market run to server.");
+        }
+
+        qtyInput.value = 0;
+        row.querySelector('.price-per-pack').value = 0;
+        row.querySelector('.subtotal').textContent = '$0.00';
+      }
+    }
+
+    if (!anyPurchase) {
+      showNotification("Please enter quantity for at least one ingredient.");
+      return;
+    }
+
+    await updateInventoryInFirestore(inventory);
+    updateCosts();
+    showNotification("Market run saved successfully!");
+  });
+
+  document.querySelectorAll('.pack-qty, .price-per-pack').forEach(input => {
+    input.addEventListener('input', updateCosts);
+  });
+
+  updateCosts();
+</script>
+
+</body>
+</html>

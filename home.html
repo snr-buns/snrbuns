@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Burger Shot - Home</title>
+
+  <!-- Bootstrap CSS CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #fff4d6;
+      margin: 0;
+      display: flex;
+      min-height: 100vh;
+      color: #333;
+    }
+    .sidebar {
+      background-color: #c82333;
+      width: 220px;
+      color: white;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar h2 {
+      font-weight: 700;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      user-select: none;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 0.75rem 0.5rem;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background-color 0.3s;
+      user-select: none;
+    }
+    .sidebar a:hover,
+    .sidebar a.active {
+      background-color: #a71d2a;
+      text-decoration: none;
+    }
+    main.home-content {
+      flex-grow: 1;
+      padding: 2rem 2.5rem;
+      background-color: #fff4d6;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    header.welcome {
+      text-align: center;
+    }
+    header.welcome h1 {
+      font-weight: 700;
+      color: #c82333;
+      font-size: 2.5rem;
+      margin-bottom: 0.25rem;
+      user-select: none;
+    }
+    header.welcome p {
+      font-weight: 600;
+      color: #555;
+      margin-top: 0;
+      user-select: none;
+    }
+
+    section.quick-stats {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .quick-card {
+      background: white;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      min-width: 140px;
+      text-align: center;
+      user-select: none;
+    }
+    .quick-card h3 {
+      margin: 0.2rem 0;
+      font-size: 1.6rem;
+      color: #c82333;
+    }
+    .quick-card p {
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+    }
+
+    section.recent-orders {
+      background: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .recent-orders h2 {
+      font-weight: 700;
+      color: #c82333;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+    .recent-orders ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .recent-orders li {
+      padding: 0.4rem 0.6rem;
+      border-bottom: 1px solid #eee;
+      font-weight: 600;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      user-select: none;
+    }
+    .recent-orders li:last-child {
+      border-bottom: none;
+    }
+
+    section.quick-nav {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .quick-nav a {
+      background-color: #c82333;
+      color: white;
+      font-weight: 700;
+      padding: 1rem 1.75rem;
+      border-radius: 8px;
+      text-decoration: none;
+      user-select: none;
+      transition: background-color 0.3s;
+      display: inline-block;
+      min-width: 140px;
+      text-align: center;
+    }
+    .quick-nav a:hover {
+      background-color: #a71d2a;
+    }
+
+    section.alerts {
+      max-width: 900px;
+      background: white;
+      padding: 0.4rem 0.6rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      margin: 0 auto;
+    }
+    .alerts h2 {
+      font-weight: 700;
+      color: #c82333;
+      margin-top: 0;
+      margin-bottom: 1rem;
+      user-select: none;
+    }
+    .alerts ul {
+      list-style: none;
+      padding-left: 1rem;
+      margin: 0;
+      font-weight: 600;
+      color: #333;
+    }
+    .alerts ul li {
+      margin-bottom: 0.3rem;
+    }
+
+    /* Scrollbar for recent orders */
+    .recent-orders ul::-webkit-scrollbar {
+      width: 7px;
+    }
+    .recent-orders ul::-webkit-scrollbar-thumb {
+      background-color: #c82333;
+      border-radius: 20px;
+    }
+
+    .announcement-banner {
+    background-color: #c82333;
+    color: #fff4d6;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    padding: 0.5rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+    box-sizing: border-box;
+    user-select: none;
+  }
+
+  .announcement-banner span {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 40s linear infinite;
+  }
+
+  /* Adjust animation duration for speed */
+  @keyframes scroll-left {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  </style>
+</head>
+<body>
+  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
+    <aside class="sidebar">
+      <h2>🍔 Burger Shot</h2>
+      <nav>
+        <ul class="list-unstyled">
+          <li><a href="home.html" class="active">🏠 Home</a></li>
+          <li><a href="register.html">🖋️ Register</a></li>
+          <li><a href="orders.html">📋 Orders</a></li>
+          <li><a href="inventory.html">📦 Inventory</a></li>
+          <li><a href="market.html">🏪 Market Run</a></li>
+          <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+          <li><a href="loyalty.html">🎁 Customers</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <main class="home-content">
+
+      <div class="announcement-banner" aria-live="polite" aria-atomic="true">
+  <span>
+    🚨 Grand Opening soon! 🍔🔥 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; 
+    We are hiring - Spread the word! 
+  </span>
+</div>
+
+      <header class="welcome">
+        <h1>🍔 Welcome to Burger Shot!</h1>
+        <p>Your quick overview & stats dashboard</p>
+      </header>
+
+      <section class="quick-stats" aria-label="Key statistics summary">
+        <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
+          <p>Orders Today</p>
+          <h3 id="ordersToday">0</h3>
+        </div>
+        <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
+          <p>Low Stock Items</p>
+          <h3 id="lowStockCount">0</h3>
+        </div>
+        <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
+          <p>Total Visits</p>
+          <h3 id="loyaltyVisits">0</h3>
+        </div>
+      </section>
+
+      <section class="quick-nav" aria-label="Quick navigation links">
+        <a href="register.html">🖋️ Register</a>
+        <a href="orders.html">📋 Orders</a>
+        <a href="inventory.html">📦 Inventory</a>
+        <a href="market.html">🏪 Market Run</a>
+        <a href="staffmeals.html">🍽️ Staff Meals</a>
+        <a href="loyalty.html">🎁 Customers</a>
+      </section>
+
+      <section class="recent-orders" aria-label="Recent orders">
+        <h2>🧾 Recent Orders</h2>
+        <ul id="recentOrdersList" tabindex="0">
+          <!-- Populated by JS -->
+        </ul>
+      </section>
+
+      
+
+      <section class="alerts" aria-label="Inventory alerts">
+        <h2>⚠️ Inventory Alerts</h2>
+        <ul id="inventoryAlertsList">
+          <!-- Populated by JS -->
+        </ul>
+      </section>
+    </main>
+  </div>
+
+ <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  getDocs,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+      authDomain: "burgershotorders.firebaseapp.com",
+      projectId: "burgershotorders",
+      storageBucket: "burgershotorders.appspot.com",
+      messagingSenderId: "244133569976",
+      appId: "1:244133569976:web:0dcca3439958188439db4d",
+      measurementId: "G-2X69N31D9Q"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const LOW_STOCK_THRESHOLD = 5;
+
+    async function fetchInventory() {
+      const docSnap = await getDoc(doc(db, "inventory", "current"));
+      return docSnap.exists() ? docSnap.data() : {};
+    }
+
+   async function fetchArchivedOrders() {
+  const q = query(
+    collection(db, "orders"),
+    where("deleted", "==", false),
+    orderBy("timestamp", "desc")
+  );
+
+  const snapshot = await getDocs(q);
+  return snapshot.docs.map(doc => ({
+    ...doc.data(),
+    id: doc.id,
+    timestamp: doc.data().timestamp?.toDate?.() || null
+  }));
+}
+
+
+
+  async function fetchLoyaltyVisits() {
+  const q = query(collection(db, "orders"), where("deleted", "==", false));
+  const snapshot = await getDocs(q);
+
+  const counts = {};
+  snapshot.forEach(doc => {
+    const customer = doc.data().customer?.toLowerCase()?.trim();
+    if (customer) {
+      counts[customer] = (counts[customer] || 0) + 1;
+    }
+  });
+
+  return counts;
+}
+  
+function formatDate(date) {
+  if (!date) return "-";
+  return date.toLocaleString('en-US', {
+    timeZone: 'America/New_York', // EST
+    month: '2-digit',
+    day: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  }).replace(',', '');
+}
+
+    async function updateDashboard() {
+      const [inventory, orders, loyalty] = await Promise.all([
+        fetchInventory(),
+        fetchArchivedOrders(),
+        fetchLoyaltyVisits()
+      ]);
+
+      const todayDateStr = new Date().toISOString().slice(0, 10);
+      const ordersToday = orders.filter(order =>
+        order.timestamp?.toISOString().slice(0, 10) === todayDateStr
+      );
+
+      document.getElementById("ordersToday").textContent = ordersToday.length;
+
+      const totalVisits = Object.values(loyalty).reduce((sum, v) => sum + v, 0);
+      document.getElementById("loyaltyVisits").textContent = totalVisits;
+
+      const lowStock = Object.entries(inventory).filter(([_, qty]) => qty < LOW_STOCK_THRESHOLD);
+      document.getElementById("lowStockCount").textContent = lowStock.length;
+
+      const ingredients = {
+        'burger_buns': 'Burger Buns',
+        'burger_patties': 'Burger Patties',
+        'sugar': 'Sugar Packs',
+        'flour': 'Flour',
+        'lettuce': 'Lettuce',
+        'cheese_slices': 'Cheddar Cheese Slices',
+        'ground_beef': 'Packaged Ground Beef',
+        'corn_syrup': 'Corn Syrup Bottles',
+        'potato': 'Potato Sack'
+      };
+      const alertsList = document.getElementById("inventoryAlertsList");
+      alertsList.innerHTML = "";
+      if (lowStock.length === 0) {
+        alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
+      } else {
+        lowStock.forEach(([key]) => {
+          const li = document.createElement("li");
+          li.textContent = `⚠️ Low stock: ${ingredients[key]}`;
+          alertsList.appendChild(li);
+        });
+      }
+
+      const list = document.getElementById("recentOrdersList");
+      list.innerHTML = "";
+      const last5 = orders.slice(0, 5);
+      if (last5.length === 0) {
+        list.innerHTML = `<li>No orders placed yet.</li>`;
+      } else {
+        last5.forEach(order => {
+          const li = document.createElement("li");
+          const clearedLabel = order.deleted ? " - Completed" : "";
+          li.textContent = `${formatDate(order.timestamp)} - ${order.customer} (Total: $${order.total.toFixed(2)})${clearedLabel}`;
+          list.appendChild(li);
+        });
+      }
+    }
+
+    updateDashboard();
+    setInterval(updateDashboard, 60000);
+  </script>
+</body>
+</html>
