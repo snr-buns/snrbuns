@@ -316,12 +316,8 @@
       if (qty > 0) {
         anyPurchase = true;
 
-        // ✅ Ground beef stored as packages, everything else as units
-        if (ingredient === "ground_beef") {
-          inventory[ingredient] = (inventory[ingredient] || 0) + qty;
-        } else {
-          inventory[ingredient] = (inventory[ingredient] || 0) + qty;
-        }
+    
+        inventory[ingredient] = (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
 
         const run = {
           timestamp: new Date().toISOString(),

@@ -209,7 +209,6 @@
         <tr>
           <th>Ingredient</th>
           <th>Total Units</th>
-          <th>Packs + Leftover Units</th>
         </tr>
       </thead>
       <tbody id="inventoryTableBody">
@@ -332,12 +331,12 @@
     { key: 'burger_buns', label: 'Burger Buns' },
     { key: 'burger_patties', label: 'Burger Patties' },
     { key: 'ground_beef', label: 'Packaged Ground Beef', isPack: true },
-    { key: 'sugar', label: 'Sugar Packs' },
-    { key: 'flour', label: 'Flour Packs' },
-    { key: 'corn_syrup', label: 'Corn Syrup Bottles' },
+    { key: 'sugar', label: 'Sugar' },
+    { key: 'flour', label: 'Flour' },
+    { key: 'corn_syrup', label: 'Corn Syrup' },
     { key: 'cheese_slices', label: 'Cheddar Cheese Slices' },
-    { key: 'potato', label: 'Potato Sack' },
-    { key: 'lettuce', label: 'Lettuce Head' }
+    { key: 'potato', label: 'Potatoes' },
+    { key: 'lettuce', label: 'Lettuce' }
   ];
 
   ingredients.forEach(({ key, label, isPack }) => {
@@ -348,15 +347,13 @@
     let packsCol = formatPacks(units);
 
     if (isPack) {
-      const packs = units; // ✅ ground beef stored as packs already
-      totalCol = packs;
-      packsCol = `${packs} pack${packs !== 1 ? 's' : ''}`;
+      totalCol = units;
+      packsCol = units;
     }
 
     tr.innerHTML = `
       <td>${label}</td>
       <td>${totalCol}</td>
-      <td class="packs-leftover">${packsCol}</td>
     `;
     tbody.appendChild(tr);
   });
