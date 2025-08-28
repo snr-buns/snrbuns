@@ -382,62 +382,74 @@ function formatDate(date) {
 }
 
     async function updateDashboard() {
-      const [inventory, orders, loyalty] = await Promise.all([
-        fetchInventory(),
-        fetchArchivedOrders(),
-        fetchLoyaltyVisits()
-      ]);
+  const [inventory, orders, loyalty] = await Promise.all([
+    fetchInventory(),
+    fetchArchivedOrders(),
+    fetchLoyaltyVisits()
+  ]);
 
-      const todayDateStr = new Date().toISOString().slice(0, 10);
-      const ordersToday = orders.filter(order =>
-        order.timestamp?.toISOString().slice(0, 10) === todayDateStr
-      );
+  const todayDateStr = new Date().toISOString().slice(0, 10);
+  const ordersToday = orders.filter(order =>
+    order.timestamp?.toISOString().slice(0, 10) === todayDateStr
+  );
 
-      document.getElementById("ordersToday").textContent = ordersToday.length;
+  document.getElementById("ordersToday").textContent = ordersToday.length;
 
-      const totalVisits = Object.values(loyalty).reduce((sum, v) => sum + v, 0);
-      document.getElementById("loyaltyVisits").textContent = totalVisits;
+  const totalVisits = Object.values(loyalty).reduce((sum, v) => sum + v, 0);
+  document.getElementById("loyaltyVisits").textContent = totalVisits;
 
-      const lowStock = Object.entries(inventory).filter(([_, qty]) => qty < LOW_STOCK_THRESHOLD);
-      document.getElementById("lowStockCount").textContent = lowStock.length;
+  // 🔹 Effective patties = real patties + ground beef packs × 5
+  const patties = Number(inventory.burger_patties || 0);
+  const groundBeef = Number(inventory.ground_beef || 0);
+  const effectivePatties = patties + (groundBeef * 5);
 
-      const ingredients = {
-        'burger_buns': 'Burger Buns',
-        'burger_patties': 'Burger Patties',
-        'sugar': 'Sugar Packs',
-        'flour': 'Flour',
-        'lettuce': 'Lettuce',
-        'cheese_slices': 'Cheddar Cheese Slices',
-        'ground_beef': 'Packaged Ground Beef',
-        'corn_syrup': 'Corn Syrup Bottles',
-        'potato': 'Potato Sack'
-      };
-      const alertsList = document.getElementById("inventoryAlertsList");
-      alertsList.innerHTML = "";
-      if (lowStock.length === 0) {
-        alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
-      } else {
-        lowStock.forEach(([key]) => {
-          const li = document.createElement("li");
-          li.textContent = `⚠️ Low stock: ${ingredients[key]}`;
-          alertsList.appendChild(li);
-        });
-      }
+  // 🔹 Build adjusted inventory for low stock check
+  const adjustedInventory = {
+    ...inventory,
+    burger_patties: effectivePatties
+  };
 
-      const list = document.getElementById("recentOrdersList");
-      list.innerHTML = "";
-      const last5 = orders.slice(0, 5);
-      if (last5.length === 0) {
-        list.innerHTML = `<li>No orders placed yet.</li>`;
-      } else {
-        last5.forEach(order => {
-          const li = document.createElement("li");
-          const clearedLabel = order.deleted ? " - Completed" : "";
-          li.textContent = `${formatDate(order.timestamp)} - ${order.customer} (Total: $${order.total.toFixed(2)})${clearedLabel}`;
-          list.appendChild(li);
-        });
-      }
-    }
+  const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => qty < LOW_STOCK_THRESHOLD);
+  document.getElementById("lowStockCount").textContent = lowStock.length;
+
+  const ingredients = {
+    'burger_buns': 'Burger Buns',
+    'burger_patties': 'Burger Patties',
+    'sugar': 'Sugar Packs',
+    'flour': 'Flour',
+    'lettuce': 'Lettuce',
+    'cheese_slices': 'Cheddar Cheese Slices',
+    'ground_beef': 'Packaged Ground Beef',
+    'corn_syrup': 'Corn Syrup Bottles',
+    'potato': 'Potato Sack'
+  };
+  const alertsList = document.getElementById("inventoryAlertsList");
+  alertsList.innerHTML = "";
+  if (lowStock.length === 0) {
+    alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
+  } else {
+    lowStock.forEach(([key]) => {
+      const li = document.createElement("li");
+      li.textContent = `⚠️ Low stock: ${ingredients[key]}`;
+      alertsList.appendChild(li);
+    });
+  }
+
+  const list = document.getElementById("recentOrdersList");
+  list.innerHTML = "";
+  const last5 = orders.slice(0, 5);
+  if (last5.length === 0) {
+    list.innerHTML = `<li>No orders placed yet.</li>`;
+  } else {
+    last5.forEach(order => {
+      const li = document.createElement("li");
+      const clearedLabel = order.deleted ? " - Completed" : "";
+      li.textContent = `${formatDate(order.timestamp)} - ${order.customer} (Total: $${order.total.toFixed(2)})${clearedLabel}`;
+      list.appendChild(li);
+    });
+  }
+}
+
 
     updateDashboard();
     setInterval(updateDashboard, 60000);
