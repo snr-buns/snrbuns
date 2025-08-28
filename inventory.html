@@ -324,33 +324,45 @@
       return text;
     }
 
-    function renderInventoryFromData(inventory) {
-      const tbody = document.getElementById('inventoryTableBody');
-      tbody.innerHTML = '';
+   function renderInventoryFromData(inventory) {
+  const tbody = document.getElementById('inventoryTableBody');
+  tbody.innerHTML = '';
 
-      const ingredients = [
-        { key: 'burger_buns', label: 'Burger Buns' },
-        { key: 'burger_patties', label: 'Burger Patties' },
-        { key: 'ground_beef', label: 'Packaged Ground Beef' },
-        { key: 'sugar', label: 'Sugar Packs' },
-        { key: 'flour', label: 'Flour Packs' },
-        { key: 'corn_syrup', label: 'Corn Syrup Bottles' },
-        { key: 'lettuce', label: 'Lettuce' },
-        { key: 'cheese_slices', label: 'Cheddar Cheese Slices' },
-        { key: 'potato', label: 'Potato Sack' }
-      ];
+  const ingredients = [
+    { key: 'burger_buns', label: 'Burger Buns' },
+    { key: 'burger_patties', label: 'Burger Patties' },
+    { key: 'ground_beef', label: 'Packaged Ground Beef', isPack: true },
+    { key: 'sugar', label: 'Sugar Packs' },
+    { key: 'flour', label: 'Flour Packs' },
+    { key: 'corn_syrup', label: 'Corn Syrup Bottles' },
+    { key: 'cheese_slices', label: 'Cheddar Cheese Slices' },
+    { key: 'potato', label: 'Potato Sack' },
+    { key: 'lettuce', label: 'Lettuce Head' }
+  ];
 
-      ingredients.forEach(({ key, label }) => {
-        const units = inventory[key] || 0;
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${label}</td>
-          <td>${units}</td>
-          <td class="packs-leftover">${formatPacks(units)}</td>
-        `;
-        tbody.appendChild(tr);
-      });
+  ingredients.forEach(({ key, label, isPack }) => {
+    const units = inventory[key] || 0;
+    const tr = document.createElement('tr');
+
+    let totalCol = units;
+    let packsCol = formatPacks(units);
+
+    if (isPack) {
+      const packs = units; // ✅ ground beef stored as packs already
+      totalCol = packs;
+      packsCol = `${packs} pack${packs !== 1 ? 's' : ''}`;
     }
+
+    tr.innerHTML = `
+      <td>${label}</td>
+      <td>${totalCol}</td>
+      <td class="packs-leftover">${packsCol}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+
 
     function showNotification(message, duration = 4000) {
       const notification = document.getElementById('notification');

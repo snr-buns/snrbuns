@@ -401,8 +401,8 @@
 
       <div class="item-grid">
   <!-- Combo: Bleeder Box -->
-  <div class="item-card" data-name="Bleeder Box Combo" data-price="1000" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/bleederbox.png" alt="Bleeder Box Combo" />
+  <div class="item-card" data-name="The Bleeder Box" data-price="1000" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/bleederbox.png" alt="The Bleeder Box" />
     <h3>The Bleeder Box</h3>
     <p>$1000</p>
     <div class="add-controls">
@@ -760,38 +760,42 @@ document.getElementById("submitOrder").addEventListener("click", async () => {
   }
 
   // Inventory check
-  const inventory = await getInventory();
-  const totalNeeded = {};
-  order.forEach(item => {
-    if (comboDetails[item.name]) {
-      comboDetails[item.name].components.forEach(comp => {
-        const needed = productIngredients[comp.name];
-        for (const ing in needed) {
-          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
-        }
-      });
-    } else {
-      const needed = productIngredients[item.name];
+const inventory = await getInventory();
+const totalNeeded = {};
+
+order.forEach(item => {
+  if (comboDetails[item.name]) {
+    // 🔹 Combo: expand into its components
+    comboDetails[item.name].components.forEach(comp => {
+      const needed = productIngredients[comp.name];
       if (!needed) return;
       for (const ing in needed) {
-        totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+        totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
       }
+    });
+  } else {
+    // 🔹 Regular item
+    const needed = productIngredients[item.name];
+    if (!needed) return;
+    for (const ing in needed) {
+      totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
     }
-  });
+  }
+});
 
-// 🔹 Auto-convert ground beef packages → patties BEFORE missing check
+// 🔹 Auto-convert ground beef → patties if needed
 if (totalNeeded["burger_patties"]) {
   let pattiesAvailable = Number(inventory.burger_patties || 0);
 
   while (pattiesAvailable < totalNeeded["burger_patties"] && Number(inventory.ground_beef || 0) > 0) {
-    inventory.ground_beef--;   // use 1 package
+    inventory.ground_beef--;   // use 1 pack
     pattiesAvailable += 5;     // add 5 patties
   }
 
   inventory.burger_patties = pattiesAvailable;
 }
 
-// 🔹 Now check missing AFTER conversion
+// 🔹 Check missing ingredients after combo breakdown
 const missing = [];
 for (const ing in totalNeeded) {
   const invVal = Number(inventory[ing] || 0);
@@ -803,20 +807,17 @@ for (const ing in totalNeeded) {
 
 if (missing.length > 0) {
   showNotification("Cannot add. Missing: " + missing.join(", "));
-  return; // ✅ stop order if missing
+  return;
 }
 
-if (missing.length > 0) {
-  showNotification("Cannot add. Missing: " + missing.join(", "));
-  return; // ✅ STOP the order if ingredients aren’t there
+// 🔹 Deduct inventory
+for (const ing in totalNeeded) {
+  inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+  if (inventory[ing] < 0) inventory[ing] = 0;
 }
+await saveInventory(inventory);
 
-  // Deduct inventory
-  for (const ing in totalNeeded) {
-    inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
-    if (inventory[ing] < 0) inventory[ing] = 0;
-  }
-  await saveInventory(inventory);
+
 
   // Loyalty update
   const newVisits = await updateLoyalty(customerRaw);

@@ -320,8 +320,7 @@
         if (ingredient === "ground_beef") {
           inventory[ingredient] = (inventory[ingredient] || 0) + qty;
         } else {
-          const unitsToAdd = qty * UNIT_PER_PACK;
-          inventory[ingredient] = (inventory[ingredient] || 0) + unitsToAdd;
+          inventory[ingredient] = (inventory[ingredient] || 0) + qty;
         }
 
         const run = {
