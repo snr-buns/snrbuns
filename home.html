@@ -339,7 +339,6 @@
    async function fetchArchivedOrders() {
   const q = query(
     collection(db, "orders"),
-    where("deleted", "==", false),
     orderBy("timestamp", "desc")
   );
 
