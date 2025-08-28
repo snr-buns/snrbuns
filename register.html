@@ -546,8 +546,8 @@ signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err))
 
 // --- Ingredient setup ---
 const productIngredients = {
-  "Burgershot Bleeder": { burger_buns: 1, burger_patties: 1, cheese_slices: 2 },
-  "The Double Shot": { burger_buns: 1, burger_patties: 1, lettuce: 1 },
+  "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 2 },
+  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
   "Burgershot Soda": { corn_syrup: 1 },
   "Fries": { potato: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
@@ -782,18 +782,6 @@ order.forEach(item => {
     }
   }
 });
-
-// 🔹 Auto-convert ground beef → patties if needed
-if (totalNeeded["burger_patties"]) {
-  let pattiesAvailable = Number(inventory.burger_patties || 0);
-
-  while (pattiesAvailable < totalNeeded["burger_patties"] && Number(inventory.ground_beef || 0) > 0) {
-    inventory.ground_beef--;   // use 1 pack
-    pattiesAvailable += 5;     // add 5 patties
-  }
-
-  inventory.burger_patties = pattiesAvailable;
-}
 
 // 🔹 Check missing ingredients after combo breakdown
 const missing = [];

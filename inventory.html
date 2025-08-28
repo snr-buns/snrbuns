@@ -230,8 +230,7 @@
       <label for="expiredIngredientSelect">Ingredient</label>
       <select id="expiredIngredientSelect" aria-label="Select expired ingredient">
         <option value="burger_buns">Burger Buns</option>
-        <option value="burger_patties">Burger Patties</option>
-        <option value="ground_beef">Packaged Ground Beef</option>
+        <option value="ground_beef">Ground Beef / Patties</option>
         <option value="lettuce">Lettuce</option>
         <option value="sugar">Sugar</option>
         <option value="flour">Flour</option>
@@ -329,8 +328,7 @@
 
   const ingredients = [
     { key: 'burger_buns', label: 'Burger Buns' },
-    { key: 'burger_patties', label: 'Burger Patties' },
-    { key: 'ground_beef', label: 'Packaged Ground Beef', isPack: true },
+    { key: 'ground_beef', label: 'Ground Beef / Patties', isPack: true },
     { key: 'sugar', label: 'Sugar' },
     { key: 'flour', label: 'Flour' },
     { key: 'corn_syrup', label: 'Corn Syrup' },
@@ -343,17 +341,9 @@
     const units = inventory[key] || 0;
     const tr = document.createElement('tr');
 
-    let totalCol = units;
-    let packsCol = formatPacks(units);
-
-    if (isPack) {
-      totalCol = units;
-      packsCol = units;
-    }
-
     tr.innerHTML = `
       <td>${label}</td>
-      <td>${totalCol}</td>
+      <td>${units}</td>
     `;
     tbody.appendChild(tr);
   });
