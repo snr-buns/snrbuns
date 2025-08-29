@@ -546,8 +546,8 @@ signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err))
 
 // --- Ingredient setup ---
 const productIngredients = {
-  "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+  "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1, flour: 1, sugar: 1 },
+  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1, flour: 1, sugar: 1 },
   "Burgershot Soda": { corn_syrup: 1 },
   "Fries": { potato: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
@@ -559,14 +559,17 @@ const comboDetails = {
     components: [
       { name: "Burgershot Bleeder", quantity: 5 },
       { name: "Fries", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 }
+      { name: "Burgershot Soda", quantity: 10 },
+      { name: "Rim Job", quantity: 1 }
+
     ]
   },
   "Patty Pounder Combo": {
     price: 650,
     components: [
       { name: "The Double Shot", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 5 }
+      { name: "Burgershot Soda", quantity: 5 },
+      { name: "Cream Pie", quantity: 1 }
     ]
   }
 };
