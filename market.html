@@ -135,6 +135,14 @@
       text-align: center;
       user-select: none;
     }
+    .divider-row td {
+      font-weight: 700;
+      background-color: #dfd5bb;
+      text-align: left;
+      padding: 4px 10px;
+      line-height: 1.2;
+      font-size: 0.9rem;
+    }
   </style>
 </head>
 <body>
@@ -165,33 +173,39 @@
         </tr>
       </thead>
       <tbody>
+        <tr class="divider-row">
+          <td colspan="5">Food Stand</td>
+        </tr>
+         <tr>
+          <td>Bottled Corn Syrup</td>
+          <td><input type="number" min="0" value="0" data-ingredient="corn_syrup" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
+        <tr>
+          <td>Flour Sack</td>
+          <td><input type="number" min="0" value="0" data-ingredient="flour" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+        </tr>
         <tr>
           <td>Package of Buns</td>
           <td><input type="number" min="0" value="0" data-ingredient="burger_buns" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
         </tr>
-        <tr>
-          <td>Packaged Ground Beef</td>
-          <td><input type="number" min="0" value="0" data-ingredient="ground_beef" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-        </tr>
-        <tr>
+         <tr>
           <td>Sugar Pack</td>
           <td><input type="number" min="0" value="0" data-ingredient="sugar" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
         </tr>
-        <tr>
-          <td>Flour Pack</td>
-          <td><input type="number" min="0" value="0" data-ingredient="flour" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
+        <tr class="divider-row">
+          <td colspan="5">Fruit Stand</td>
         </tr>
         <tr>
-          <td>Corn Syrup Bottles</td>
-          <td><input type="number" min="0" value="0" data-ingredient="corn_syrup" class="pack-qty" /></td>
+          <td>Lettuce Head</td>
+          <td><input type="number" min="0" value="0" data-ingredient="lettuce" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
         </tr>
@@ -201,18 +215,24 @@
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
         </tr>
+        <tr class="divider-row">
+          <td colspan="5">Dairy Stand</td>
+        </tr>
         <tr>
-          <td>Cheddar Cheese Slices</td>
+          <td>Packaged Cheese</td>
           <td><input type="number" min="0" value="0" data-ingredient="cheese_slices" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
         </tr>
+         <tr class="divider-row">
+          <td colspan="5">Meat Stand</td>
+        </tr>
         <tr>
-          <td>Lettuce Head</td>
-          <td><input type="number" min="0" value="0" data-ingredient="lettuce" class="pack-qty" /></td>
+          <td>Packaged Ground Beef</td>
+          <td><input type="number" min="0" value="0" data-ingredient="ground_beef" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
-        </tr>
+        </tr>      
       </tbody>
     </table>
 

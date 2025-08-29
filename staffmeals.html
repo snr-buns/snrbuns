@@ -162,8 +162,11 @@
       <label for="foodSelect">Select Food Item</label>
       <select id="foodSelect" aria-label="Food item selection">
         <option value="">-- None --</option>
-        <option value="Bleeder Burger">Bleeder Burger</option>
-        <option value="Freedom Fries">Freedom Fries</option>
+        <option value="Burgershot Bleeder">Burgershot Bleeder</option>
+        <option value="The Double Shot">The Double Shot</option>
+        <option value="Fries">Fries</option>
+        <option value="Rim Job">Rim Job</option>
+        <option value="Cream Pie">Cream Pie</option>
       </select>
       <label for="foodQty">Quantity (max 5)</label>
       <select id="foodQty" aria-label="Food quantity">
@@ -180,7 +183,7 @@
       <label for="drinkSelect">Select Drink Item</label>
       <select id="drinkSelect" aria-label="Drink item selection">
         <option value="">-- None --</option>
-        <option value="Grill Cola">Grill Cola</option>
+        <option value="Burgershot Soda">Burgershot Soda</option>
       </select>
       <label for="drinkQty">Quantity (max 5)</label>
       <select id="drinkQty" aria-label="Drink quantity">
@@ -194,7 +197,6 @@
     </div>
 
     <button id="submitMeal">Submit Staff Meal</button>
-
   </main>
 
   <div id="notification"></div>
@@ -207,11 +209,9 @@
       getDoc,
       updateDoc,
       collection,
-      addDoc,
-      runTransaction
+      addDoc
     } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    // Firebase config (replace with your config if needed)
     const firebaseConfig = {
       apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
       authDomain: "burgershotorders.firebaseapp.com",
@@ -228,138 +228,106 @@
     const inventoryDocRef = doc(db, "inventory", "current");
     const staffMealsCollection = collection(db, "staff_meals");
 
-    const UNIT_PER_PACK = 5;
+    // ✅ Same ingredients map as register.html
+    const productIngredients = {
+      "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 2 },
+      "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+      "Burgershot Soda": { corn_syrup: 1 },
+      "Fries": { potato: 2 },
+      "Rim Job": { sugar: 1, flour: 1 },
+      "Cream Pie": { sugar: 1, flour: 1 }
+    };
 
     function showNotification(message, duration = 4000) {
-      const notification = document.getElementById('notification');
-      notification.textContent = message;
-      notification.style.display = 'block';
-      notification.style.opacity = '1';
+      const n = document.getElementById('notification');
+      n.textContent = message;
+      n.style.display = 'block';
+      n.style.opacity = '1';
 
       if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
 
       showNotification.timeoutId = setTimeout(() => {
-        notification.style.transition = 'opacity 0.5s ease';
-        notification.style.opacity = '0';
-
-        notification.addEventListener('transitionend', () => {
-          notification.style.display = 'none';
-          notification.style.transition = '';
+        n.style.transition = 'opacity 0.5s ease';
+        n.style.opacity = '0';
+        n.addEventListener('transitionend', () => {
+          n.style.display = 'none';
+          n.style.transition = '';
         }, { once: true });
       }, duration);
-    }
-
-    async function getInventory() {
-      const docSnap = await getDoc(inventoryDocRef);
-      if (docSnap.exists()) {
-        return docSnap.data();
-      } else {
-        return {};
-      }
     }
 
     async function submitStaffMeal() {
       const employee = document.getElementById('employeeSelect').value;
       const foodItem = document.getElementById('foodSelect').value;
-      const foodQty = parseInt(document.getElementById('foodQty').value);
+      const foodQty = parseInt(document.getElementById('foodQty').value) || 0;
       const drinkItem = document.getElementById('drinkSelect').value;
-      const drinkQty = parseInt(document.getElementById('drinkQty').value);
+      const drinkQty = parseInt(document.getElementById('drinkQty').value) || 0;
 
       if (!employee) {
         showNotification("Please select your name.");
         return;
       }
 
-      const foodSelected = foodItem !== "" && foodQty > 0;
-      const drinkSelected = drinkItem !== "" && drinkQty > 0;
+      const items = [];
+      if (foodItem && foodQty > 0) items.push({ name: foodItem, quantity: foodQty });
+      if (drinkItem && drinkQty > 0) items.push({ name: drinkItem, quantity: drinkQty });
 
-      if (!foodSelected && !drinkSelected) {
+      if (items.length === 0) {
         showNotification("Please select at least one food or drink with quantity.");
         return;
       }
 
-      if (foodQty > 5 || drinkQty > 5) {
-        showNotification("Quantity per item cannot exceed 5.");
+      const docSnap = await getDoc(inventoryDocRef);
+      if (!docSnap.exists()) {
+        showNotification("No inventory found!");
+        return;
+      }
+      const inventory = docSnap.data();
+      const totalNeeded = {};
+
+      // build required ingredients
+      items.forEach(item => {
+        const needed = productIngredients[item.name];
+        if (needed) {
+          for (const ing in needed) {
+            totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+          }
+        }
+      });
+
+      // check shortages
+      const missing = [];
+      for (const ing in totalNeeded) {
+        if ((inventory[ing] || 0) < totalNeeded[ing]) {
+          missing.push(`${ing} (need ${totalNeeded[ing]}, have ${inventory[ing] || 0})`);
+        }
+      }
+      if (missing.length > 0) {
+        showNotification("Not enough ingredients: " + missing.join(", "));
         return;
       }
 
-      try {
-        await runTransaction(db, async (transaction) => {
-          const docSnap = await transaction.get(inventoryDocRef);
-          if (!docSnap.exists()) {
-            throw "Inventory document does not exist!";
-          }
-          const inventory = docSnap.data();
-
-          let neededBuns = 0,
-              neededPatties = 0,
-              neededChilliPowder = 0,
-              neededPotato = 0,
-              neededSugar = 0,
-              neededCornSyrup = 0;
-
-          if (foodSelected) {
-            if (foodItem === "Bleeder Burger") {
-              neededBuns = foodQty;
-              neededPatties = foodQty;
-            } else if (foodItem === "Freedom Fries") {
-              neededChilliPowder = foodQty;
-              neededPotato = foodQty;
-            }
-          }
-
-          if (drinkSelected) {
-            neededSugar = drinkQty;
-            neededCornSyrup = drinkQty;
-          }
-
-          // Check if inventory has enough
-          const missing = [];
-          if ((inventory.burger_buns || 0) < neededBuns) missing.push("Burger Buns");
-          if ((inventory.burger_patties || 0) < neededPatties) missing.push("Burger Patties");
-          if ((inventory.chilli_powder || 0) < neededChilliPowder) missing.push("Chilli Powder Seasoning");
-          if ((inventory.potato || 0) < neededPotato) missing.push("Potato Sack");
-          if ((inventory.sugar || 0) < neededSugar) missing.push("Sugar Packs");
-          if ((inventory.corn_syrup || 0) < neededCornSyrup) missing.push("Corn Syrup Bottles");
-
-          if (missing.length > 0) {
-            throw `Missing ingredients: ${missing.join(", ")}`;
-          }
-
-          // Deduct ingredients
-          const updatedInventory = { ...inventory };
-          updatedInventory.burger_buns = (updatedInventory.burger_buns || 0) - neededBuns;
-          updatedInventory.burger_patties = (updatedInventory.burger_patties || 0) - neededPatties;
-          updatedInventory.chilli_powder = (updatedInventory.chilli_powder || 0) - neededChilliPowder;
-          updatedInventory.potato = (updatedInventory.potato || 0) - neededPotato;
-          updatedInventory.sugar = (updatedInventory.sugar || 0) - neededSugar;
-          updatedInventory.corn_syrup = (updatedInventory.corn_syrup || 0) - neededCornSyrup;
-
-          transaction.update(inventoryDocRef, updatedInventory);
-
-          // Add staff meal record
-          transaction.set(doc(staffMealsCollection), {
-            employee,
-            foodItem: foodSelected ? foodItem : null,
-            foodQty: foodSelected ? foodQty : 0,
-            drinkItem: drinkSelected ? drinkItem : null,
-            drinkQty: drinkSelected ? drinkQty : 0,
-            timestamp: new Date().toISOString()
-          });
-        });
-
-        showNotification("Staff meal recorded and inventory updated!");
-
-        // Reset form
-        document.getElementById('employeeSelect').value = "";
-        document.getElementById('foodSelect').value = "";
-        document.getElementById('foodQty').value = "0";
-        document.getElementById('drinkSelect').value = "";
-        document.getElementById('drinkQty').value = "0";
-      } catch (error) {
-        console.error(error);
-        showNotification(typeof error === "string" ? error : "Failed to submit staff meal.");
+      // deduct inventory
+      for (const ing in totalNeeded) {
+        inventory[ing] -= totalNeeded[ing];
       }
+      await updateDoc(inventoryDocRef, inventory);
+
+      // log staff meal
+      await addDoc(staffMealsCollection, {
+        employee,
+        items,
+        timestamp: new Date()
+      });
+
+      showNotification("✅ Staff meal recorded and inventory updated!");
+
+      // reset
+      document.getElementById('employeeSelect').value = "";
+      document.getElementById('foodSelect').value = "";
+      document.getElementById('foodQty').value = "0";
+      document.getElementById('drinkSelect').value = "";
+      document.getElementById('drinkQty').value = "0";
     }
 
     document.getElementById('submitMeal').addEventListener('click', submitStaffMeal);

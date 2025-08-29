@@ -184,6 +184,31 @@
       text-align: center;
       white-space: nowrap;
     }
+    .combo-box {
+  background: white;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+  font-weight: 700;
+  color: #333;
+}
+.combo-box h3 {
+  margin-top: 0;
+  margin-bottom: 0.75rem;
+  color: #c82333;
+  font-size: 1.4rem;
+}
+.combo-box ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+.combo-box li {
+  margin-bottom: 0.3rem;
+  font-weight: 600;
+}
+
   </style>
 </head>
 <body>
@@ -204,6 +229,7 @@
 
   <main>
     <h1>📦 Inventory</h1>
+    <div id="comboCounts" class="combo-box"></div>
     <table>
       <thead>
         <tr>
@@ -295,6 +321,7 @@
           const emptyData = {};
           await setDoc(inventoryDocRef, emptyData);
           renderInventoryFromData(emptyData);
+          renderComboCounts(data);
         }
       } catch (error) {
         console.error("Error fetching inventory:", error);
@@ -306,6 +333,7 @@
       if (docSnap.exists()) {
         const data = docSnap.data();
         renderInventoryFromData(data);
+        renderComboCounts(data);
       }
     });
 
@@ -349,7 +377,60 @@
   });
 }
 
+function calculateCombos(inventory) {
+  // ✅ Ingredient requirements per full combo (5 meals per box)
+  const comboRecipes = {
+    "Bleeder Box": {
+      burger_buns: 5,      // 5 Bleeders
+      ground_beef: 5,
+      cheese_slices: 5,    // 1 per Bleeder
+      potato: 10,          // 2 per Fries ×5
+      corn_syrup: 10,      // 1 per Soda ×10
+      sugar: 1,            // free dessert
+      flour: 1             // free dessert
+    },
+    "Patty Pounder Combo": {
+      burger_buns: 5,      // 5 Double Shots
+      ground_beef: 5,
+      lettuce: 5,
+      corn_syrup: 5,
+      sugar: 1,            // free dessert
+      flour: 1
+    }
+  };
 
+  const results = {};
+
+  for (const [comboName, recipe] of Object.entries(comboRecipes)) {
+    let possible = Infinity;
+
+    for (const [ingredient, qty] of Object.entries(recipe)) {
+      const available = inventory[ingredient] || 0;
+      const maxFromThis = Math.floor(available / qty);
+      possible = Math.min(possible, maxFromThis);
+    }
+
+    results[comboName] = possible === Infinity ? 0 : possible;
+  }
+
+  return results;
+}
+
+function renderComboCounts(inventory) {
+  const container = document.getElementById("comboCounts");
+  const combos = calculateCombos(inventory);
+
+  container.innerHTML = `
+    <h3>Combo Availability</h3>
+    <ul>
+      ${Object.entries(combos)
+        .map(([name, count]) =>
+          `<li style="color:${count === 0 ? 'red' : '#333'}">${name}: ${count}</li>`
+        )
+        .join("")}
+    </ul>
+  `;
+}
 
     function showNotification(message, duration = 4000) {
       const notification = document.getElementById('notification');
