@@ -500,13 +500,19 @@
           <option value="Munch">Munch</option>
         </select>
         <label for="customerName">Customer Name</label>
-        <input type="text" id="customerName" placeholder="Enter customer name" required />
+        <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
+        <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
+        🚑 Reminder: EMS customers are on a tab.  
+        Place the order but do NOT invoice them — log it on emails. <br><br>
+        👮 Remember to add discount for PD!
+        </small>
+
+        <datalist id="customerSuggestions"></datalist>
       </div>
       <ul id="orderList"></ul>
       <p>Subtotal: $<span id="subtotal">0</span></p>
       <p><strong>Total: $<span id="total">0</span></strong></p>
       <button id="pdDiscount" class="discount-btn">Apply PD Discount (20%)</button>
-      <button id="emsDiscount" class="discount-btn">Apply EMS Discount (20%)</button>
       <button id="submitOrder">Place Order</button>
     </aside>
   </div>
@@ -543,6 +549,33 @@ const db = getFirestore(app);
 // 🔑 Anonymous sign-in
 const auth = getAuth(app);
 signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err));
+
+import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+// Load all customers into datalist
+async function loadCustomerSuggestions() {
+  try {
+    const snapshot = await getDocs(collection(db, "loyalty"));
+    const datalist = document.getElementById("customerSuggestions");
+    datalist.innerHTML = "";
+
+    snapshot.forEach(docSnap => {
+      const name = docSnap.id; // your document ID is customer name (lowercase)
+      if (name) {
+        const option = document.createElement("option");
+        // capitalize nicely for display
+        option.value = name.replace(/\b\w/g, c => c.toUpperCase());
+        datalist.appendChild(option);
+      }
+    });
+  } catch (error) {
+    console.error("Error loading customer suggestions:", error);
+  }
+}
+
+// Call it once when page loads
+loadCustomerSuggestions();
+
 
 // --- Ingredient setup ---
 const productIngredients = {
@@ -718,27 +751,20 @@ document.querySelectorAll(".add-btn").forEach(button => {
 });
 
 // 🎟 Discount buttons
-const pdBtn = document.getElementById("pdDiscount");
-const emsBtn = document.getElementById("emsDiscount");
+const pdBtn = document.getElementById("pdDiscount")
 
 function resetDiscountButtons() {
   pdBtn.classList.remove("active");
-  emsBtn.classList.remove("active");
 }
 function applyDiscount(type) {
   activeDiscount = type;
   resetDiscountButtons();
   if (type === "PD") pdBtn.classList.add("active");
-  if (type === "EMS") emsBtn.classList.add("active");
   updateOrderList();
 }
 
 pdBtn.addEventListener("click", () => {
   discountToApply = "PD";
-  discountModal.style.display = "flex";
-});
-emsBtn.addEventListener("click", () => {
-  discountToApply = "EMS";
   discountModal.style.display = "flex";
 });
 yesBtn.addEventListener("click", () => {
