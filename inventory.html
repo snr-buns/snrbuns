@@ -424,15 +424,15 @@ function renderComboCounts(inventory) {
   const container = document.getElementById("comboCounts");
   const combos = calculateCombos(inventory);
 
+  const comboEntries = Object.entries(combos).map(
+    ([name, count]) => `${count} ${name}${count !== 1 ? "'s" : ""}`
+  );
+
   container.innerHTML = `
     <h3>Combo Availability</h3>
-    <ul>
-      ${Object.entries(combos)
-        .map(([name, count]) =>
-          `<li style="color:${count === 0 ? 'red' : '#333'}">${name}: ${count}</li>`
-        )
-        .join("")}
-    </ul>
+    <p style="font-weight:600; color:#333;">
+      ${comboEntries.join(" <br>OR<br> ")}
+    </p>
   `;
 }
 
