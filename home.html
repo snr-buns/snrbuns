@@ -397,16 +397,17 @@ function formatDate(date) {
   const totalVisits = Object.values(loyalty).reduce((sum, v) => sum + v, 0);
   document.getElementById("loyaltyVisits").textContent = totalVisits;
 
-  // 🔹 Effective patties = real patties + ground beef packs × 5
-  const patties = Number(inventory.burger_patties || 0);
-  const groundBeef = Number(inventory.ground_beef || 0);
-  const effectivePatties = patties + (groundBeef * 5);
+// 🔹 Effective patties = real patties + ground beef packs × 5
+const patties = Number(inventory.burger_patties || 0);
+const groundBeef = Number(inventory.ground_beef || 0);
+const effectivePatties = patties + (groundBeef * 5);
 
-  // 🔹 Build adjusted inventory for low stock check
-  const adjustedInventory = {
-    ...inventory,
-    burger_patties: effectivePatties
-  };
+// 🔹 Replace ground_beef with the effective patties count
+const adjustedInventory = {
+  ...inventory,
+  ground_beef: effectivePatties
+};
+
 
   const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => qty < LOW_STOCK_THRESHOLD);
   document.getElementById("lowStockCount").textContent = lowStock.length;
