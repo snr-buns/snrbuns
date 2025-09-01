@@ -498,6 +498,7 @@
           <option value="" disabled selected>Select employee</option>
           <option value="Savannah">Savannah</option>
           <option value="Munch">Munch</option>
+          <option value="Slade">Slade</option>
         </select>
         <label for="customerName">Customer Name</label>
         <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
@@ -531,7 +532,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-import { getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
@@ -545,12 +546,8 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
-// 🔑 Anonymous sign-in
 const auth = getAuth(app);
 signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err));
-
-import { getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // Load all customers into datalist
 async function loadCustomerSuggestions() {
@@ -560,10 +557,9 @@ async function loadCustomerSuggestions() {
     datalist.innerHTML = "";
 
     snapshot.forEach(docSnap => {
-      const name = docSnap.id; // your document ID is customer name (lowercase)
+      const name = docSnap.id;
       if (name) {
         const option = document.createElement("option");
-        // capitalize nicely for display
         option.value = name.replace(/\b\w/g, c => c.toUpperCase());
         datalist.appendChild(option);
       }
@@ -572,12 +568,9 @@ async function loadCustomerSuggestions() {
     console.error("Error loading customer suggestions:", error);
   }
 }
-
-// Call it once when page loads
 loadCustomerSuggestions();
 
-
-// --- Ingredient setup ---
+// Ingredient setup
 const productIngredients = {
   "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
   "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
@@ -594,7 +587,6 @@ const comboDetails = {
       { name: "Fries", quantity: 5 },
       { name: "Burgershot Soda", quantity: 10 },
       { name: "Rim Job", quantity: 1 }
-
     ]
   },
   "Patty Pounder Combo": {
@@ -607,7 +599,6 @@ const comboDetails = {
   }
 };
 
-// ✅ Readable ingredient labels
 const ingredientLabels = {
   burger_buns: "burger buns",
   burger_patties: "burger patties",
@@ -620,8 +611,7 @@ const ingredientLabels = {
   potato: "potatoes"
 };
 
-
-// --- Inventory (Firestore) ---
+// Inventory
 async function getInventory() {
   const snap = await getDoc(doc(db, "inventory", "current"));
   return snap.exists() ? snap.data() : {};
@@ -630,7 +620,7 @@ async function saveInventory(data) {
   await setDoc(doc(db, "inventory", "current"), data, { merge: true });
 }
 
-// --- Loyalty (Firestore) ---
+// Loyalty
 async function updateLoyalty(customer) {
   const key = customer.toLowerCase();
   const ref = doc(db, "loyalty", key);
@@ -641,7 +631,7 @@ async function updateLoyalty(customer) {
   return newVisits;
 }
 
-// --- UI + Orders ---
+// UI + Orders
 let order = [];
 let activeDiscount = null;
 
@@ -663,7 +653,7 @@ function showNotification(message, duration = 4000) {
   setTimeout(() => n.style.display = "none", duration);
 }
 
-// ✅ Update order list (+, −, Remove working)
+// Update order list
 function updateOrderList() {
   orderList.innerHTML = "";
   let subtotal = 0;
@@ -687,7 +677,6 @@ function updateOrderList() {
   subtotalSpan.textContent = subtotal.toFixed(2);
   totalSpan.textContent = (activeDiscount ? subtotal * 0.8 : subtotal).toFixed(2);
 
-  // reattach listeners
   document.querySelectorAll(".qty-btn").forEach(btn => {
     btn.addEventListener("click", e => {
       const index = parseInt(e.target.dataset.index, 10);
@@ -709,7 +698,7 @@ function updateOrderList() {
   });
 }
 
-// 🔎 Category + Search filter
+// Filtering
 function filterItems() {
   const selectedCategory = [...categoryButtons].find(btn => btn.classList.contains("active")).textContent.trim();
   const searchText = searchBar.value.trim().toLowerCase();
@@ -731,7 +720,7 @@ categoryButtons.forEach(btn => {
 });
 searchBar.addEventListener("input", filterItems);
 
-// ➕ Add items
+// Add items
 document.querySelectorAll(".add-btn").forEach(button => {
   button.addEventListener("click", e => {
     const card = e.target.closest(".item-card");
@@ -744,14 +733,14 @@ document.querySelectorAll(".add-btn").forEach(button => {
     if (existingItem) {
       existingItem.quantity += quantity;
     } else {
-      order.push({ name, price, quantity, image }); // ✅ include image
+      order.push({ name, price, quantity, image });
     }
     updateOrderList();
   });
 });
 
-// 🎟 Discount buttons
-const pdBtn = document.getElementById("pdDiscount")
+// Discount
+const pdBtn = document.getElementById("pdDiscount");
 
 function resetDiscountButtons() {
   pdBtn.classList.remove("active");
@@ -762,7 +751,6 @@ function applyDiscount(type) {
   if (type === "PD") pdBtn.classList.add("active");
   updateOrderList();
 }
-
 pdBtn.addEventListener("click", () => {
   discountToApply = "PD";
   discountModal.style.display = "flex";
@@ -779,62 +767,14 @@ noBtn.addEventListener("click", () => {
   discountToApply = null;
 });
 
-// 📝 Submit Order
-document.getElementById("submitOrder").addEventListener("click", async () => {
-  const employee = document.getElementById("employeeName").value;
-  const customerRaw = document.getElementById("customerName").value.trim();
-  if (!employee || !customerRaw || order.length === 0) {
-    showNotification("Please fill all fields and add items.");
-    return;
+// 📝 Process order function
+async function processOrder(employee, customerRaw, inventory, totalNeeded) {
+  // Deduct inventory
+  for (const ing in totalNeeded) {
+    inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+    if (inventory[ing] < 0) inventory[ing] = 0;
   }
-
-  // Inventory check
-const inventory = await getInventory();
-const totalNeeded = {};
-
-order.forEach(item => {
-  if (comboDetails[item.name]) {
-    // 🔹 Combo: expand into its components
-    comboDetails[item.name].components.forEach(comp => {
-      const needed = productIngredients[comp.name];
-      if (!needed) return;
-      for (const ing in needed) {
-        totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
-      }
-    });
-  } else {
-    // 🔹 Regular item
-    const needed = productIngredients[item.name];
-    if (!needed) return;
-    for (const ing in needed) {
-      totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
-    }
-  }
-});
-
-// 🔹 Check missing ingredients after combo breakdown
-const missing = [];
-for (const ing in totalNeeded) {
-  const invVal = Number(inventory[ing] || 0);
-  if (invVal < totalNeeded[ing]) {
-    const label = ingredientLabels[ing] || ing;
-    missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
-  }
-}
-
-if (missing.length > 0) {
-  showNotification("Cannot add. Missing: " + missing.join(", "));
-  return;
-}
-
-// 🔹 Deduct inventory
-for (const ing in totalNeeded) {
-  inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
-  if (inventory[ing] < 0) inventory[ing] = 0;
-}
-await saveInventory(inventory);
-
-
+  await saveInventory(inventory);
 
   // Loyalty update
   const newVisits = await updateLoyalty(customerRaw);
@@ -868,8 +808,62 @@ await saveInventory(inventory);
   document.getElementById("employeeName").value = "";
   resetDiscountButtons();
   activeDiscount = null;
+}
+
+// Submit Order with missing ingredient confirmation
+document.getElementById("submitOrder").addEventListener("click", async () => {
+  const employee = document.getElementById("employeeName").value;
+  const customerRaw = document.getElementById("customerName").value.trim();
+  if (!employee || !customerRaw || order.length === 0) {
+    showNotification("Please fill all fields and add items.");
+    return;
+  }
+
+  // Inventory check
+  const inventory = await getInventory();
+  const totalNeeded = {};
+
+  order.forEach(item => {
+    if (comboDetails[item.name]) {
+      comboDetails[item.name].components.forEach(comp => {
+        const needed = productIngredients[comp.name];
+        if (!needed) return;
+        for (const ing in needed) {
+          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
+        }
+      });
+    } else {
+      const needed = productIngredients[item.name];
+      if (!needed) return;
+      for (const ing in needed) {
+        totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+      }
+    }
+  });
+
+  // Check missing
+  const missing = [];
+  for (const ing in totalNeeded) {
+    const invVal = Number(inventory[ing] || 0);
+    if (invVal < totalNeeded[ing]) {
+      const label = ingredientLabels[ing] || ing;
+      missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
+    }
+  }
+
+  if (missing.length > 0) {
+    if (confirm("Not enough " + missing.join(", ") + ". Are you sure you want to continue?")) {
+      await processOrder(employee, customerRaw, inventory, totalNeeded);
+    } else {
+      showNotification("Order cancelled.");
+      return;
+    }
+  } else {
+    await processOrder(employee, customerRaw, inventory, totalNeeded);
+  }
 });
 </script>
+
 
 </body>
 </html>
