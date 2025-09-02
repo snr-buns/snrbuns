@@ -426,6 +426,16 @@
     </div>
   </div>
 
+  <div class="item-card" data-name="Heart Stopper Meal" data-price="1500" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/bleederbox.png" alt="Heart Stopper Meal" />
+    <h3>Heart Stopper Meal</h3>
+    <p>$1500</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
+
   <!-- Burgershot Bleeder -->
   <div class="item-card" data-name="Burgershot Bleeder" data-price="85" data-category="Food" data-image="assets/images/bleeder.png">
     <img src="assets/images/bleeder.png" alt="Burgershot Bleeder" />
@@ -583,7 +593,8 @@ const productIngredients = {
   "Burgershot Soda": { corn_syrup: 1 },
   "Fries": { potato: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
-  "Cream Pie": { sugar: 1, flour: 1 }
+  "Cream Pie": { sugar: 1, flour: 1 },
+  "Heart Stopper Burger": { burger_buns: 5, ground_beef: 15, cheese_slices: 5 }
 };
 const comboDetails = {
   "The Bleeder Box": {
@@ -600,6 +611,15 @@ const comboDetails = {
     components: [
       { name: "The Double Shot", quantity: 5 },
       { name: "Burgershot Soda", quantity: 5 },
+      { name: "Cream Pie", quantity: 1 }
+    ]
+  },
+   "Heart Stopper Meal": {
+    price: 1500,
+    components: [
+      { name: "Heart Stopper Burger", quantity: 1 },
+      { name: "Burgershot Soda", quantity: 10 },
+      { name: "Fries", quantity: 5 },
       { name: "Cream Pie", quantity: 1 }
     ]
   }
