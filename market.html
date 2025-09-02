@@ -165,90 +165,101 @@
     <h1>🏪 Market Run</h1>
 
     <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-    As of right now, only those with permission from a manager are able to carry out market runs.
+    As of right now, only those with permission from a manager are able to carry out market runs. <br><br>
+    The suggested packs will give you enough ingredients to make 15 Bleeder Boxes and 10 Patty Pounder Combos.
   </p>
 
     <table>
       <thead>
-        <tr>
-          <th>Ingredient</th>
-          <th>Pack Quantity</th>
-          <th>Price Per Pack ($)</th>
-          <th>Subtotal ($)</th>
-        </tr>
-      </thead>
+  <tr>
+    <th>Ingredient</th>
+    <th>Pack Quantity</th>
+    <th>Price Per Pack ($)</th>
+    <th>Subtotal ($)</th>
+    <th>Suggested Packs</th>
+  </tr>
+</thead>
       <tbody>
         <tr class="divider-row">
-          <td colspan="5">Food Stand</td>
+          <td colspan="6">Food Stand</td>
         </tr>
          <tr>
           <td>Bottled Corn Syrup</td>
           <td><input type="number" min="0" value="0" data-ingredient="corn_syrup" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
         <tr>
           <td>Flour Sack</td>
           <td><input type="number" min="0" value="0" data-ingredient="flour" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
         <tr>
           <td>Package of Buns</td>
           <td><input type="number" min="0" value="0" data-ingredient="burger_buns" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
          <tr>
           <td>Sugar Pack</td>
           <td><input type="number" min="0" value="0" data-ingredient="sugar" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
         <tr class="divider-row">
-          <td colspan="5">Fruit Stand</td>
+          <td colspan="6">Fruit Stand</td>
         </tr>
         <tr>
           <td>Lettuce Head</td>
           <td><input type="number" min="0" value="0" data-ingredient="lettuce" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
         <tr>
           <td>Potato Sack</td>
           <td><input type="number" min="0" value="0" data-ingredient="potato" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
         <tr class="divider-row">
-          <td colspan="5">Dairy Stand</td>
+          <td colspan="6">Dairy Stand</td>
         </tr>
         <tr>
           <td>Packaged Cheese</td>
           <td><input type="number" min="0" value="0" data-ingredient="cheese_slices" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>
          <tr class="divider-row">
-          <td colspan="5">Meat Stand</td>
+          <td colspan="6">Meat Stand</td>
         </tr>
         <tr>
           <td>Packaged Ground Beef</td>
           <td><input type="number" min="0" value="0" data-ingredient="ground_beef" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
         </tr>      
       </tbody>
     </table>
 
     <div id="totalCost">Total Cost: $0.00</div>
+    <div id="totalWeight">Total Weight: 0.0</div>
 
     <button id="confirmPurchase">Confirm Purchase</button>
 
     <div class="notification" id="notification"></div>
   </main>
 
- <script type="module">
+<script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import {
   getFirestore,
@@ -275,6 +286,7 @@ const inventoryDocRef = doc(db, "inventory", "current");
 const UNIT_PER_PACK = 5;
 const notification = document.getElementById('notification');
 
+/* ===== Notifications ===== */
 function showNotification(message, duration=3000) {
   notification.textContent = message;
   notification.style.display = 'block';
@@ -290,6 +302,7 @@ function showNotification(message, duration=3000) {
   }, duration);
 }
 
+/* ===== Firestore Inventory ===== */
 async function getLiveInventory() {
   const docSnap = await getDoc(inventoryDocRef);
   return docSnap.exists() ? docSnap.data() : {};
@@ -297,7 +310,7 @@ async function getLiveInventory() {
 
 async function updateInventoryInFirestore(inventory) {
   try {
-    await setDoc(inventoryDocRef, inventory, { merge: true }); // ✅ merge instead of overwrite
+    await setDoc(inventoryDocRef, inventory, { merge: true });
     showNotification("Inventory updated.");
   } catch (error) {
     console.error("Firestore update failed:", error);
@@ -305,12 +318,14 @@ async function updateInventoryInFirestore(inventory) {
   }
 }
 
+/* ===== Market Costs + Weight ===== */
 function updateCosts() {
   const rows = document.querySelectorAll('tbody tr');
   let total = 0;
+  let weight = 0;
 
   rows.forEach(row => {
-    if (row.classList.contains("divider-row")) return; // skip section headers
+    if (row.classList.contains("divider-row")) return;
 
     const qtyInput = row.querySelector('.pack-qty');
     const priceInput = row.querySelector('.price-per-pack');
@@ -324,11 +339,24 @@ function updateCosts() {
 
     subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
     total += subtotal;
+
+    // ✅ Weight: default 5 per pack, lettuce = 2.5
+    const ingredient = qtyInput.getAttribute('data-ingredient');
+    if (ingredient) {
+      if (ingredient === "lettuce") {
+        weight += qty * 2.5;
+      } else {
+        weight += qty * 5;
+      }
+    }
   });
 
   document.getElementById('totalCost').textContent = `Total Cost: $${total.toFixed(2)}`;
+  document.getElementById('totalWeight').textContent = `Total Weight: ${weight.toFixed(1)}`;
 }
 
+
+/* ===== Confirm Purchase ===== */
 document.getElementById('confirmPurchase').addEventListener('click', async () => {
   const rows = document.querySelectorAll('tbody tr');
   let inventory = await getLiveInventory();
@@ -349,10 +377,8 @@ document.getElementById('confirmPurchase').addEventListener('click', async () =>
     if (qty > 0) {
       anyPurchase = true;
 
-      // ✅ add packs * 5 units
       inventory[ingredient] = (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
 
-      // log run
       const run = {
         timestamp: new Date().toISOString(),
         ingredient,
@@ -365,7 +391,6 @@ document.getElementById('confirmPurchase').addEventListener('click', async () =>
         console.error("Error adding market run:", error);
       }
 
-      // reset row
       qtyInput.value = 0;
       priceInput.value = 0;
       subtotalCell.textContent = "$0.00";
@@ -387,7 +412,43 @@ document.querySelectorAll('.pack-qty, .price-per-pack').forEach(input => {
 });
 
 updateCosts();
+
+/* ===== Dynamic Suggested Packs based on Inventory ===== */
+async function setSuggestedPacks() {
+  // Packs required for 15 Bleeders + 10 Pounders
+  const required = {
+    burger_buns: 25,
+    ground_beef: 25,
+    cheese_slices: 15,
+    potato: 30,
+    lettuce: 10,
+    corn_syrup: 40,
+    sugar: 5,
+    flour: 5
+  };
+
+  const inventory = await getLiveInventory();
+
+  document.querySelectorAll('tbody tr').forEach(row => {
+    const qtyInput = row.querySelector('.pack-qty');
+    const suggestedCell = row.querySelector('.suggested');
+    if (!qtyInput || !suggestedCell) return;
+
+    const ingredient = qtyInput.getAttribute('data-ingredient');
+    if (ingredient && required[ingredient] !== undefined) {
+      const currentUnits = inventory[ingredient] || 0;
+      const currentPacks = Math.floor(currentUnits / UNIT_PER_PACK);
+      const needed = Math.max(required[ingredient] - currentPacks, 0);
+      suggestedCell.textContent = needed;
+    }
+  });
+}
+
+updateCosts();
+setSuggestedPacks();
 </script>
+
+
 
 
 </body>
