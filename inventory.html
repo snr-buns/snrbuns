@@ -233,7 +233,11 @@
     This inventory page helps us to track ingredients without having to work it out manually from the fridge or warehouse. <br><br> 
     Once an order, staff meal or market run is submitted, the inventory will update automatically.
   </p>
-    <div id="comboCounts" class="combo-box"></div>
+    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+  <div id="comboCounts" class="combo-box" style="flex: 1;"></div>
+  <div id="itemCounts" class="combo-box" style="flex: 1;"></div>
+</div>
+
     <table>
       <thead>
         <tr>
@@ -326,6 +330,8 @@
           await setDoc(inventoryDocRef, emptyData);
           renderInventoryFromData(emptyData);
           renderComboCounts(data);
+          renderItemCounts(data);
+
         }
       } catch (error) {
         console.error("Error fetching inventory:", error);
@@ -338,6 +344,7 @@
         const data = docSnap.data();
         renderInventoryFromData(data);
         renderComboCounts(data);
+        renderItemCounts(data);
       }
     });
 
@@ -434,6 +441,61 @@ function renderComboCounts(inventory) {
       ${comboEntries.join(" <br>OR<br> ")}
     </p>
   `;
+}
+
+function renderItemCounts(inventory) {
+  const container = document.getElementById("itemCounts");
+  const items = calculateItems(inventory);
+
+  container.innerHTML = `
+    <h3>Item Availability</h3>
+    <ul>
+      ${Object.entries(items)
+        .map(([name, count]) =>
+          `<li style="color:${count === 0 ? 'red' : '#333'}">${name}: ${count}</li>`
+        )
+        .join("")}
+    </ul>
+  `;
+}
+
+
+function calculateItems(inventory) {
+  const itemRecipes = {
+    "Bleeder": {
+      burger_buns: 1,
+      ground_beef: 1,
+      cheese_slices: 1
+    },
+    "Double Shot": {
+      burger_buns: 1,
+      ground_beef: 2,
+      lettuce: 1
+    },
+    "Fries": {
+      potato: 2
+    },
+    "Soda": {
+      corn_syrup: 1
+    },
+    "Dessert": {
+      sugar: 1,
+      flour: 1
+    }
+  };
+
+  const results = {};
+  for (const [itemName, recipe] of Object.entries(itemRecipes)) {
+    let possible = Infinity;
+    for (const [ingredient, qty] of Object.entries(recipe)) {
+      const available = inventory[ingredient] || 0;
+      const maxFromThis = Math.floor(available / qty);
+      possible = Math.min(possible, maxFromThis);
+    }
+    results[itemName] = possible === Infinity ? 0 : possible;
+  }
+
+  return results;
 }
 
     function showNotification(message, duration = 4000) {
