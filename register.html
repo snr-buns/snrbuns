@@ -52,14 +52,15 @@
       text-decoration: none;
     }
     main.register-content {
-      flex-grow: 1;
-      padding: 2rem 2.5rem;
-      background-color: #fff4d6;
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      flex-direction: column;
-    }
+  flex-grow: 1;
+  padding: 2rem 2.5rem;
+  background-color: #fff4d6;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  flex-direction: row;   /* ✅ default desktop */
+}
+
     .category-filter {
       width: 100%;
       display: flex;
@@ -656,6 +657,10 @@
   /* ✅ Desktop reset */
 /* ✅ Desktop reset */
 @media (min-width: 769px) {
+
+  main.register-content {
+    flex-direction: column;   /* ✅ only mobile */
+  }
   main.register-content {
     flex-direction: row;       /* grid + aside side by side */
     align-items: flex-start;
