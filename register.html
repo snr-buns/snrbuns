@@ -640,6 +640,19 @@
     flex-direction: column;
   }
 
+  @media (max-width: 768px) {
+  /* ... your other mobile styles ... */
+
+  .hamburger {
+    top: 10px;   /* was 15px */
+    left: 10px;  /* still aligned left */
+  }
+
+  .category-filter {
+    margin-top: 50px;  /* pushes buttons down so they don’t overlap */
+  }
+}
+
   main {
     margin-left: 0;
     padding: 1rem;
