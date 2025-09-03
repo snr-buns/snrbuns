@@ -512,14 +512,18 @@
   border: none;
   cursor: pointer;
   color: #c82333; /* Burger Shot red */
-  z-index: 2000;
   position: fixed;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
+  z-index: 3000; /* stay above everything */
 }
 
-/* Sidebar adjustments for mobile */
+/* Mobile behavior */
 @media (max-width: 768px) {
+  .hamburger {
+    display: block; /* show only on small screens */
+  }
+
   .sidebar {
     position: fixed;
     top: 0;
@@ -527,22 +531,22 @@
     height: 100vh;
     width: 220px;
     background-color: #c82333;
-    transform: translateX(-100%); /* hidden by default */
+    transform: translateX(-100%); /* start hidden */
     transition: transform 0.3s ease;
-    z-index: 1500;
+    z-index: 2500;
   }
 
   .sidebar.active {
-    transform: translateX(0); /* slides into view */
+    transform: translateX(0); /* slide in */
   }
 
+  /* prevent main content from squashing */
   .main-container {
     flex-direction: column;
   }
-
   main {
-    padding: 1rem;
     margin-left: 0;
+    padding: 1rem;
   }
 }
   </style>
