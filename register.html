@@ -505,7 +505,7 @@
 }
 /* Hamburger button */
 .hamburger {
-  display: block !important;
+  display: none;
   font-size: 2rem;
   background: #c82333;    /* give it the Burger Shot red */
   color: white;
@@ -530,7 +530,7 @@
 /* Mobile: collapsible order summary */
 @media (max-width: 768px) {
   .order-toggle {
-    display: block;
+    display: block !important;
     width: 100%;
     background: #c82333;
     color: white;
@@ -639,9 +639,15 @@
   flex-direction: column;
 }
 
-aside.order-summary {
-  order: 99;
+.order-toggle {
+  order: 2;
+  margin-top: 0.5rem;
 }
+
+aside.order-summary {
+  order: 3;
+}
+
 
   main {
     margin-left: 0;
