@@ -528,9 +528,12 @@
 }
 /* Mobile behavior */
 /* Mobile: collapsible order summary */
+/* Mobile behavior */
 @media (max-width: 768px) {
   .hamburger {
     display: block;   /* ✅ show on mobile */
+    top: 15px;
+    left: 15px;
   }
 
   .order-toggle {
@@ -546,10 +549,14 @@
     cursor: pointer;
     text-align: center;
     font-size: 1.1rem;
-    order: 2; /* after text */
+    order: 2;
   }
   .order-toggle:hover {
     background: #a71d2a;
+  }
+
+  .category-filter {
+    margin-top: 50px; /* ✅ pushes buttons down */
   }
 
   .category {
@@ -563,15 +570,15 @@
   .item-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.8rem;
-    order: 4; /* cards come after order summary */
+    order: 4;
   }
 
   .item-card {
-    height: 250px;        /* instead of 320px */
-    padding: 0.75rem;     /* tighter padding */
+    height: 250px;
+    padding: 0.75rem;
   }
   .item-card img {
-    max-height: 55px;    /* smaller images */
+    max-height: 55px;
     margin-bottom: 0.5rem;
   }
   .item-card h3 {
@@ -602,17 +609,17 @@
   }
 
   aside.order-summary {
-    order: 3; /* ✅ comes right after button */
+    order: 3;
     width: 100%;
     height: auto;
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.4s ease, padding 0.3s ease;
-    padding: 0 1rem; /* collapsed = no vertical padding */
+    padding: 0 1rem;
     margin-bottom: 1rem;
   }
   aside.order-summary.active {
-    max-height: 1000px; /* plenty of room for contents */
+    max-height: 1000px;
     padding: 1rem;
   }
 
@@ -623,16 +630,15 @@
     height: 100vh;
     width: 220px;
     background-color: #c82333;
-    transform: translateX(-100%); /* start hidden */
+    transform: translateX(-100%);
     transition: transform 0.3s ease;
     z-index: 2500;
   }
 
   .sidebar.active {
-    transform: translateX(0); /* slide in */
+    transform: translateX(0);
   }
 
-  /* prevent main content from squashing */
   .main-container {
     display: flex;
     width: 100%;
@@ -640,24 +646,12 @@
     flex-direction: column;
   }
 
-  @media (max-width: 768px) {
-  /* ... your other mobile styles ... */
-
-  .hamburger {
-    top: 15px;   /* was 15px */
-    left: 15px;  /* still aligned left */
-  }
-
-  .category-filter {
-    margin-top: 50px;  /* pushes buttons down so they don’t overlap */
-  }
-}
-
   main {
     padding: 100px 1rem 1rem;
     margin-left: 0;
   }
 }
+
 
   /* ✅ Desktop reset */
 /* ✅ Desktop reset */
