@@ -205,9 +205,31 @@
   background: #a71d2a;   /* darker red on hover */
 }
 
+/* Sidebar adjustments for mobile */
 @media (max-width: 768px) {
-  .hamburger {
-    display: block;
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 220px;
+    background-color: #c82333;
+    transform: translateX(-100%); /* hidden by default */
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+
+  .sidebar.active {
+    transform: translateX(0); /* slides into view */
+  }
+
+  .main-container {
+    flex-direction: column;
+  }
+
+  main {
+    padding: 1rem;
+    margin-left: 0;
   }
 }
 

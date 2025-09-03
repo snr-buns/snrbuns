@@ -520,10 +520,6 @@
 
 /* Sidebar adjustments for mobile */
 @media (max-width: 768px) {
-  .hamburger {
-    display: block; /* show hamburger on small screens */
-  }
-
   .sidebar {
     position: fixed;
     top: 0;
@@ -537,10 +533,9 @@
   }
 
   .sidebar.active {
-    transform: translateX(0); /* slide in when active */
+    transform: translateX(0); /* slides into view */
   }
 
-  /* prevent main content being squished */
   .main-container {
     flex-direction: column;
   }
@@ -550,7 +545,6 @@
     margin-left: 0;
   }
 }
-
   </style>
 </head>
 <body>
