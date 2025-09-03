@@ -671,12 +671,20 @@ document.getElementById('submitExpiredBtn').addEventListener('click', async () =
 fetchInventory();
 </script>
 <script>
-    const menuBtn = document.getElementById("menuToggle");
-    const sidebar = document.querySelector(".sidebar");
+  const menuBtn = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
 
-    menuBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("active");
-    });
-  </script>
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+
+    // Switch between ☰ and ✖
+    if (sidebar.classList.contains("active")) {
+      menuBtn.textContent = "✖";
+    } else {
+      menuBtn.textContent = "☰";
+    }
+  });
+</script>
+
 </body>
 </html>

@@ -502,7 +502,15 @@ setSuggestedPacks();
 
   menuBtn.addEventListener("click", () => {
     sidebar.classList.toggle("active");
+
+    // Switch between ☰ and ✖
+    if (sidebar.classList.contains("active")) {
+      menuBtn.textContent = "✖";
+    } else {
+      menuBtn.textContent = "☰";
+    }
   });
 </script>
+
 </body>
 </html>
