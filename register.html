@@ -17,7 +17,6 @@
       background-color: #fff4d6;
       min-height: 100vh;
       margin: 0;
-      display: flex;
       color: #333;
     }
     .sidebar {
@@ -580,8 +579,16 @@
 
   /* prevent main content from squashing */
   .main-container {
-    flex-direction: column;
-  }
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  flex-direction: column;
+}
+.order-toggle,
+aside.order-summary {
+  order: -1;
+}
+
   main {
     margin-left: 0;
     padding: 1rem;
