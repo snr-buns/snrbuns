@@ -546,6 +546,60 @@
   .order-toggle:hover {
     background: #a71d2a;
   }
+  .category {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.6rem;
+    height: 26px;
+    min-height: 26px;
+    border-radius: 6px;
+  }
+  .item-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  .item-card {
+    height: 250px;        /* instead of 320px */
+    padding: 0.75rem;     /* tighter padding */
+  }
+  .item-card img {
+    max-height: 55px;    /* smaller images */
+    margin-bottom: 0.5rem;
+  }
+  .item-card h3 {
+    font-size: 1rem;
+    margin-bottom: 0.25rem;
+  }
+  .item-card p {
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+  }
+   .quantity-input {
+    width: 45px;
+    font-size: 0.85rem;
+    padding: 0.15rem;
+  }
+  .add-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+  }
+.quantity-input {
+    width: 45px;
+    font-size: 0.85rem;
+    padding: 0.15rem;
+  }
+  .add-btn {
+    font-size: 0.85rem;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+  }
+  #searchBar {
+    font-size: 0.85rem;
+    padding: 0.25rem 0.5rem;
+    height: 30px;
+    border-radius: 6px;
+  }
 
   aside.order-summary {
     width: 100%;
@@ -584,9 +638,9 @@
   min-height: 100vh;
   flex-direction: column;
 }
-.order-toggle,
+
 aside.order-summary {
-  order: -1;
+  order: 99;
 }
 
   main {
