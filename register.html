@@ -524,11 +524,42 @@
 .hamburger:hover {
   background: #a71d2a;
 }
-
+ .order-toggle {
+  display: none; /* hidden by default (desktop) */
+}
 /* Mobile behavior */
+/* Mobile: collapsible order summary */
 @media (max-width: 768px) {
-  .hamburger {
-    display: block !important; /* show only on small screens */
+  .order-toggle {
+    display: block;
+    width: 100%;
+    background: #c82333;
+    color: white;
+    font-weight: 700;
+    border: none;
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin: 0 0 0.8rem 0;
+    cursor: pointer;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+  .order-toggle:hover {
+    background: #a71d2a;
+  }
+
+  aside.order-summary {
+    width: 100%;
+    height: auto;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+    padding: 0 1rem; /* collapsed = no vertical padding */
+    margin-bottom: 1rem;
+  }
+  aside.order-summary.active {
+    max-height: 1000px; /* plenty of room for contents */
+    padding: 1rem;
   }
 
   .sidebar {
@@ -555,6 +586,7 @@
     margin-left: 0;
     padding: 1rem;
   }
+
 }
   </style>
 </head>
@@ -690,7 +722,7 @@
 </div>
 
     </main>
-
+    <button id="toggleOrderSummary" class="order-toggle">🧾 Order</button>
     <aside class="order-summary">
       <h2>🧾 New Order</h2>
       <div class="order-info">
@@ -1178,6 +1210,19 @@ if (missing.length > 0) {
     }
   });
 </script>
+
+<script>
+  const orderToggle = document.getElementById("toggleOrderSummary");
+  const orderSummary = document.querySelector("aside.order-summary");
+
+  orderToggle.addEventListener("click", () => {
+    orderSummary.classList.toggle("active");
+    orderToggle.textContent = orderSummary.classList.contains("active")
+      ? "✖ Close Order"
+      : "🧾 Order";
+  });
+</script>
+
 
 </body>
 </html>
