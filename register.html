@@ -532,6 +532,7 @@
   .hamburger {
     display: block;   /* ✅ show on mobile */
   }
+
   .order-toggle {
     display: block !important;
     width: 100%;
@@ -601,7 +602,7 @@
   }
 
   aside.order-summary {
-    order: 3; /* comes right after button */
+    order: 3; /* ✅ comes right after button */
     width: 100%;
     height: auto;
     max-height: 0;
@@ -645,6 +646,34 @@
   }
 }
 
+  /* ✅ Desktop reset */
+/* ✅ Desktop reset */
+@media (min-width: 769px) {
+  main.register-content {
+    flex-direction: row;       /* grid + aside side by side */
+    align-items: flex-start;
+  }
+
+  .item-grid {
+    flex: 1;
+    order: 1;   /* grid first (left) */
+  }
+
+  aside.order-summary {
+    width: 300px;
+    height: 700px;
+    flex-shrink: 0;
+    max-height: none;          /* remove mobile collapse */
+    padding: 2rem;
+    margin: 0;
+    order: 2;   /* sidebar second (right) */
+  }
+
+  .order-toggle {
+    display: none !important;  /* hide button on desktop */
+  }
+}
+
   </style>
 </head>
 <body>
@@ -679,6 +708,53 @@
   Full customer name is not necessary, first name is acceptable. This is for future loyalty program plans and keeping track of orders.
 </p>
 <button id="toggleOrderSummary" class="order-toggle">🧾 Order</button>
+<aside class="order-summary">
+      <h2>🧾 New Order</h2>
+      <div class="order-info">
+        <label for="employeeName">Employee Name</label>
+<div class="custom-select-wrapper">
+  <!-- hidden real select -->
+  <select id="employeeName" required style="display:none;">
+    <option value="" disabled selected>Select employee</option>
+    <option value="Savannah">Savannah</option>
+    <option value="Munch">Munch</option>
+    <option value="Slade">Slade</option>
+    <option value="Jack">Jack</option>
+    <option value="Stu">Stu</option>
+    <option value="Tyrod">Tyrod</option>
+    <option value="James">James</option>
+  </select>
+
+  <!-- styled fake select -->
+  <div class="custom-select">
+    <div class="select-selected">Select employee</div>
+    <div class="select-items select-hide">
+      <div data-value="Savannah">Savannah</div>
+      <div data-value="Munch">Munch</div>
+      <div data-value="Slade">Slade</div>
+      <div data-value="Jack">Jack</div>
+      <div data-value="Stu">Stu</div>
+      <div data-value="Tyrod">Tyrod</div>
+      <div data-value="James">James</div>
+    </div>
+  </div>
+</div>
+        <label for="customerName">Customer Name</label>
+        <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
+        <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
+        🚑 Reminder: EMS customers are on a tab.  
+        Place the order but do NOT invoice them — log it on emails. <br><br>
+        👮 Remember to add discount for PD!
+        </small>
+
+        <datalist id="customerSuggestions"></datalist>
+      </div>
+      <ul id="orderList"></ul>
+      <p>Subtotal: $<span id="subtotal">0</span></p>
+      <p><strong>Total: $<span id="total">0</span></strong></p>
+      <button id="pdDiscount" class="discount-btn">Apply PD Discount (20%)</button>
+      <button id="submitOrder">Place Order</button>
+    </aside>
 
       <div class="item-grid">
   <!-- Combo: Bleeder Box -->
@@ -780,53 +856,6 @@
 </div>
 
     </main>
-    <aside class="order-summary">
-      <h2>🧾 New Order</h2>
-      <div class="order-info">
-        <label for="employeeName">Employee Name</label>
-<div class="custom-select-wrapper">
-  <!-- hidden real select -->
-  <select id="employeeName" required style="display:none;">
-    <option value="" disabled selected>Select employee</option>
-    <option value="Savannah">Savannah</option>
-    <option value="Munch">Munch</option>
-    <option value="Slade">Slade</option>
-    <option value="Jack">Jack</option>
-    <option value="Stu">Stu</option>
-    <option value="Tyrod">Tyrod</option>
-    <option value="James">James</option>
-  </select>
-
-  <!-- styled fake select -->
-  <div class="custom-select">
-    <div class="select-selected">Select employee</div>
-    <div class="select-items select-hide">
-      <div data-value="Savannah">Savannah</div>
-      <div data-value="Munch">Munch</div>
-      <div data-value="Slade">Slade</div>
-      <div data-value="Jack">Jack</div>
-      <div data-value="Stu">Stu</div>
-      <div data-value="Tyrod">Tyrod</div>
-      <div data-value="James">James</div>
-    </div>
-  </div>
-</div>
-        <label for="customerName">Customer Name</label>
-        <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
-        <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
-        🚑 Reminder: EMS customers are on a tab.  
-        Place the order but do NOT invoice them — log it on emails. <br><br>
-        👮 Remember to add discount for PD!
-        </small>
-
-        <datalist id="customerSuggestions"></datalist>
-      </div>
-      <ul id="orderList"></ul>
-      <p>Subtotal: $<span id="subtotal">0</span></p>
-      <p><strong>Total: $<span id="total">0</span></strong></p>
-      <button id="pdDiscount" class="discount-btn">Apply PD Discount (20%)</button>
-      <button id="submitOrder">Place Order</button>
-    </aside>
   </div>
 
   <div id="notification" role="alert"></div>
