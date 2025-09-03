@@ -450,6 +450,13 @@
 
   menuBtn.addEventListener("click", () => {
     sidebar.classList.toggle("active");
+
+    // Optional: change icon between ☰ and ✖
+    if (sidebar.classList.contains("active")) {
+      menuBtn.textContent = "✖";
+    } else {
+      menuBtn.textContent = "☰";
+    }
   });
 </script>
 
