@@ -89,6 +89,19 @@
   margin-bottom: 0.5rem; /* ✅ consistent spacing below each field */
   box-sizing: border-box;
 }
+/* Style the expanded dropdown list to match register.html */
+.form-group select option {
+  font-weight: 600;
+  padding: 8px;
+  background: #fff;
+  color: #333;
+}
+
+.form-group select option:checked {
+  background: #fff4d6; /* light yellow for selected option */
+  color: #c82333;      /* Burger Shot red */
+}
+
 
     label {
       font-weight: 700;
@@ -127,6 +140,22 @@ select:focus {
   box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
 }
 
+/* Style the dropdown menu itself */
+select option {
+  font-weight: 600;
+  padding: 8px;
+  border: none;
+  background: #fff;
+  color: #333;
+}
+
+/* Highlight when hovered */
+select option:hover {
+  background-color: #fff4d6; /* light yellow background */
+  color: #c82333;            /* Burger Shot red text */
+}
+
+
     button {
       background-color: #c82333;
       border: none;
@@ -162,6 +191,10 @@ select:focus {
       text-align: center;
       white-space: nowrap;
     }
+
+    main h1 + p {
+  margin-top: 0.5rem; /* nice spacing below headings */
+}
 
     /* Hamburger button */
 .hamburger {
@@ -214,222 +247,297 @@ select:focus {
     margin-left: 0;
     padding: 100px 1rem 1rem; /* 👈 top padding clears hamburger */
   }
+  .custom-select-wrapper {
+  position: relative;
+  width: 100%;
 }
-  </style>
+
+.custom-select {
+  position: relative;
+  font-weight: 700;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.select-selected {
+  background-color: #fff;
+  border: 2px solid #c82333;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.select-selected:hover {
+  background-color: #fff0e6;
+}
+
+.select-selected:after {
+  content: "▼";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: #c82333;
+}
+
+.select-items {
+  position: absolute;
+  background-color: #fff;
+  border: 2px solid #c82333;
+  border-radius: 10px;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.select-items div {
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.select-items div:hover {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.select-hide {
+  display: none;
+}
+
+}</style>
 </head>
 <body>
-  <button id="menuToggle" class="hamburger">☰</button>
+<button id="menuToggle" class="hamburger">☰</button>
   <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
-  <aside class="sidebar">
-    <h2>🍔 Burger Shot</h2>
-    <nav>
-      <ul class="list-unstyled">
-        <li><a href="home.html">🏠 Home</a></li>
-        <li><a href="register.html">🖋️ Register</a></li>
-        <li><a href="orders.html">📋 Orders</a></li>
-        <li><a href="inventory.html">📦 Inventory</a></li>
-        <li><a href="market.html">🏪 Market Run</a></li>
-        <li><a href="staffmeals.html" class="active">🍽️ Staff Meals</a></li>
-        <li><a href="loyalty.html">🎁 Customers</a></li>
-      </ul>
-    </nav>
-  </aside>
+    <aside class="sidebar">
+      <h2>🍔 Burger Shot</h2>
+      <nav>
+        <ul class="list-unstyled">
+          <li><a href="home.html">🏠 Home</a></li>
+          <li><a href="register.html">🖋️ Register</a></li>
+          <li><a href="orders.html">📋 Orders</a></li>
+          <li><a href="inventory.html">📦 Inventory</a></li>
+          <li><a href="market.html">🏪 Market Run</a></li>
+          <li><a href="staffmeals.html" class="active">🍽️ Staff Meals</a></li>
+          <li><a href="loyalty.html">🎁 Customers</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-  <main>
-    <h1>🍽️ Staff Meals</h1>
+    <main>
+      <h1>🍽️ Staff Meals</h1>
 
       <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-    Employees are entitled to 5 drinks and 5 food items per shift. Please make sure you log it here so that the inventory stays accurate.
-  </p>
+        Employees are entitled to 5 drinks and 5 food items per shift. Please make sure you log it here so that the inventory stays accurate.
+      </p>
 
-    <div class="form-group">
-      <label for="employeeSelect">Select Employee</label>
-      <select id="employeeSelect" required>
-        <option value="" disabled selected>Select your name</option>
-        <option value="Savannah">Savannah</option>
-        <option value="Munch">Munch</option>
-        <option value="Slade">Slade</option>
-        <option value="Jack">Jack</option>
-        <option value="Stu">Stu</option>
-        <option value="Tyrod">Tyrod</option>
-        <option value="James">James</option>
-      </select>
-    </div>
+      <!-- Employee -->
+      <div class="form-group">
+        <label for="employeeSelect">Select Employee</label>
+        <select id="employeeSelect" required>
+          <option value="" disabled selected>Select employee</option>
+          <option value="Savannah">Savannah</option>
+          <option value="Munch">Munch</option>
+          <option value="Slade">Slade</option>
+          <option value="Jack">Jack</option>
+          <option value="Stu">Stu</option>
+          <option value="Tyrod">Tyrod</option>
+          <option value="James">James</option>
+        </select>
+      </div>
 
-    <div class="form-group">
-      <label for="foodSelect">Select Food Item</label>
-      <select id="foodSelect" aria-label="Food item selection"> 
-        <option value="">-- None --</option> 
-        <option value="Burgershot Bleeder">Burgershot Bleeder</option>
-        <option value="The Double Shot">The Double Shot</option>
-        <option value="Fries">Fries</option>
-        <option value="Rim Job">Rim Job</option>
-        <option value="Cream Pie">Cream Pie</option>
-      </select>
-      <label for="foodQty">Quantity (max 5)</label>
-      <select id="foodQty" aria-label="Food quantity">
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </div>
+      <!-- Food -->
+      <div class="form-group">
+        <label for="foodSelect">Select Food Item</label>
+        <select id="foodSelect">
+          <option value="" disabled selected>-- None --</option>
+          <option value="Burgershot Bleeder">Burgershot Bleeder</option>
+          <option value="The Double Shot">The Double Shot</option>
+          <option value="Heart Stopper Burger">Heart Stopper Burger</option>
+          <option value="Fries">Fries</option>
+          <option value="Rim Job">Rim Job</option>
+          <option value="Cream Pie">Cream Pie</option>
+        </select>
 
-    <div class="form-group">
-      <label for="drinkSelect">Select Drink Item</label>
-      <select id="drinkSelect" aria-label="Drink item selection">
-        <option value="">-- None --</option>
-        <option value="Burgershot Soda">Burgershot Soda</option>
-      </select>
-      <label for="drinkQty">Quantity (max 5)</label>
-      <select id="drinkQty" aria-label="Drink quantity">
-        <option value="0">0</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-      </select>
-    </div>
+        <label for="foodQty">Quantity (max 5)</label>
+        <select id="foodQty">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
 
-    <button id="submitMeal">Submit Staff Meal</button>
-  </main>
+      <!-- Drink -->
+      <div class="form-group">
+        <label for="drinkSelect">Select Drink Item</label>
+        <select id="drinkSelect">
+          <option value="" disabled selected>-- None --</option>
+          <option value="Burgershot Soda">Burgershot Soda</option>
+        </select>
+
+        <label for="drinkQty">Quantity (max 5)</label>
+        <select id="drinkQty">
+          <option value="0" selected>0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </div>
+
+      <button id="submitMeal">Submit Staff Meal</button>
+    </main>
+  </div>
 
   <div id="notification"></div>
 
+
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      updateDoc,
-      collection,
-      addDoc
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import {
+    getFirestore,
+    doc,
+    getDoc,
+    updateDoc,
+    collection,
+    addDoc
+  } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-      authDomain: "burgershotorders.firebaseapp.com",
-      projectId: "burgershotorders",
-      storageBucket: "burgershotorders.appspot.com",
-      messagingSenderId: "244133569976",
-      appId: "1:244133569976:web:0dcca3439958188439db4d",
-      measurementId: "G-2X69N31D9Q"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+    authDomain: "burgershotorders.firebaseapp.com",
+    projectId: "burgershotorders",
+    storageBucket: "burgershotorders.appspot.com",
+    messagingSenderId: "244133569976",
+    appId: "1:244133569976:web:0dcca3439958188439db4d",
+    measurementId: "G-2X69N31D9Q"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    const inventoryDocRef = doc(db, "inventory", "current");
-    const staffMealsCollection = collection(db, "staff_meals");
+  const inventoryDocRef = doc(db, "inventory", "current");
+  const staffMealsCollection = collection(db, "staff_meals");
 
-    // ✅ Same ingredients map as register.html
-    const productIngredients = {
-      "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 2 },
-      "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-      "Burgershot Soda": { corn_syrup: 1 },
-      "Fries": { potato: 2 },
-      "Rim Job": { sugar: 1, flour: 1 },
-      "Cream Pie": { sugar: 1, flour: 1 }
-    };
+  // ✅ Same ingredients map as register.html
+  const productIngredients = {
+    "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 2 },
+    "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+    "Heart Stopper Burger": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
+    "Burgershot Soda": { corn_syrup: 1 },
+    "Fries": { potato: 2 },
+    "Rim Job": { sugar: 1, flour: 1 },
+    "Cream Pie": { sugar: 1, flour: 1 }
+  };
 
-    function showNotification(message, duration = 4000) {
-      const n = document.getElementById('notification');
-      n.textContent = message;
-      n.style.display = 'block';
-      n.style.opacity = '1';
+  function showNotification(message, duration = 4000) {
+    const n = document.getElementById('notification');
+    n.textContent = message;
+    n.style.display = 'block';
+    n.style.opacity = '1';
 
-      if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
+    if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
 
-      showNotification.timeoutId = setTimeout(() => {
-        n.style.transition = 'opacity 0.5s ease';
-        n.style.opacity = '0';
-        n.addEventListener('transitionend', () => {
-          n.style.display = 'none';
-          n.style.transition = '';
-        }, { once: true });
-      }, duration);
+    showNotification.timeoutId = setTimeout(() => {
+      n.style.transition = 'opacity 0.5s ease';
+      n.style.opacity = '0';
+      n.addEventListener('transitionend', () => {
+        n.style.display = 'none';
+        n.style.transition = '';
+      }, { once: true });
+    }, duration);
+  }
+
+  async function submitStaffMeal() {
+    const employee = document.getElementById('employeeSelect').value;
+    const foodItem = document.getElementById('foodSelect').value;
+    const foodQty = parseInt(document.getElementById('foodQty').value) || 0;
+    const drinkItem = document.getElementById('drinkSelect').value;
+    const drinkQty = parseInt(document.getElementById('drinkQty').value) || 0;
+
+    if (!employee) {
+      showNotification("Please select your name.");
+      return;
     }
 
-    async function submitStaffMeal() {
-      const employee = document.getElementById('employeeSelect').value;
-      const foodItem = document.getElementById('foodSelect').value;
-      const foodQty = parseInt(document.getElementById('foodQty').value) || 0;
-      const drinkItem = document.getElementById('drinkSelect').value;
-      const drinkQty = parseInt(document.getElementById('drinkQty').value) || 0;
+    const items = [];
+    if (foodItem && foodQty > 0) items.push({ name: foodItem, quantity: foodQty });
+    if (drinkItem && drinkQty > 0) items.push({ name: drinkItem, quantity: drinkQty });
 
-      if (!employee) {
-        showNotification("Please select your name.");
-        return;
-      }
-
-      const items = [];
-      if (foodItem && foodQty > 0) items.push({ name: foodItem, quantity: foodQty });
-      if (drinkItem && drinkQty > 0) items.push({ name: drinkItem, quantity: drinkQty });
-
-      if (items.length === 0) {
-        showNotification("Please select at least one food or drink with quantity.");
-        return;
-      }
-
-      const docSnap = await getDoc(inventoryDocRef);
-      if (!docSnap.exists()) {
-        showNotification("No inventory found!");
-        return;
-      }
-      const inventory = docSnap.data();
-      const totalNeeded = {};
-
-      // build required ingredients
-      items.forEach(item => {
-        const needed = productIngredients[item.name];
-        if (needed) {
-          for (const ing in needed) {
-            totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
-          }
-        }
-      });
-
-      // check shortages
-      const missing = [];
-      for (const ing in totalNeeded) {
-        if ((inventory[ing] || 0) < totalNeeded[ing]) {
-          missing.push(`${ing} (need ${totalNeeded[ing]}, have ${inventory[ing] || 0})`);
-        }
-      }
-      if (missing.length > 0) {
-        showNotification("Not enough ingredients: " + missing.join(", "));
-        return;
-      }
-
-      // deduct inventory
-      for (const ing in totalNeeded) {
-        inventory[ing] -= totalNeeded[ing];
-      }
-      await updateDoc(inventoryDocRef, inventory);
-
-      // log staff meal
-      await addDoc(staffMealsCollection, {
-        employee,
-        items,
-        timestamp: new Date()
-      });
-
-      showNotification("✅ Staff meal recorded and inventory updated!");
-
-      // reset
-      document.getElementById('employeeSelect').value = "";
-      document.getElementById('foodSelect').value = "";
-      document.getElementById('foodQty').value = "0";
-      document.getElementById('drinkSelect').value = "";
-      document.getElementById('drinkQty').value = "0";
+    if (items.length === 0) {
+      showNotification("Please select at least one food or drink with quantity.");
+      return;
     }
 
-    document.getElementById('submitMeal').addEventListener('click', submitStaffMeal);
-  </script>
+    const docSnap = await getDoc(inventoryDocRef);
+    if (!docSnap.exists()) {
+      showNotification("No inventory found!");
+      return;
+    }
+    const inventory = docSnap.data();
+    const totalNeeded = {};
+
+    // build required ingredients
+    items.forEach(item => {
+      const needed = productIngredients[item.name];
+      if (needed) {
+        for (const ing in needed) {
+          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+        }
+      }
+    });
+
+    // check shortages
+    const missing = [];
+    for (const ing in totalNeeded) {
+      if ((inventory[ing] || 0) < totalNeeded[ing]) {
+        missing.push(`${ing} (need ${totalNeeded[ing]}, have ${inventory[ing] || 0})`);
+      }
+    }
+    if (missing.length > 0) {
+      showNotification("Not enough ingredients: " + missing.join(", "));
+      return;
+    }
+
+    // deduct inventory
+    for (const ing in totalNeeded) {
+      inventory[ing] -= totalNeeded[ing];
+    }
+    await updateDoc(inventoryDocRef, inventory);
+
+    // log staff meal
+    await addDoc(staffMealsCollection, {
+      employee,
+      items,
+      timestamp: new Date()
+    });
+
+    showNotification("✅ Staff meal recorded and inventory updated!");
+
+    // reset selects
+    document.getElementById('employeeSelect').selectedIndex = 0;
+    document.getElementById('foodSelect').selectedIndex = 0;
+    document.getElementById('foodQty').selectedIndex = 0;
+    document.getElementById('drinkSelect').selectedIndex = 0;
+    document.getElementById('drinkQty').selectedIndex = 0;
+  }
+
+  document.getElementById('submitMeal').addEventListener('click', submitStaffMeal);
+</script>
+
 <script>
   const menuBtn = document.getElementById("menuToggle");
   const sidebar = document.querySelector(".sidebar");
@@ -445,6 +553,7 @@ select:focus {
     }
   });
 </script>
+
 
 </body>
 </html>
