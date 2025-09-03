@@ -211,19 +211,20 @@
         <table id="ordersTable" aria-label="Order Sheet">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Employee</th>
-              <th>Customer</th>
-              <th>The Bleeder</th>
-              <th>Double Shot</th>
-              <th>Soda</th>
-              <th>Fries</th>
-              <th>Rim Job</th>
-              <th>Cream Pie</th>
-              <th>Total</th>
-              <th>Free Dessert?</th>
-              <th>Done?</th>
-            </tr>
+  <th>Date</th>
+  <th>Employee</th>
+  <th>Customer</th>
+  <th>The Bleeder</th>
+  <th>Double Shot</th>
+  <th>Soda</th>
+  <th>Fries</th>
+  <th>Rim Job</th>
+  <th>Cream Pie</th>
+  <th>Heart Stopper</th>
+  <th>Total</th>
+  <th>Free Dessert?</th>
+  <th>Done?</th>
+</tr>
           </thead>
           <tbody id="ordersBody"></tbody>
         </table>
@@ -270,24 +271,41 @@
   const noBtn = modal.querySelector(".no-btn");
 
   const comboDetails = {
-    "The Bleeder Box": {
-      components: [
-        { name: "Burgershot Bleeder", quantity: 5 },
-        { name: "Burgershot Soda", quantity: 10 },
-        { name: "Fries", quantity: 5 },
-        { name: "Rim Job", quantity: 1 }
+  "The Bleeder Box": {
+    components: [
+      { name: "Burgershot Bleeder", quantity: 5 },
+      { name: "Burgershot Soda", quantity: 10 },
+      { name: "Fries", quantity: 5 },
+      { name: "Rim Job", quantity: 1 }
     ]
-    },
-    "Patty Pounder Combo": {
-      components: [
-        { name: "The Double Shot", quantity: 5 },
-        { name: "Burgershot Soda", quantity: 5 },
-        { name: "Rim Job", quantity: 1 }
-      ]
-    }
-  };
+  },
+  "Patty Pounder Combo": {
+    components: [
+      { name: "The Double Shot", quantity: 5 },
+      { name: "Burgershot Soda", quantity: 5 },
+      { name: "Rim Job", quantity: 1 }
+    ]
+  },
+  "Heart Stopper Meal": {
+    components: [
+      { name: "Heart Stopper Burger", quantity: 5 },
+      { name: "Burgershot Soda", quantity: 10 },
+      { name: "Fries", quantity: 5 },
+      { name: "Cream Pie", quantity: 1 }
+    ]
+  }
+};
 
-  const PRODUCTS = ["Burgershot Bleeder", "The Double Shot", "Burgershot Soda", "Fries", "Rim Job", "Cream Pie"];
+
+ const PRODUCTS = [
+  "Burgershot Bleeder",
+  "The Double Shot",
+  "Burgershot Soda",
+  "Fries",
+  "Rim Job",
+  "Cream Pie",
+  "Heart Stopper Burger"
+];
 
  const q = query(
   collection(db, "orders"),
@@ -359,19 +377,21 @@
     });
 
     tr.innerHTML = `
-      <td>${formattedDate}</td>
-      <td>${order.employee || "-"}</td>
-      <td>${order.customer || "-"}</td>
-      <td>${counts["Burgershot Bleeder"]}</td>
-      <td>${counts["The Double Shot"]}</td>
-      <td>${counts["Burgershot Soda"]}</td>
-      <td>${counts["Fries"]}</td>
-      <td>${counts["Rim Job"]}</td>
-      <td>${counts["Cream Pie"]}</td>
-      <td>$${order.total?.toFixed(2) || "0.00"}</td>
-      <td>${order.freeDessert ? "Yes 🍰" : ""}</td>
-      <td></td>
-    `;
+  <td>${formattedDate}</td>
+  <td>${order.employee || "-"}</td>
+  <td>${order.customer || "-"}</td>
+  <td>${counts["Burgershot Bleeder"]}</td>
+  <td>${counts["The Double Shot"]}</td>
+  <td>${counts["Burgershot Soda"]}</td>
+  <td>${counts["Fries"]}</td>
+  <td>${counts["Rim Job"]}</td>
+  <td>${counts["Cream Pie"]}</td>
+  <td>${counts["Heart Stopper Burger"]}</td>
+  <td>$${order.total?.toFixed(2) || "0.00"}</td>
+  <td>${order.freeDessert ? "Yes 🍰" : ""}</td>
+  <td></td>
+`;
+
 
     tr.children[11].appendChild(checkbox); // ✅ "Done?" column only
     tbody.appendChild(tr);
