@@ -68,8 +68,27 @@
     }
 
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
+
+    .form-group label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 0.2rem; /* space below each label */
+}
+
+.form-group select,
+.form-group input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border-radius: 10px;
+  border: 2px solid #c82333;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333;
+  margin-bottom: 0.5rem; /* ✅ consistent spacing below each field */
+  box-sizing: border-box;
+}
 
     label {
       font-weight: 700;
@@ -78,20 +97,35 @@
       margin-bottom: 0.3rem;
     }
 
-    select {
-      width: 100%;
-      padding: 0.5rem;
-      font-weight: 600;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      user-select: text;
-      appearance: none;
-      background: white url("data:image/svg+xml,%3Csvg fill='none' stroke='%23333' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;
-      background-size: 1em;
-      cursor: pointer;
-      outline: none;
-    }
+/* Staff meals selects styled like Register page */
+select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.4rem;
+  border-radius: 10px;
+  border: 2px solid #c82333;   /* red by default */
+  background-color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='%23c82333' d='M5.5 7l4.5 5 4.5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+select:hover {
+  border-color: #a71d2a;
+}
+
+select:focus {
+  outline: none;
+  border-color: #ff8800; /* orange on focus */
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
+}
 
     button {
       background-color: #c82333;
@@ -224,8 +258,8 @@
 
     <div class="form-group">
       <label for="foodSelect">Select Food Item</label>
-      <select id="foodSelect" aria-label="Food item selection">
-        <option value="">-- None --</option>
+      <select id="foodSelect" aria-label="Food item selection"> 
+        <option value="">-- None --</option> 
         <option value="Burgershot Bleeder">Burgershot Bleeder</option>
         <option value="The Double Shot">The Double Shot</option>
         <option value="Fries">Fries</option>

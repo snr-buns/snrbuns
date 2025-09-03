@@ -243,6 +243,23 @@ aside.order-summary {
     padding: 1rem;
   }
 }
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+    margin: 0 -0.5rem;  /* let it stretch full width */
+  }
+
+  table#ordersTable {
+    font-size: 0.8rem;    /* shrink text */
+    min-width: 700px;     /* slightly smaller base width */
+  }
+
+  table#ordersTable th,
+  table#ordersTable td {
+    padding: 6px 8px;     /* tighter padding for small screens */
+  }
+}
 
   </style>
 </head>
