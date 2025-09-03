@@ -227,9 +227,57 @@
     }
   }
 
+  /* Hamburger button */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c82333; /* Burger Shot red */
+  margin: 1rem;
+  z-index: 2000;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+
+/* Sidebar adjustments for mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block; /* show hamburger on small screens */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 220px;
+    background-color: #c82333;
+    transform: translateX(-100%); /* hidden */
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+
+  .sidebar.active {
+    transform: translateX(0); /* slide in */
+  }
+
+  /* Make sure main content isn’t squeezed */
+  .main-container {
+    flex-direction: column;
+  }
+  main {
+    padding: 1rem;
+    margin-left: 0;
+  }
+}
+
   </style>
 </head>
 <body>
+  <button id="menuToggle" class="hamburger">☰</button>
   <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
     <aside class="sidebar">
       <h2>🍔 Burger Shot</h2>
@@ -251,7 +299,11 @@
       <div class="announcement-banner" aria-live="polite" aria-atomic="true">
   <span>
     🚨 Grand Opening soon! 🍔🔥 &nbsp;&nbsp;&nbsp; | &nbsp;&nbsp;&nbsp; 
-    We are hiring - Spread the word! 
+    ✅ Remember to clock in/out at start of shift and end of shift! &nbsp;&nbsp;|&nbsp;&nbsp;
+    ⏰ Clock in and out on emails for weekly bonuses &nbsp;&nbsp;|&nbsp;&nbsp;
+    💸 Double-check invoices before sending &nbsp;&nbsp;|&nbsp;&nbsp;
+    🧾 Remember PD discount for uniformed officers &nbsp;&nbsp;|&nbsp;&nbsp;
+    🚑 EMS orders are on a tab (no invoice - post on emails!)
   </span>
 </div>
 
@@ -306,126 +358,77 @@
     </main>
   </div>
 
- <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-    import {
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+import {
   getFirestore,
   doc,
-  getDoc,
+  onSnapshot,
   collection,
   query,
-  where,
-  getDocs,
   orderBy
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-      authDomain: "burgershotorders.firebaseapp.com",
-      projectId: "burgershotorders",
-      storageBucket: "burgershotorders.appspot.com",
-      messagingSenderId: "244133569976",
-      appId: "1:244133569976:web:0dcca3439958188439db4d",
-      measurementId: "G-2X69N31D9Q"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    const LOW_STOCK_THRESHOLD = 5;
-
-    async function fetchInventory() {
-      const docSnap = await getDoc(doc(db, "inventory", "current"));
-      return docSnap.exists() ? docSnap.data() : {};
-    }
-
-   async function fetchArchivedOrders() {
-  const q = query(
-    collection(db, "orders"),
-    orderBy("timestamp", "desc")
-  );
-
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map(doc => ({
-    ...doc.data(),
-    id: doc.id,
-    timestamp: doc.data().timestamp?.toDate?.() || null
-  }));
-}
-
-
-
-  async function fetchLoyaltyVisits() {
-  const q = query(collection(db, "orders"), where("deleted", "==", false));
-  const snapshot = await getDocs(q);
-
-  const counts = {};
-  snapshot.forEach(doc => {
-    const customer = doc.data().customer?.toLowerCase()?.trim();
-    if (customer) {
-      counts[customer] = (counts[customer] || 0) + 1;
-    }
-  });
-
-  return counts;
-}
-  
-function formatDate(date) {
-  if (!date) return "-";
-  return date.toLocaleString('en-US', {
-    timeZone: 'America/New_York', // EST
-    month: '2-digit',
-    day: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: true
-  }).replace(',', '');
-}
-
-    async function updateDashboard() {
-  const [inventory, orders, loyalty] = await Promise.all([
-    fetchInventory(),
-    fetchArchivedOrders(),
-    fetchLoyaltyVisits()
-  ]);
-
-  const todayDateStr = new Date().toISOString().slice(0, 10);
-  const ordersToday = orders.filter(order =>
-    order.timestamp?.toISOString().slice(0, 10) === todayDateStr
-  );
-
-  document.getElementById("ordersToday").textContent = ordersToday.length;
-
-  const totalVisits = Object.values(loyalty).reduce((sum, v) => sum + v, 0);
-  document.getElementById("loyaltyVisits").textContent = totalVisits;
-
-// 🔹 Effective patties = real patties + ground beef packs × 5
-const patties = Number(inventory.burger_patties || 0);
-const groundBeef = Number(inventory.ground_beef || 0);
-const effectivePatties = patties + (groundBeef * 5);
-
-// 🔹 Replace ground_beef with the effective patties count
-const adjustedInventory = {
-  ...inventory,
-  ground_beef: effectivePatties
+const firebaseConfig = {
+  apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
+  authDomain: "burgershotorders.firebaseapp.com",
+  projectId: "burgershotorders",
+  storageBucket: "burgershotorders.appspot.com",
+  messagingSenderId: "244133569976",
+  appId: "1:244133569976:web:0dcca3439958188439db4d",
+  measurementId: "G-2X69N31D9Q"
 };
 
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
+const LOW_STOCK_THRESHOLD = 21;
+
+/* ===== Date Helpers ===== */
+function isSameDayEST(date) {
+  if (!date) return false;
+  const estDate = new Date(date.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const todayEST = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  return estDate.toDateString() === todayEST.toDateString();
+}
+
+function formatDate(date) {
+  if (!date) return "-";
+  return date.toLocaleString("en-US", {
+    timeZone: "America/New_York",
+    month: "2-digit",
+    day: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true
+  }).replace(",", "");
+}
+
+/* ===== UI Update Functions ===== */
+function updateInventoryUI(inventory) {
+  // Effective patties = patties + ground beef packs × 5
+  const patties = Number(inventory.burger_patties || 0);
+  const groundBeef = Number(inventory.ground_beef || 0);
+  const effectivePatties = patties + (groundBeef * 5);
+
+  const adjustedInventory = { ...inventory, ground_beef: effectivePatties };
+
+  // Low stock
   const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => qty < LOW_STOCK_THRESHOLD);
   document.getElementById("lowStockCount").textContent = lowStock.length;
 
   const ingredients = {
-    'burger_buns': 'Burger Buns',
-    'sugar': 'Sugar Packs',
-    'flour': 'Flour',
-    'lettuce': 'Lettuce',
-    'cheese_slices': 'Cheddar Cheese Slices',
-    'ground_beef': 'Ground Beef / Patties',
-    'corn_syrup': 'Corn Syrup Bottles',
-    'potato': 'Potato Sack'
+    burger_buns: "Burger Buns",
+    sugar: "Sugar Packs",
+    flour: "Flour",
+    lettuce: "Lettuce",
+    cheese_slices: "Cheddar Cheese Slices",
+    ground_beef: "Ground Beef / Patties",
+    corn_syrup: "Corn Syrup Bottles",
+    potato: "Potato Sack"
   };
+
   const alertsList = document.getElementById("inventoryAlertsList");
   alertsList.innerHTML = "";
   if (lowStock.length === 0) {
@@ -437,7 +440,23 @@ const adjustedInventory = {
       alertsList.appendChild(li);
     });
   }
+}
 
+function updateOrdersUI(orders) {
+  // Orders today (EST-based)
+  const ordersToday = orders.filter(order => isSameDayEST(order.timestamp));
+  document.getElementById("ordersToday").textContent = ordersToday.length;
+
+  // Total visits (all orders, regardless of deleted)
+  const counts = {};
+  orders.forEach(order => {
+    const customer = order.customer?.toLowerCase()?.trim();
+    if (customer) counts[customer] = (counts[customer] || 0) + 1;
+  });
+  const totalVisits = Object.values(counts).reduce((sum, v) => sum + v, 0);
+  document.getElementById("loyaltyVisits").textContent = totalVisits;
+
+  // Recent orders
   const list = document.getElementById("recentOrdersList");
   list.innerHTML = "";
   const last5 = orders.slice(0, 5);
@@ -446,16 +465,35 @@ const adjustedInventory = {
   } else {
     last5.forEach(order => {
       const li = document.createElement("li");
-      const clearedLabel = order.deleted ? " - Completed" : "";
+      const clearedLabel = order.deleted ? " ✅ Completed" : "";
       li.textContent = `${formatDate(order.timestamp)} - ${order.customer} (Total: $${order.total.toFixed(2)})${clearedLabel}`;
       list.appendChild(li);
     });
   }
 }
 
+/* ===== Live Listeners ===== */
+onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
+  if (docSnap.exists()) updateInventoryUI(docSnap.data());
+});
 
-    updateDashboard();
-    setInterval(updateDashboard, 60000);
-  </script>
+onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), (snapshot) => {
+  const orders = snapshot.docs.map(doc => ({
+    ...doc.data(),
+    id: doc.id,
+    timestamp: doc.data().timestamp?.toDate?.() || null
+  }));
+  updateOrdersUI(orders);
+});
+</script>
+<script>
+  const menuBtn = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
+
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+  });
+</script>
+
 </body>
 </html>

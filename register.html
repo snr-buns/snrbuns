@@ -193,7 +193,7 @@
       margin-top: 1rem;
       display: block;
     }
-    .order-info select,
+
     .order-info input {
       width: 100%;
       padding: 0.5rem;
@@ -204,6 +204,103 @@
       font-size: 1rem;
       user-select: text;
     }
+
+    .order-info select {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  margin-top: 0.4rem;
+  border-radius: 10px;
+  border: 2px solid #c82333;   /* Burger Shot red */
+  background-color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333;
+  appearance: none; /* hide default arrow */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='%23c82333' d='M5.5 7l4.5 5 4.5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.order-info select:hover {
+  border-color: #a71d2a;
+}
+
+.order-info select:focus {
+  outline: none;
+  border-color: #ff8800;
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
+}
+
+.order-info option {
+  font-weight: 600;
+  padding: 8px;
+}
+
+.custom-select {
+  position: relative;
+  font-weight: 700;
+  font-size: 1rem;
+  user-select: none;
+}
+
+.select-selected {
+  background-color: #fff;
+  border: 2px solid #c82333;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.select-selected:hover {
+  background-color: #fff0e6;
+}
+
+.select-selected:after {
+  content: "▼";
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: #c82333;
+}
+
+.select-items {
+  position: absolute;
+  background-color: #fff;
+  border: 2px solid #c82333;
+  border-radius: 10px;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  display: flex;
+  flex-direction: column;
+  margin-top: 5px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.select-items div {
+  padding: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.select-items div:hover {
+  background-color: #ffc107;
+  color: #000;
+}
+
+.select-hide {
+  display: none;
+}
+
+
     #orderList {
       list-style-type: none;
       padding-left: 0;
@@ -371,9 +468,94 @@
       background-color: #f44336;
       color: white;
     }
+/* Customer name input styled like custom select with search icon */
+.order-info input#customerName {
+  width: 100%;
+  padding: 0.75rem 3rem 0.75rem 1rem; /* space on the right for the icon */
+  margin-top: 0.4rem;
+  border-radius: 10px;
+  border: 2px solid #c82333;
+  background-color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  color: #333;
+  transition: all 0.2s ease-in-out;
+  box-sizing: border-box; /* ✅ ensures padding works properly */
+
+  /* 🔍 magnifying glass */
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23c82333' viewBox='0 0 24 24'><circle cx='11' cy='11' r='7' stroke='%23c82333' stroke-width='2' fill='none'/><line x1='16.5' y1='16.5' x2='22' y2='22' stroke='%23c82333' stroke-width='2'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center; /* snug inside the padding */
+  background-size: 1.1rem; /* slightly bigger so it’s clearer */
+}
+
+.order-info input#customerName::placeholder {
+  color: #888;
+  font-weight: 600;
+  font-size: 0.9rem; /* 👈 smaller placeholder */
+}
+
+.order-info input#customerName:hover {
+  border-color: #a71d2a;
+}
+
+.order-info input#customerName:focus {
+  outline: none;
+  border-color: #ff8800;
+  box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
+}
+/* Hamburger button */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c82333; /* Burger Shot red */
+  margin: 1rem;
+  z-index: 2000;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+
+/* Sidebar adjustments for mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block; /* show hamburger on small screens */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 220px;
+    background-color: #c82333;
+    transform: translateX(-100%); /* hidden */
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+
+  .sidebar.active {
+    transform: translateX(0); /* slide in */
+  }
+
+  /* Make sure main content isn’t squeezed */
+  .main-container {
+    flex-direction: column;
+  }
+  main {
+    padding: 1rem;
+    margin-left: 0;
+  }
+}
+
+
   </style>
 </head>
 <body>
+  <button id="menuToggle" class="hamburger">☰</button>
   <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
     <aside class="sidebar">
       <h2>🍔 Burger Shot</h2>
@@ -509,13 +691,29 @@
       <h2>🧾 New Order</h2>
       <div class="order-info">
         <label for="employeeName">Employee Name</label>
-        <select id="employeeName" required>
-          <option value="" disabled selected>Select employee</option>
-          <option value="Savannah">Savannah</option>
-          <option value="Munch">Munch</option>
-          <option value="Slade">Slade</option>
-          <option value="Jack">Jack</option>
-        </select>
+<div class="custom-select-wrapper">
+  <!-- hidden real select -->
+  <select id="employeeName" required style="display:none;">
+    <option value="" disabled selected>Select employee</option>
+    <option value="Savannah">Savannah</option>
+    <option value="Munch">Munch</option>
+    <option value="Slade">Slade</option>
+    <option value="Jack">Jack</option>
+    <option value="Tyrod">Tyrod</option>
+  </select>
+
+  <!-- styled fake select -->
+  <div class="custom-select">
+    <div class="select-selected">Select employee</div>
+    <div class="select-items select-hide">
+      <div data-value="Savannah">Savannah</div>
+      <div data-value="Munch">Munch</div>
+      <div data-value="Slade">Slade</div>
+      <div data-value="Jack">Jack</div>
+      <div data-value="Tyrod">Tyrod</div>
+    </div>
+  </div>
+</div>
         <label for="customerName">Customer Name</label>
         <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
         <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
@@ -548,13 +746,15 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-import { getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc, getDocs } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { 
+  getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc, getDocs, onSnapshot 
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
   authDomain: "burgershotorders.firebaseapp.com",
   projectId: "burgershotorders",
-  storageBucket: "burgershotorders.firebasestorage.app",
+  storageBucket: "burgershotorders.appspot.com",
   messagingSenderId: "244133569976",
   appId: "1:244133569976:web:0dcca3439958188439db4d",
   measurementId: "G-2X69N31D9Q"
@@ -565,26 +765,47 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err));
 
-// Load all customers into datalist
-async function loadCustomerSuggestions() {
-  try {
-    const snapshot = await getDocs(collection(db, "loyalty"));
-    const datalist = document.getElementById("customerSuggestions");
-    datalist.innerHTML = "";
+// Subscribe to loyalty names live
+function subscribeCustomerSuggestions() {
+  const input = document.getElementById("customerName");
+  const datalist = document.getElementById("customerSuggestions");
+  const q = collection(db, "orders");
 
+  let allNames = [];
+
+  // Keep all unique names in memory
+  onSnapshot(q, snapshot => {
+    const seen = new Set();
+    allNames = [];
     snapshot.forEach(docSnap => {
-      const name = docSnap.id;
-      if (name) {
-        const option = document.createElement("option");
-        option.value = name.replace(/\b\w/g, c => c.toUpperCase());
-        datalist.appendChild(option);
+      const data = docSnap.data();
+      if (data.customer && !seen.has(data.customer.toLowerCase())) {
+        seen.add(data.customer.toLowerCase());
+        allNames.push(data.customer);
       }
     });
-  } catch (error) {
-    console.error("Error loading customer suggestions:", error);
-  }
+  });
+
+  // Filter suggestions as user types
+  input.addEventListener("input", () => {
+    const val = input.value.toLowerCase();
+    datalist.innerHTML = "";
+    if (!val) return;
+
+    const filtered = allNames.filter(name => 
+      name.toLowerCase().startsWith(val)
+    );
+
+    filtered.forEach(name => {
+      const option = document.createElement("option");
+      option.value = name;
+      datalist.appendChild(option);
+    });
+  });
 }
-loadCustomerSuggestions();
+
+
+subscribeCustomerSuggestions();
 
 // Ingredient setup
 const productIngredients = {
@@ -594,7 +815,7 @@ const productIngredients = {
   "Fries": { potato: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
   "Cream Pie": { sugar: 1, flour: 1 },
-  "Heart Stopper Burger": { burger_buns: 5, ground_beef: 15, cheese_slices: 5 }
+  "Heart Stopper Burger": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 }
 };
 const comboDetails = {
   "The Bleeder Box": {
@@ -614,13 +835,13 @@ const comboDetails = {
       { name: "Cream Pie", quantity: 1 }
     ]
   },
-   "Heart Stopper Meal": {
+  "Heart Stopper Meal": {
     price: 1500,
     components: [
-      { name: "Heart Stopper Burger", quantity: 1 },
+      { name: "Heart Stopper Burger", quantity: 5 },
       { name: "Burgershot Soda", quantity: 10 },
       { name: "Fries", quantity: 5 },
-      { name: "Cream Pie", quantity: 1 }
+      { name: "Rim Job", quantity: 1 }
     ]
   }
 };
@@ -653,7 +874,7 @@ async function updateLoyalty(customer) {
   const snap = await getDoc(ref);
   const oldVisits = snap.exists() ? snap.data().visits : 0;
   const newVisits = oldVisits + 1;
-  await setDoc(ref, { visits: newVisits }, { merge: true });
+  await setDoc(ref, { name: customer, visits: newVisits }, { merge: true });
   return newVisits;
 }
 
@@ -745,6 +966,33 @@ categoryButtons.forEach(btn => {
   });
 });
 searchBar.addEventListener("input", filterItems);
+
+// Custom select for Employee Name
+const customSelect = document.querySelector(".custom-select");
+const selected = customSelect.querySelector(".select-selected");
+const optionsBox = customSelect.querySelector(".select-items");
+const options = optionsBox.querySelectorAll("div");
+const hiddenSelect = document.getElementById("employeeName");
+
+selected.addEventListener("click", () => {
+  optionsBox.classList.toggle("select-hide");
+});
+
+options.forEach(option => {
+  option.addEventListener("click", () => {
+    selected.textContent = option.textContent;
+    hiddenSelect.value = option.dataset.value;
+    optionsBox.classList.add("select-hide");
+  });
+});
+
+// close if clicked outside
+document.addEventListener("click", (e) => {
+  if (!customSelect.contains(e.target)) {
+    optionsBox.classList.add("select-hide");
+  }
+});
+
 
 // Add items
 document.querySelectorAll(".add-btn").forEach(button => {
@@ -868,28 +1116,53 @@ document.getElementById("submitOrder").addEventListener("click", async () => {
   });
 
   // Check missing
-  const missing = [];
-  for (const ing in totalNeeded) {
-    const invVal = Number(inventory[ing] || 0);
-    if (invVal < totalNeeded[ing]) {
-      const label = ingredientLabels[ing] || ing;
-      missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
-    }
+  // Check missing
+const missing = [];
+for (const ing in totalNeeded) {
+  const invVal = Number(inventory[ing] || 0);
+  if (invVal < totalNeeded[ing]) {
+    const label = ingredientLabels[ing] || ing;
+    missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
+  }
+}
+
+if (missing.length > 0) {
+  // Show notification with missing ingredients
+  showNotification(
+    `⚠️ Not enough ingredients:\n${missing.join("\n")}\n\nClick again to force submit.`,
+    6000
+  );
+
+  // Allow double-click submit to override
+  if (!document.getElementById("submitOrder").dataset.confirmed) {
+    document.getElementById("submitOrder").dataset.confirmed = "true";
+
+    setTimeout(() => {
+      document.getElementById("submitOrder").removeAttribute("data-confirmed");
+    }, 6000);
+
+    return; // block first click
   }
 
-  if (missing.length > 0) {
-    if (confirm("Not enough " + missing.join(", ") + ". Are you sure you want to continue?")) {
-      await processOrder(employee, customerRaw, inventory, totalNeeded);
-    } else {
-      showNotification("Order cancelled.");
-      return;
-    }
-  } else {
-    await processOrder(employee, customerRaw, inventory, totalNeeded);
-  }
+  // Second click within time window → force submit
+  delete document.getElementById("submitOrder").dataset.confirmed;
+  await processOrder(employee, customerRaw, inventory, totalNeeded);
+} else {
+  await processOrder(employee, customerRaw, inventory, totalNeeded);
+}
+
 });
 </script>
 
+
+<script>
+  const menuBtn = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
+
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+  });
+</script>
 
 </body>
 </html>

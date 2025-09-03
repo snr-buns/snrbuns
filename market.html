@@ -143,9 +143,58 @@
       line-height: 1.2;
       font-size: 0.9rem;
     }
+
+    /* Hamburger button */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c82333; /* Burger Shot red */
+  margin: 1rem;
+  z-index: 2000;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+
+/* Sidebar adjustments for mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block; /* show hamburger on small screens */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 220px;
+    background-color: #c82333;
+    transform: translateX(-100%); /* hidden */
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+
+  .sidebar.active {
+    transform: translateX(0); /* slide in */
+  }
+
+  /* Make sure main content isn’t squeezed */
+  .main-container {
+    flex-direction: column;
+  }
+  main {
+    padding: 1rem;
+    margin-left: 0;
+  }
+}
   </style>
 </head>
 <body>
+  <button id="menuToggle" class="hamburger">☰</button>
+  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
   <aside class="sidebar">
     <h2>🍔 Burger Shot</h2>
     <nav>
@@ -164,10 +213,10 @@
   <main>
     <h1>🏪 Market Run</h1>
 
-    <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-    As of right now, only those with permission from a manager are able to carry out market runs. <br><br>
-    The suggested packs will give you enough ingredients to make 15 Bleeder Boxes and 10 Patty Pounder Combos.
-  </p>
+ <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
+  As of right now, only those with permission from a manager are able to carry out market runs. <br><br>
+  The suggested packs will give you enough ingredients to make 20 Heart Stopper Meals, 15 Bleeder Boxes and 10 Patty Pounder Combos.
+</p>
 
     <table>
       <thead>
@@ -417,15 +466,15 @@ updateCosts();
 async function setSuggestedPacks() {
   // Packs required for 15 Bleeders + 10 Pounders
   const required = {
-    burger_buns: 25,
-    ground_beef: 25,
-    cheese_slices: 15,
-    potato: 30,
-    lettuce: 10,
-    corn_syrup: 40,
-    sugar: 5,
-    flour: 5
-  };
+  burger_buns: 45,
+  ground_beef: 85,
+  cheese_slices: 35,
+  lettuce: 20,
+  corn_syrup: 80,
+  potato: 70,
+  sugar: 9,
+  flour: 9
+};
 
   const inventory = await getLiveInventory();
 
@@ -447,9 +496,13 @@ async function setSuggestedPacks() {
 updateCosts();
 setSuggestedPacks();
 </script>
+<script>
+  const menuBtn = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
 
-
-
-
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
+  });
+</script>
 </body>
 </html>

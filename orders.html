@@ -182,9 +182,57 @@
       background-color: #f44336;
       color: white;
     }
+
+    /* Hamburger button */
+.hamburger {
+  display: none;
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #c82333; /* Burger Shot red */
+  margin: 1rem;
+  z-index: 2000;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+}
+
+/* Sidebar adjustments for mobile */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block; /* show hamburger on small screens */
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 220px;
+    background-color: #c82333;
+    transform: translateX(-100%); /* hidden */
+    transition: transform 0.3s ease;
+    z-index: 1500;
+  }
+
+  .sidebar.active {
+    transform: translateX(0); /* slide in */
+  }
+
+  /* Make sure main content isn’t squeezed */
+  .main-container {
+    flex-direction: column;
+  }
+  main {
+    padding: 1rem;
+    margin-left: 0;
+  }
+}
   </style>
 </head>
 <body>
+  <button id="menuToggle" class="hamburger">☰</button>
   <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
     <!-- Sidebar -->
     <aside class="sidebar">
@@ -291,7 +339,7 @@
       { name: "Heart Stopper Burger", quantity: 5 },
       { name: "Burgershot Soda", quantity: 10 },
       { name: "Fries", quantity: 5 },
-      { name: "Cream Pie", quantity: 1 }
+      { name: "Rim Job", quantity: 1 }
     ]
   }
 };
@@ -393,7 +441,7 @@
 `;
 
 
-    tr.children[11].appendChild(checkbox); // ✅ "Done?" column only
+    tr.children[12].appendChild(checkbox); // ✅ "Done?" column only
     tbody.appendChild(tr);
   });
 }
@@ -412,6 +460,14 @@
 
   noBtn.addEventListener("click", () => {
     modal.style.display = "none";
+  });
+</script>
+<script>
+  const menuBtn = document.getElementById("menuToggle");
+  const sidebar = document.querySelector(".sidebar");
+
+  menuBtn.addEventListener("click", () => {
+    sidebar.classList.toggle("active");
   });
 </script>
 
