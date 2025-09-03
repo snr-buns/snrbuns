@@ -505,7 +505,7 @@
 }
 /* Hamburger button */
 .hamburger {
-  display: none;
+  display: block !important;
   font-size: 2rem;
   background: #c82333;    /* give it the Burger Shot red */
   color: white;
@@ -628,6 +628,7 @@ aside.order-summary {
   Please note: We are only serving combo deals currently. <br><br>
   Full customer name is not necessary, first name is acceptable. This is for future loyalty program plans and keeping track of orders.
 </p>
+<button id="toggleOrderSummary" class="order-toggle">🧾 Order</button>
 
       <div class="item-grid">
   <!-- Combo: Bleeder Box -->
@@ -729,7 +730,6 @@ aside.order-summary {
 </div>
 
     </main>
-    <button id="toggleOrderSummary" class="order-toggle">🧾 Order</button>
     <aside class="order-summary">
       <h2>🧾 New Order</h2>
       <div class="order-info">
