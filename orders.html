@@ -206,7 +206,7 @@
 /* Mobile behavior */
 @media (max-width: 768px) {
   .hamburger {
-    display: block; /* show only on small screens */
+    display: block !important; /* show only on small screens */
   }
 
   .sidebar {
@@ -226,9 +226,18 @@
   }
 
   /* prevent main content from squashing */
-  .main-container {
-    flex-direction: column;
-  }
+  /* Reorder layout on mobile */
+.main-container {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Move order toggle + summary above item cards */
+.order-toggle,
+aside.order-summary {
+  order: -1; /* put them before menu content */
+}
+
   main {
     margin-left: 0;
     padding: 1rem;
