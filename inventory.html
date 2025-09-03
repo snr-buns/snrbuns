@@ -389,41 +389,42 @@
 }
 
 function calculateCombos(inventory) {
-  // ✅ Ingredient requirements per full combo (5 meals per box)
   const comboRecipes = {
     "Bleeder Box": {
-      burger_buns: 5,      // 5 Bleeders
+      burger_buns: 5,
       ground_beef: 5,
-      cheese_slices: 5,    // 1 per Bleeder
-      potato: 10,          // 2 per Fries ×5
-      corn_syrup: 10,      // 1 per Soda ×10
-      sugar: 1,            // free dessert
-      flour: 1             // free dessert
+      cheese_slices: 5,
+      potato: 10,   // fries (2 × 5)
+      corn_syrup: 10,
+      sugar: 1,
+      flour: 1
     },
     "Patty Pounder Combo": {
-      burger_buns: 5,      // 5 Double Shots
+      burger_buns: 5,
       ground_beef: 5,
       lettuce: 5,
       corn_syrup: 5,
-      sugar: 1,            // free dessert
+      sugar: 1,
       flour: 1
+    },
+    "Heart Stopper Meal": {
+      burger_buns: 5,
+      ground_beef: 15,
+      cheese_slices: 5,
+      potato: 10   // 5 fries
     }
   };
 
   const results = {};
-
   for (const [comboName, recipe] of Object.entries(comboRecipes)) {
     let possible = Infinity;
-
     for (const [ingredient, qty] of Object.entries(recipe)) {
       const available = inventory[ingredient] || 0;
       const maxFromThis = Math.floor(available / qty);
       possible = Math.min(possible, maxFromThis);
     }
-
     results[comboName] = possible === Infinity ? 0 : possible;
   }
-
   return results;
 }
 
@@ -472,6 +473,11 @@ function calculateItems(inventory) {
       ground_beef: 2,
       lettuce: 1
     },
+    "Heart Stopper": {
+      burger_buns: 5,
+      ground_beef: 15,
+      cheese_slices: 5
+    }, // 👈 added comma here
     "Fries": {
       potato: 2
     },
@@ -494,7 +500,6 @@ function calculateItems(inventory) {
     }
     results[itemName] = possible === Infinity ? 0 : possible;
   }
-
   return results;
 }
 
