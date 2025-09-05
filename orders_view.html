@@ -62,17 +62,19 @@
   <table id="ordersTable">
     <thead>
       <tr>
-        <th>Date</th>
-        <th>Employee</th>
-        <th>Customer</th>
-        <th>Bleeder</th>
-        <th>Double Shot</th>
-        <th>Soda</th>
-        <th>Fries</th>
-        <th>Rim Job</th>
-        <th>Cream Pie</th>
-        <th>Total</th>
-        <th>Free Dessert?</th>
+  <th>Date</th>
+  <th>Employee</th>
+  <th>Customer</th>
+  <th>Burgershot Bleeder</th>
+  <th>The Double Shot</th>
+  <th>Heart Stopper Burger</th>
+  <th>Burgershot Soda</th>
+  <th>Fries</th>
+  <th>Rim Job</th>
+  <th>Cream Pie</th>
+  <th>Total</th>
+  <th>Free Dessert?</th>
+</tr>
       </tr>
     </thead>
     <tbody></tbody>
@@ -101,23 +103,38 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ✅ Updated product list
-    const PRODUCTS = [
-      "Burgershot Bleeder",
-      "The Double Shot",
-      "Burgershot Soda",
-      "Fries",
-      "Rim Job",
-      "Cream Pie"
-    ];
+    // ✅ Current products sold
+const PRODUCTS = [
+  "Burgershot Bleeder",
+  "The Double Shot",
+  "Heart Stopper Burger",
+  "Burgershot Soda",
+  "Fries",
+  "Rim Job",
+  "Cream Pie"
+];
 
-    // ✅ Updated combo definition
-    const comboDetails = {
-      "Bleeder Box Combo": [
-        { name: "Burgershot Bleeder", quantity: 10 },
-        { name: "Burgershot Soda", quantity: 15 }
-      ]
-    };
+// ✅ Combo breakdowns
+const comboDetails = {
+  "The Bleeder Box": [
+    { name: "Burgershot Bleeder", quantity: 5 },
+    { name: "Fries", quantity: 5 },
+    { name: "Burgershot Soda", quantity: 10 },
+    { name: "Rim Job", quantity: 1 }
+  ],
+  "Patty Pounder Combo": [
+    { name: "The Double Shot", quantity: 5 },
+    { name: "Burgershot Soda", quantity: 5 },
+    { name: "Cream Pie", quantity: 1 }
+  ],
+  "Heart Stopper Meal": [
+    { name: "Heart Stopper Burger", quantity: 5 },
+    { name: "Burgershot Soda", quantity: 10 },
+    { name: "Fries", quantity: 5 },
+    { name: "Rim Job", quantity: 1 }
+  ]
+};
+
 
     function formatEST(timestamp) {
       if (!timestamp) return "";
@@ -169,6 +186,7 @@
           <td>${order.customer || "-"}</td>
           <td>${counts["Burgershot Bleeder"] || 0}</td>
           <td>${counts["The Double Shot"] || 0}</td>
+          <td>${counts["Heart Stopper Burger"] || 0}</td>
           <td>${counts["Burgershot Soda"] || 0}</td>
           <td>${counts["Fries"] || 0}</td>
           <td>${counts["Rim Job"] || 0}</td>
