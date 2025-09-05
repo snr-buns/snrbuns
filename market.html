@@ -225,6 +225,13 @@
   The suggested packs will give you enough ingredients to make 20 Heart Stopper Meals, 15 Bleeder Boxes and 10 Patty Pounder Combos.
 </p>
 
+<div class="mb-3">
+  <label for="runnerName" class="form-label" style="font-weight:600; color:#c82333;">
+    Staff Member Name:
+  </label>
+  <input type="text" id="runnerName" class="form-control" placeholder="Enter your name" />
+</div>
+
     <table>
       <thead>
   <tr>
@@ -342,6 +349,18 @@ const inventoryDocRef = doc(db, "inventory", "current");
 const UNIT_PER_PACK = 5;
 const notification = document.getElementById('notification');
 
+const ingredientNames = {
+  corn_syrup: "Bottled Corn Syrup",
+  flour: "Flour Sack",
+  burger_buns: "Package of Buns",
+  sugar: "Sugar Sack",
+  lettuce: "Lettuce Head",
+  potato: "Potato Sack",
+  cheese_slices: "Packaged Cheese",
+  ground_beef: "Packaged Ground Beef"
+};
+
+
 /* ===== Notifications ===== */
 function showNotification(message, duration=3000) {
   notification.textContent = message;
@@ -411,12 +430,17 @@ function updateCosts() {
   document.getElementById('totalWeight').textContent = `Total Weight: ${weight.toFixed(1)}`;
 }
 
-
-/* ===== Confirm Purchase ===== */
 document.getElementById('confirmPurchase').addEventListener('click', async () => {
+  const runnerName = document.getElementById('runnerName').value.trim();
+  if (!runnerName) {
+    showNotification("Please enter your name before confirming.");
+    return;
+  }
+
   const rows = document.querySelectorAll('tbody tr');
   let inventory = await getLiveInventory();
   let anyPurchase = false;
+  let purchasedItems = []; // ✅ store all items in one array
 
   for (const row of rows) {
     if (row.classList.contains("divider-row")) continue;
@@ -433,20 +457,18 @@ document.getElementById('confirmPurchase').addEventListener('click', async () =>
     if (qty > 0) {
       anyPurchase = true;
 
+      // ✅ update inventory
       inventory[ingredient] = (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
 
-      const run = {
-        timestamp: new Date().toISOString(),
+      // ✅ add to items array
+      purchasedItems.push({
         ingredient,
         packsBought: qty,
-        pricePerPack: price
-      };
-      try {
-        await addDoc(collection(db, "market_runs"), run);
-      } catch (error) {
-        console.error("Error adding market run:", error);
-      }
+        pricePerPack: price,
+        subtotal: qty * price
+      });
 
+      // reset UI row
       qtyInput.value = 0;
       priceInput.value = 0;
       subtotalCell.textContent = "$0.00";
@@ -458,10 +480,26 @@ document.getElementById('confirmPurchase').addEventListener('click', async () =>
     return;
   }
 
-  await updateInventoryInFirestore(inventory);
-  updateCosts();
-  showNotification("Market run saved successfully!");
+  // ✅ Save ONE doc with all items
+  const marketRun = {
+    timestamp: new Date().toISOString(),
+    runner: runnerName,
+    items: purchasedItems,    // all items in one array
+    totalCost: purchasedItems.reduce((sum, i) => sum + i.subtotal, 0)
+  };
+
+  try {
+    await addDoc(collection(db, "market_runs"), marketRun);
+    await updateInventoryInFirestore(inventory);
+    updateCosts();
+    showNotification("Market run saved successfully!");
+  } catch (error) {
+    console.error("Error adding market run:", error);
+    showNotification("Failed to save market run.");
+  }
 });
+
+
 
 document.querySelectorAll('.pack-qty, .price-per-pack').forEach(input => {
   input.addEventListener('input', updateCosts);

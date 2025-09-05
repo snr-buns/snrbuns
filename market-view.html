@@ -3,12 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Burger Shot - Market Runs View</title>
+  <title>Burger Shot - Market Runs Log</title>
 
-  <!-- Bootstrap CSS CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
 
   <style>
@@ -31,7 +28,7 @@
     }
     table {
       width: 100%;
-      max-width: 900px;
+      max-width: 1000px;
       border-collapse: collapse;
       background: white;
       border-radius: 8px;
@@ -58,7 +55,6 @@
       padding: 12px 20px;
       border-radius: 8px;
       cursor: pointer;
-      user-select: none;
       transition: background-color 0.3s;
     }
     #downloadCSV:hover {
@@ -68,7 +64,6 @@
       margin-top: 1rem;
       font-weight: 600;
       color: #666;
-      user-select: none;
     }
   </style>
 </head>
@@ -79,20 +74,17 @@
     <thead>
       <tr>
         <th>Date & Time</th>
-        <th>Ingredient</th>
-        <th>Quantity (packs)</th>
-        <th>Price per pack</th>
+        <th>Runner</th>
+        <th>Items Purchased</th>
         <th>Total Cost</th>
       </tr>
     </thead>
-    <tbody id="marketTableBody">
-      <!-- Filled by JS -->
-    </tbody>
+    <tbody id="marketTableBody"></tbody>
   </table>
 
   <div id="noData" style="display:none;">No market runs logged yet.</div>
 
-  <button id="downloadCSV" aria-label="Download market runs as CSV">Download CSV</button>
+  <button id="downloadCSV">Download CSV</button>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
@@ -118,19 +110,22 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    const ingredientLabels = {
-      burger_buns: "Pack Burger Buns (5 buns)",
-      burger_patties: "Pack Burger Patties (5 patties)",
-      sugar: "Pack Sugar (5 packs)",
-      corn_syrup: "Corn Syrup Bottles (5 bottles)",
-      chilli_powder: "Chilli Powder Seasoning",
-      potato: "Potato Sack"
+    // ✅ Proper names for ingredients
+    const ingredientNames = {
+      corn_syrup: "Bottled Corn Syrup",
+      flour: "Flour Sack",
+      burger_buns: "Package of Buns",
+      sugar: "Sugar Sack",
+      lettuce: "Lettuce Head",
+      potato: "Potato Sack",
+      cheese_slices: "Packaged Cheese",
+      ground_beef: "Packaged Ground Beef"
     };
 
     const marketTableBody = document.getElementById('marketTableBody');
     const noDataDiv = document.getElementById('noData');
 
-    // Real-time listener for market_runs collection ordered by timestamp desc
+    // Real-time listener
     const q = query(collection(db, "market_runs"), orderBy("timestamp", "desc"));
     onSnapshot(q, (snapshot) => {
       marketTableBody.innerHTML = '';
@@ -145,26 +140,39 @@
 
       snapshot.forEach(doc => {
         const run = doc.data();
-        const date = new Date(run.timestamp);
-        const formattedDate = date.toLocaleString();
+        const date = new Date(run.timestamp).toLocaleString();
 
-        const ingredientLabel = ingredientLabels[run.ingredient] || run.ingredient;
-        const quantityPacks = run.packsBought;
-        const pricePerPack = run.pricePerPack.toFixed(2);
-        const totalCost = (quantityPacks * run.pricePerPack).toFixed(2);
+        let itemsList = "";
+        let totalCost = run.totalCost || 0;
+        let runner = run.runner || "N/A";
+
+        if (Array.isArray(run.items) && run.items.length > 0) {
+          // ✅ New format (multi-item run)
+          itemsList = run.items.map(item => {
+            const name = ingredientNames[item.ingredient] || item.ingredient;
+            return `${name} x${item.packsBought}`;
+          }).join(", ");
+        } else if (run.ingredient) {
+          // ✅ Old format (single item doc)
+          const name = ingredientNames[run.ingredient] || run.ingredient;
+          itemsList = `${name} x${(run.packsBought || 0)}`;
+          totalCost = (run.packsBought || 0) * (run.pricePerPack || 0);
+        } else {
+          itemsList = "No items";
+        }
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>${formattedDate}</td>
-          <td>${ingredientLabel}</td>
-          <td>${quantityPacks}</td>
-          <td>$${pricePerPack}</td>
-          <td>$${totalCost}</td>
+          <td>${date}</td>
+          <td>${runner}</td>
+          <td>${itemsList}</td>
+          <td>$${totalCost.toFixed(2)}</td>
         `;
         marketTableBody.appendChild(tr);
       });
     });
 
+    // CSV Export
     document.getElementById('downloadCSV').addEventListener('click', async () => {
       const snapshot = await getDocs(collection(db, "market_runs"));
       if (snapshot.empty) {
@@ -172,32 +180,51 @@
         return;
       }
 
-      const headers = ['Date & Time', 'Ingredient', 'Quantity (packs)', 'Price per pack', 'Total Cost'];
+      const headers = ['Date & Time', 'Runner', 'Items Purchased', 'Total Cost'];
       const rows = [];
 
       snapshot.forEach(doc => {
         const run = doc.data();
         const date = new Date(run.timestamp).toLocaleString();
-        const ingredientLabel = ingredientLabels[run.ingredient] || run.ingredient;
-        const quantityPacks = run.packsBought;
-        const pricePerPack = run.pricePerPack.toFixed(2);
-        const totalCost = (quantityPacks * run.pricePerPack).toFixed(2);
 
-        rows.push([date, ingredientLabel, quantityPacks, `$${pricePerPack}`, `$${totalCost}`]);
+        let itemsList = "";
+        let totalCost = run.totalCost || 0;
+        let runner = run.runner || "N/A";
+
+        if (Array.isArray(run.items) && run.items.length > 0) {
+          itemsList = run.items.map(item => {
+            const name = ingredientNames[item.ingredient] || item.ingredient;
+            return `${name} x${item.packsBought}`;
+          }).join("; ");
+        } else if (run.ingredient) {
+          const name = ingredientNames[run.ingredient] || run.ingredient;
+          itemsList = `${name} x${(run.packsBought || 0)}`;
+          totalCost = (run.packsBought || 0) * (run.pricePerPack || 0);
+        } else {
+          itemsList = "No items";
+        }
+
+        rows.push([
+          date,
+          runner,
+          itemsList,
+          `$${totalCost.toFixed(2)}`
+        ]);
       });
 
       const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
+
       const a = document.createElement('a');
       a.href = url;
       a.download = `market_runs_${new Date().toISOString().slice(0,10)}.csv`;
-      a.style.display = 'none';
       document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      setTimeout(() => {
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 0);
     });
   </script>
 </body>
