@@ -343,56 +343,71 @@
       .join(" ");
   }
 
-  function renderLoyalty(visitCounts) {
-    const container = document.getElementById("loyaltyList");
-    container.innerHTML = "";
+function renderLoyalty(stats) {
+  const container = document.getElementById("loyaltyList");
+  container.innerHTML = "";
 
-    const customers = Object.entries(visitCounts).sort((a, b) => b[1] - a[1]);
+  const customers = Object.entries(stats);
 
-    if (customers.length === 0) {
-      container.innerHTML = "<p>No customer data found.</p>";
-      return;
+  if (customers.length === 0) {
+    container.innerHTML = "<p>No customer data found.</p>";
+    return;
+  }
+
+  // 🏆 Leaderboard: Top Visits
+  const topVisits = [...customers].sort((a, b) => b[1].visits - a[1].visits).slice(0, 3);
+  const visitsCard = document.createElement("div");
+  visitsCard.className = "leaderboard-card";
+  visitsCard.innerHTML = `
+    <h2>🏆 Top Visitors</h2>
+    ${topVisits.map(([name, data], i) =>
+      `<p><strong>${i + 1}. ${capitalizeName(name)}</strong> — ${data.visits} visits</p>`
+    ).join("")}
+  `;
+  container.appendChild(visitsCard);
+
+  // 💰 Leaderboard: Top Spenders
+  const topSpenders = [...customers].sort((a, b) => b[1].spent - a[1].spent).slice(0, 3);
+  const spendersCard = document.createElement("div");
+  spendersCard.className = "leaderboard-card";
+  spendersCard.innerHTML = `
+    <h2>💰 Top Spenders</h2>
+    ${topSpenders.map(([name, data], i) =>
+      `<p><strong>${i + 1}. ${capitalizeName(name)}</strong> — £${data.spent.toFixed(2)}</p>`
+    ).join("")}
+  `;
+  container.appendChild(spendersCard);
+
+  // 🎁 Customer cards
+  customers.forEach(([name, data]) => {
+    const { visits, spent } = data;
+    const modVisits = visits % MAX_CIRCLES === 0 ? MAX_CIRCLES : visits % MAX_CIRCLES;
+
+    let circlesHTML = "";
+    for (let i = 1; i <= MAX_CIRCLES; i++) {
+      circlesHTML += `<div class="circle${i <= modVisits ? " filled" : " empty"}"></div>`;
     }
 
-    // 🏆 Leaderboard card (inside loyalty list, centered)
-    // 🏆 Leaderboard card
-const top3 = customers.slice(0, 3);
-const leaderboardCard = document.createElement("div");
-leaderboardCard.className = "leaderboard-card";
-leaderboardCard.innerHTML = `
-  <h2>🏆 Top Customers</h2>
-  ${top3.map(([name, visits], i) =>
-    `<p><strong>${i + 1}. ${capitalizeName(name)}</strong> — ${visits} visits</p>`
-  ).join("")}
-`;
-container.appendChild(leaderboardCard);
+    const card = document.createElement("div");
+    card.className = "customer-card";
+    card.innerHTML = `
+      <div class="customer-name">${capitalizeName(name)}</div>
+      <div class="circles">${circlesHTML}</div>
+      <div class="total-visits">
+        Visits: ${visits}<br>
+        Spent: £${spent.toFixed(2)}
+      </div>
+    `;
+    container.appendChild(card);
 
-
-    // 🎁 Customer cards
-    customers.forEach(([name, visits]) => {
-      const modVisits = visits % MAX_CIRCLES === 0 ? MAX_CIRCLES : visits % MAX_CIRCLES;
-
-      let circlesHTML = "";
-      for (let i = 1; i <= MAX_CIRCLES; i++) {
-        circlesHTML += `<div class="circle${i <= modVisits ? " filled" : " empty"}"></div>`;
-      }
-
-      const card = document.createElement("div");
-      card.className = "customer-card";
-      card.innerHTML = `
-        <div class="customer-name">${capitalizeName(name)}</div>
-        <div class="circles">${circlesHTML}</div>
-        <div class="total-visits">Total Visits: ${visits}</div>
-      `;
-      container.appendChild(card);
-
-      // ✨ Animate circles
-      const circles = card.querySelectorAll(".circle");
-      circles.forEach((c, idx) => {
-        setTimeout(() => c.classList.add("show"), idx * 120);
-      });
+    // Animate circles
+    const circles = card.querySelectorAll(".circle");
+    circles.forEach((c, idx) => {
+      setTimeout(() => c.classList.add("show"), idx * 120);
     });
-  }
+  });
+}
+
 
   // 🔍 Filter customers live
   document.getElementById("searchCustomers").addEventListener("input", (e) => {
@@ -406,18 +421,25 @@ container.appendChild(leaderboardCard);
   // ✅ Live listener
   const ordersCol = collection(db, "orders");
   onSnapshot(ordersCol, (snapshot) => {
-    const visitCounts = {};
+  const stats = {}; // { customer: { visits, spent } }
 
-    snapshot.forEach((doc) => {
-      const data = doc.data();
-      const customer = data.customer?.toLowerCase()?.trim();
-      if (customer) {
-        visitCounts[customer] = (visitCounts[customer] || 0) + 1;
+  snapshot.forEach((doc) => {
+    const data = doc.data();
+    const customer = data.customer?.toLowerCase()?.trim();
+    const total = parseFloat(data.total) || 0;
+
+    if (customer) {
+      if (!stats[customer]) {
+        stats[customer] = { visits: 0, spent: 0 };
       }
-    });
-
-    renderLoyalty(visitCounts);
+      stats[customer].visits += 1;
+      stats[customer].spent += total;
+    }
   });
+
+  renderLoyalty(stats);
+});
+
 </script>
 <script>
   const menuBtn = document.getElementById("menuToggle");
