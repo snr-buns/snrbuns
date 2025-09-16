@@ -3,21 +3,66 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Burger Shot Login</title>
+  <title>Snr Buns | Staff Login</title>
   <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffcc66, #ff9966);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    .login-container {
+      background: #fff;
+      padding: 2rem 2.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+    h1 { margin: 0 0 0.5rem 0; font-size: 2rem; }
+    h2 { margin: 0 0 1.5rem 0; color: #444; font-size: 1.2rem; }
+    input {
+      width: 100%; padding: 0.75rem; margin: 0.5rem 0;
+      border: 1px solid #ccc; border-radius: 0.5rem; font-size: 1rem;
+    }
+    button {
+      width: 100%; padding: 0.75rem; margin-top: 1rem;
+      background: #ff5a36; border: none; border-radius: 0.5rem;
+      color: white; font-size: 1rem; cursor: pointer;
+    }
+
+    input, button {
+  width: 100%;
+  padding: 0.75rem;
+  margin: 0.5rem 0;
+  border: 1px solid #ccc;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  box-sizing: border-box; /* ✅ ensures padding doesn’t make them overflow */
+}
+
+    button:hover { background: #e34a2a; }
+    .error-message { color: red; margin-top: 1rem; font-size: 0.9rem; }
+  </style>
 </head>
-<body class="login-body">
+<body>
   <div class="login-container">
     <h1>🍔 Snr. Buns</h1>
     <h2>Staff Login</h2>
 
     <form id="loginForm">
-      <input type="password" id="password" class="password-box" placeholder="Enter Staff Password" required />
+      <input type="email" id="email" value="staff@snrbuns.com" readonly />
+      <input type="password" id="password" placeholder="Password" required />
       <button type="submit">Login</button>
       <p id="loginError" class="error-message"></p>
     </form>
   </div>
 
-  <script src="login.js"></script>
+  <script type="module" src="login.js"></script>
 </body>
 </html>

@@ -8,6 +8,9 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+ 
+  <script type="module" src="auth.js"></script>
+
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
@@ -536,8 +539,10 @@
   }
 }
   </style>
+  
 </head>
 <body>
+  
   <button id="menuToggle" class="hamburger">☰</button>
   <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
     <aside class="sidebar">
@@ -678,24 +683,12 @@
     </div>
   </div>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-import { 
-  getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc, getDocs, onSnapshot 
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-  authDomain: "burgershotorders.firebaseapp.com",
-  projectId: "burgershotorders",
-  storageBucket: "burgershotorders.appspot.com",
-  messagingSenderId: "244133569976",
-  appId: "1:244133569976:web:0dcca3439958188439db4d",
-  measurementId: "G-2X69N31D9Q"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
-signInAnonymously(auth).catch(err => console.error("Anon sign-in failed:", err));
+import { getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc, getDocs, onSnapshot } 
+  from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+const db = getFirestore();
+
 // Subscribe to loyalty names live
 function subscribeCustomerSuggestions() {
   const input = document.getElementById("customerName");

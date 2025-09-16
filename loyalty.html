@@ -11,6 +11,8 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
 
+  <script type="module" src="auth.js"></script>
+
   <style>
     body {
       font-family: 'Montserrat', sans-serif;
@@ -323,21 +325,13 @@
   </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+  import {
+  getFirestore, collection, query, where, orderBy, updateDoc, doc, onSnapshot
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-    authDomain: "burgershotorders.firebaseapp.com",
-    projectId: "burgershotorders",
-    storageBucket: "burgershotorders.appspot.com",
-    messagingSenderId: "244133569976",
-    appId: "1:244133569976:web:0dcca3439958188439db4d",
-    measurementId: "G-2X69N31D9Q"
-  };
+import { app } from "./auth.js"; // reuses the initialized app
+const db = getFirestore(app);
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
 
   const MAX_CIRCLES = 5;
 
