@@ -393,13 +393,14 @@ const db = getFirestore(app);
   "Heart Stopper Burger"
 ];
 
- const q = query(
+ import { query, collection, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+const q = query(
   collection(db, "orders"),
   where("deleted", "==", false),
-  orderBy("timestamp", "desc")
+  orderBy("timestamp", "desc"),
+  limit(50) // ✅ only the 50 most recent orders
 );
-
-
 
   let currentOrders = [];
 

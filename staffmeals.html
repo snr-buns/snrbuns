@@ -427,7 +427,7 @@ const db = getFirestore(app);
 
   // ✅ Same ingredients map as register.html
   const productIngredients = {
-    "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 2 },
+    "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
     "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
     "Heart Stopper Burger": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
     "Burgershot Soda": { corn_syrup: 1 },
@@ -509,7 +509,7 @@ const db = getFirestore(app);
     for (const ing in totalNeeded) {
       inventory[ing] -= totalNeeded[ing];
     }
-    await updateDoc(inventoryDocRef, inventory);
+    await setDoc(inventoryDocRef, inventory, { merge: true });
 
     // log staff meal
     await addDoc(staffMealsCollection, {
