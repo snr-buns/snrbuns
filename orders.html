@@ -342,7 +342,8 @@ import {
   collection,
   query,
   where,
-  orderBy
+  orderBy,
+  limit
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 // ✅ Reuse the same Firebase app
@@ -392,8 +393,6 @@ const db = getFirestore(app);
   "Cream Pie",
   "Heart Stopper Burger"
 ];
-
- import { query, collection, where, orderBy, limit } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 const q = query(
   collection(db, "orders"),
