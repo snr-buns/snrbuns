@@ -660,16 +660,14 @@
         <label for="customerName">Customer Name</label>
         <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
         <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
-        🚑 Reminder: EMS customers are on a tab.  
+        🚑👮 Reminder: EMS and PD customers are on a tab.  
         Place the order but do NOT invoice them — log it on emails. <br><br>
-        👮 Remember to add discount for PD!
         </small>
         <datalist id="customerSuggestions"></datalist>
       </div>
       <ul id="orderList"></ul>
       <p>Subtotal: $<span id="subtotal">0</span></p>
       <p><strong>Total: $<span id="total">0</span></strong></p>
-      <button id="pdDiscount" class="discount-btn">Apply PD Discount (20%)</button>
       <button id="submitOrder">Place Order</button>
     </aside>
   </div>
