@@ -907,7 +907,6 @@ document.querySelectorAll(".add-btn").forEach(button => {
   });
 });
 // Discount
-const pdBtn = document.getElementById("pdDiscount");
 function resetDiscountButtons() {
   pdBtn.classList.remove("active");
 }
@@ -917,10 +916,6 @@ function applyDiscount(type) {
   if (type === "PD") pdBtn.classList.add("active");
   updateOrderList();
 }
-pdBtn.addEventListener("click", () => {
-  discountToApply = "PD";
-  discountModal.style.display = "flex";
-});
 yesBtn.addEventListener("click", () => {
   applyDiscount(discountToApply);
   discountModal.style.display = "none";
