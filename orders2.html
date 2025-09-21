@@ -379,8 +379,8 @@ const db = getFirestore(app);
 
 
  const PRODUCTS = [
-  "The Prickley",
   "Money Shot",
+  "The Prickley",
   "Burgershot Soda",
   "Fries",
   "Ice Cream",
@@ -461,8 +461,8 @@ const q = query(
   <td>${formattedDate}</td>
   <td>${order.employee || "-"}</td>
   <td>${order.customer || "-"}</td>
+  <td>${counts["The Simply"]}</td>
   <td>${counts["Money Shot"]}</td>
-  <td>${counts["The Prickley"]}</td>
   <td>${counts["Burgershot Soda"]}</td>
   <td>${counts["Fries"]}</td>
   <td>${counts["Ice Cream"]}</td>
