@@ -574,6 +574,15 @@
 </p>
       <div class="item-grid">
   <!-- Combos -->
+   <div class="item-card" data-name="Big Buns Deal" data-price="1800" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/combo.png" alt="Big Buns Deal" />
+    <h3>Big Buns Deal</h3>
+    <p>$1800</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
      <div class="item-card" data-name="The Bleeder Box" data-price="1400" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="The Bleeder Box" />
     <h3>The Bleeder Box</h3>
@@ -741,6 +750,15 @@ const productIngredients = {
   "Cream Pie": { sugar: 1, flour: 1 }
 };
 const comboDetails = {
+  "Big Buns Deal": {
+    price: 1800,
+    components: [
+      { name: "The Simply", quantity: 10 },
+      { name: "Fries", quantity: 5 },
+      { name: "Coffee", quantity: 15 },
+      { name: "Rim Job", quantity: 1 }
+    ]
+  },
   "The Bleeder Box": {
     price: 1400,
     components: [

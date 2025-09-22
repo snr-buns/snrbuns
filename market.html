@@ -228,8 +228,7 @@
     <h1>🏪 Market Run</h1>
 
  <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-  As of right now, only those with permission from a manager are able to carry out market runs. <br><br>
-  The suggested packs will give you enough ingredients to make 20 Heart Stopper Meals, 15 Bleeder Boxes and 10 Patty Pounder Combos.
+  Please remember to submit this form it is ESSENTIAL for our logs. Also post in emails to confirm how much you spend. <br><br>
 </p>
 
 <div class="mb-3">
@@ -373,9 +372,9 @@ const ingredientNames = {
   potato: "Potato Sack",
   cheese_slices: "Packaged Cheese",
   ground_beef: "Packaged Ground Beef",
-  chicken: "chicken",
-  bacon: "bacon",
-  coffee_beans: "coffee",
+  chicken: "Chicken Package",
+  bacon: "Bacon Package",
+  coffee_beans: "Bag of Coffee",
 };
 
 
@@ -529,17 +528,17 @@ updateCosts();
 async function setSuggestedPacks() {
   // Packs required for 15 Bleeders + 10 Pounders
   const required = {
-  burger_buns: 35,
-  ground_beef: 15,
-  cheese_slices: 40,
-  lettuce: 10,
+  burger_buns: 60,
+  ground_beef: 20,
+  cheese_slices: 20,
+  lettuce: 15,
   corn_syrup: 0,
-  potato: 20,
+  potato: 80,
   sugar: 7,
   flour: 7,
   chicken: 40,
-  bacon: 30,
-  coffee_beans: 75,
+  bacon: 20,
+  coffee_beans: 80,
 };
 
   const inventory = await getLiveInventory();

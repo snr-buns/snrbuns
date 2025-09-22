@@ -357,6 +357,15 @@ const db = getFirestore(app);
   const noBtn = modal.querySelector(".no-btn");
 
   const comboDetails = {
+    "Big Buns Deal": {
+    price: 1800,
+    components: [
+      { name: "The Simply", quantity: 10 },
+      { name: "Fries", quantity: 5 },
+      { name: "Coffee", quantity: 15 },
+      { name: "Rim Job", quantity: 1 }
+    ]
+  },
     "The Bleeder Box": {
     price: 1400,
     components: [
@@ -380,6 +389,7 @@ const db = getFirestore(app);
  const PRODUCTS = [
   "The Prickley",
   "The Bleeder",
+  "The Simply",
   "Coffee",
   "Fries",
   "Rim Job",
@@ -460,6 +470,7 @@ const q = query(
   <td>${order.customer || "-"}</td>
   <td>${counts["The Prickley"]}</td>
   <td>${counts["The Bleeder"]}</td>
+  <td>${counts["The Simply"]}</td>
   <td>${counts["Coffee"]}</td>
   <td>${counts["Fries"]}</td>
   <td>${counts["Rim Job"]}</td>
@@ -470,7 +481,7 @@ const q = query(
 `;
 
 
-    tr.children[11].appendChild(checkbox); // ✅ "Done?" column only
+    tr.children[12].appendChild(checkbox); // ✅ "Done?" column only
     tbody.appendChild(tr);
   });
 }
