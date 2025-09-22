@@ -301,11 +301,10 @@ aside.order-summary {
   <th>Date</th>
   <th>Employee</th>
   <th>Customer</th>
-  <th>Money Shot</th>
   <th>The Prickley</th>
-  <th>Soda</th>
+  <th>The Bleeder</th>
+  <th>Coffee</th>
   <th>Fries</th>
-  <th>Ice Cream</th>
   <th>Rim Job</th>
   <th>Cream Pie</th>
   <th>Total</th>
@@ -358,35 +357,33 @@ const db = getFirestore(app);
   const noBtn = modal.querySelector(".no-btn");
 
   const comboDetails = {
-  "Double Trouble Deal": {
+    "The Bleeder Box": {
+    price: 1400,
     components: [
-      { name: "Money Shot", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 },
+      { name: "The Bleeder", quantity: 5 },
       { name: "Fries", quantity: 5 },
-      { name: "Rim Job", quantity: 1 },
-      { name: "Ice Cream", quantity: 1 }
+      { name: "Coffee", quantity: 10 },
+      { name: "Rim Job", quantity: 1 }
     ]
   },
-  "Crispy Junior Box": {
+  "Patty Pounder Combo": {
+    price: 750,
     components: [
       { name: "The Prickley", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 },
-      { name: "Rim Job", quantity: 1 },
-      { name: "Ice Cream", quantity: 1 }
+      { name: "Coffee", quantity: 5 },
+      { name: "Cream Pie", quantity: 1 }
     ]
-  }
+  },
 };
 
 
  const PRODUCTS = [
   "The Prickley",
-  "Money Shot",
-  "Burgershot Soda",
+  "The Bleeder",
+  "Coffee",
   "Fries",
-  "Ice Cream",
   "Rim Job",
   "Cream Pie",
-  
 ];
 
 const q = query(
@@ -461,11 +458,10 @@ const q = query(
   <td>${formattedDate}</td>
   <td>${order.employee || "-"}</td>
   <td>${order.customer || "-"}</td>
-  <td>${counts["Money Shot"]}</td>
   <td>${counts["The Prickley"]}</td>
-  <td>${counts["Burgershot Soda"]}</td>
+  <td>${counts["The Bleeder"]}</td>
+  <td>${counts["Coffee"]}</td>
   <td>${counts["Fries"]}</td>
-  <td>${counts["Ice Cream"]}</td>
   <td>${counts["Rim Job"]}</td>
   <td>${counts["Cream Pie"]}</td>
   <td>$${order.total?.toFixed(2) || "0.00"}</td>
@@ -474,7 +470,7 @@ const q = query(
 `;
 
 
-    tr.children[12].appendChild(checkbox); // ✅ "Done?" column only
+    tr.children[11].appendChild(checkbox); // ✅ "Done?" column only
     tbody.appendChild(tr);
   });
 }

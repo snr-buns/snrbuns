@@ -371,9 +371,9 @@ select option:hover {
         <label for="foodSelect">Select Food Item</label>
         <select id="foodSelect">
           <option value="" disabled selected>-- None --</option>
-          <option value="Burgershot Bleeder">Burgershot Bleeder</option>
-          <option value="The Double Shot">The Double Shot</option>
-          <option value="Heart Stopper Burger">Heart Stopper Burger</option>
+          <option value="The Bleeder">The Bleeder</option>
+          <option value="The Prickley">The Prickley</option>
+          <option value="The Simply">The Simply</option>
           <option value="Fries">Fries</option>
           <option value="Rim Job">Rim Job</option>
           <option value="Cream Pie">Cream Pie</option>
@@ -395,7 +395,7 @@ select option:hover {
         <label for="drinkSelect">Select Drink Item</label>
         <select id="drinkSelect">
           <option value="" disabled selected>-- None --</option>
-          <option value="Burgershot Soda">Burgershot Soda</option>
+          <option value="Coffee">Coffee</option>
         </select>
 
         <label for="drinkQty">Quantity (max 5)</label>
@@ -428,15 +428,15 @@ const db = getFirestore(app);
   const staffMealsCollection = collection(db, "staff_meals");
 
   // ✅ Same ingredients map as register.html
-  const productIngredients = {
-    "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-    "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-    "Heart Stopper Burger": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
-    "Burgershot Soda": { corn_syrup: 1 },
-    "Fries": { potato: 2 },
-    "Rim Job": { sugar: 1, flour: 1 },
-    "Cream Pie": { sugar: 1, flour: 1 }
-  };
+ const productIngredients = {
+  "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+  "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
+  "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
+  "Coffee": {coffee_beans: 1},
+  "Fries": { potato: 2 },
+  "Rim Job": { sugar: 1, flour: 1 },
+  "Cream Pie": { sugar: 1, flour: 1 }
+};
 
   function showNotification(message, duration = 4000) {
     const n = document.getElementById('notification');

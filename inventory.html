@@ -377,12 +377,9 @@
         <option value="sugar">Sugar</option>
         <option value="flour">Flour</option>
         <option value="cheese_slices">Cheddar Cheese Slices</option>
-        <option value="corn_syrup">Corn Syrup</option>
-        <option value="ice_cream">Ice Cream</option>
         <option value="chicken">Chicken</option>
         <option value="bacon">Bacon</option>
         <option value="coffee_beans">Coffee Beans</option>
-        <option value="vanilla">Vanilla Beans</option>
       </select>
 
       <label for="expiredTypeSelect">Type</label>
@@ -418,61 +415,30 @@ const inventoryDocRef = doc(db, "inventory", "current");
 
 /* === Recipes === */
 const comboRecipes = {
-  "Double Trouble Deal": {
-    burger_buns: 5,
-    ground_beef: 10,
-    cheese_slices: 5,
-    potato: 10,
-    corn_syrup: 10,
-    sugar: 1,
-    flour: 1,
-    ice_cream: 1,
-    vanilla: 2
-  },
-  "Crispy Junior Box": {
+  "Patty Pounder Combo": {
     burger_buns: 5,
     chicken: 5,
     lettuce: 5,
-    corn_syrup: 10,
+    coffee_beans: 5,
     sugar: 1,
-    flour: 1,
-    ice_cream: 1,
-    vanilla: 2
+    flour: 1
   },
-    "Bleeder Box": {
+  "The Bleeder Box": {
     burger_buns: 5,
     ground_beef: 5,
     cheese_slices: 5,
     potato: 10,
-    corn_syrup: 10,
-    sugar: 1,
-    flour: 1
-  },
-  "Patty Pounder Combo": {
-    burger_buns: 5,
-    ground_beef: 5,
-    lettuce: 5,
-    corn_syrup: 5,
-    sugar: 1,
-    flour: 1
-  },
-  "Heart Stopper Meal": {
-    burger_buns: 5,
-    ground_beef: 15,
-    cheese_slices: 5,
-    potato: 10,
-    corn_syrup: 10,
+    coffee_beans: 10,
     sugar: 1,
     flour: 1
   }
 };
 
 const itemRecipes = {
-  "Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-  "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-  "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
+  "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+  "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
   "Fries": { potato: 2 },
-  "Soda": { corn_syrup: 1 },
+  "Coffee": { coffee_beans: 1 },
   "Dessert": { sugar: 1, flour: 1 }
 };
 
@@ -483,14 +449,11 @@ const ingredientLabels = {
   cheese_slices: "Cheddar Cheese Slices",
   potato: "Potatoes",
   lettuce: "Lettuce",
-  corn_syrup: "Corn Syrup",
   sugar: "Sugar",
   flour: "Flour",
-  ice_cream: "Ice Cream",
   chicken: "Chicken",
   bacon: "Bacon",
-  coffee_beans: "Coffee",
-  vanilla: "Vanilla"
+  coffee_beans: "Coffee"
 };
 
 /* === Inventory Fetching === */
@@ -534,15 +497,12 @@ function renderInventoryFromData(inventory) {
     { key: 'ground_beef', label: 'Ground Beef / Patties' },
     { key: 'sugar', label: 'Sugar' },
     { key: 'flour', label: 'Flour' },
-    { key: 'corn_syrup', label: 'Corn Syrup' },
     { key: 'cheese_slices', label: 'Cheddar Cheese Slices' },
     { key: 'potato', label: 'Potatoes' },
     { key: 'lettuce', label: 'Lettuce' },
-    { key: 'ice_cream', label: 'Ice Cream' },
     { key: 'chicken', label: 'Chicken' },
     { key: 'bacon', label: 'Bacon' },
-    { key: 'coffee_beans', label: 'Coffee' },
-    { key: 'vanilla', label: 'Vanilla' }
+    { key: 'coffee_beans', label: 'Coffee' }
   ];
 
   ingredients.forEach(({ key, label }) => {
