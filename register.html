@@ -662,7 +662,15 @@
   </div>
 </div>
         <label for="customerName">Customer Name</label>
-        <input type="text" id="customerName" list="customerSuggestions" placeholder="Enter customer name" required />
+        <input
+  type="text"
+  id="customerName"
+  name="no-autofill"
+  list="customerSuggestions"
+  placeholder="Enter customer name"
+  required
+  autocomplete="off"
+/>
         <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
         🚑👮 Reminder: EMS and PD customers are on a tab.  
         Place the order but do NOT invoice them — log it on emails. <br><br>
@@ -685,11 +693,39 @@
     </div>
   </div>
 <script type="module">
-import { getFirestore, Timestamp, collection, addDoc, doc, getDoc, setDoc, getDocs, onSnapshot } 
-  from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import {
+  getFirestore, Timestamp,
+  collection, addDoc, doc, getDoc, setDoc, getDocs,
+  increment, serverTimestamp,
+  query, orderBy, startAt, endAt, limit, documentId
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
 const db = getFirestore();
+
+function loyaltyKey(name) {
+  return (name || "").trim().toLowerCase().replace(/\s+/g, " "); // collapse spaces
+}
+
+async function bumpLoyaltyForOrder(db, customerName, ts, amount = 0) {
+  const raw = customerName || "";
+  const key = loyaltyKey(raw);
+  if (!key) return 0;
+
+  const ref = doc(db, "loyalty", key);
+  // increment first (no race conditions if multiple orders happen)
+  await setDoc(ref, {
+    name: raw.trim(),
+    visits: increment(1),
+    spent: increment(Number(amount) || 0),
+    lastVisit: ts || serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  // read back to know the new visits count (needed for free-dessert logic)
+  const snap = await getDoc(ref);
+  return (snap.exists() && Number(snap.data().visits)) || 0;
+}
 
 function toTitleCase(str) {
   return str
@@ -700,39 +736,37 @@ function toTitleCase(str) {
     .join(" ");
 }
 
-// Subscribe to loyalty names live
 function subscribeCustomerSuggestions() {
   const input = document.getElementById("customerName");
   const datalist = document.getElementById("customerSuggestions");
-  const q = collection(db, "orders");
-  let allNames = [];
-  // Keep all unique names in memory
-  onSnapshot(q, snapshot => {
-    const seen = new Set();
-    allNames = [];
-    snapshot.forEach(docSnap => {
-      const data = docSnap.data();
-      if (data.customer && !seen.has(data.customer.toLowerCase())) {
-        seen.add(data.customer.toLowerCase());
-        allNames.push(data.customer);
-      }
-    });
-  });
-  // Filter suggestions as user types
-  input.addEventListener("input", () => {
-    const val = input.value.toLowerCase();
+
+  // simple debounce to reduce reads while typing
+  let t;
+  input.addEventListener("input", async () => {
+    clearTimeout(t);
+    const val = (input.value || "").trim().toLowerCase();
     datalist.innerHTML = "";
     if (!val) return;
-    const filtered = allNames.filter(name => 
-      name.toLowerCase().startsWith(val)
-    );
-    filtered.forEach(name => {
-      const option = document.createElement("option");
-      option.value = name;
-      datalist.appendChild(option);
-    });
+
+    t = setTimeout(async () => {
+      const qL = query(
+        collection(db, "loyalty"),
+        orderBy(documentId()),
+        startAt(val),
+        endAt(val + "\uf8ff"),
+        limit(8)
+      );
+      const snap = await getDocs(qL);
+      snap.docs.forEach(d => {
+        const opt = document.createElement("option");
+        // prefer nice display casing if stored
+        opt.value = d.data()?.name || d.id;
+        datalist.appendChild(opt);
+      });
+    }, 150); // 150ms debounce
   });
 }
+
 subscribeCustomerSuggestions();
 // Ingredient setup
 const productIngredients = {
@@ -800,16 +834,6 @@ async function getInventory() {
 }
 async function saveInventory(data) {
   await setDoc(doc(db, "inventory", "current"), data, { merge: true });
-}
-// Loyalty
-async function updateLoyalty(customer) {
-  const key = customer.toLowerCase();
-  const ref = doc(db, "loyalty", key);
-  const snap = await getDoc(ref);
-  const oldVisits = snap.exists() ? snap.data().visits : 0;
-  const newVisits = oldVisits + 1;
-  await setDoc(ref, { name: customer, visits: newVisits }, { merge: true });
-  return newVisits;
 }
 // UI + Orders
 let order = [];
@@ -930,9 +954,7 @@ document.querySelectorAll(".add-btn").forEach(button => {
   });
 });
 // Discount
-function resetDiscountButtons() {
-  pdBtn.classList.remove("active");
-}
+function resetDiscountButtons() {}
 function applyDiscount(type) {
   activeDiscount = type;
   resetDiscountButtons();
@@ -950,40 +972,49 @@ noBtn.addEventListener("click", () => {
   showNotification("No discount applied.");
   discountToApply = null;
 });
-// 📝 Process order function
+// 📝 Process order function (REPLACE your current one with this)
 async function processOrder(employee, customerRaw, inventory, totalNeeded) {
-  // Deduct inventory
+  // 1) Deduct inventory
   for (const ing in totalNeeded) {
     inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
     if (inventory[ing] < 0) inventory[ing] = 0;
   }
   await saveInventory(inventory);
-  // Loyalty update
+
+  // 2) Compute totals BEFORE loyalty update
+  const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  const total = activeDiscount ? subtotal * 0.8 : subtotal;
+
+  // 3) Loyalty update (now includes totalSpent)
   const formattedCustomer = toTitleCase(customerRaw);
-const newVisits = await updateLoyalty(formattedCustomer);
+  const nowTs = Timestamp.now();
+  const newVisits = await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
   const freeDessert = newVisits % 5 === 0;
+
   if (freeDessert) {
     showNotification(`🎉 ${formattedCustomer} reached ${newVisits} visits! Free dessert!`);
   } else {
     showNotification("Order saved!");
   }
-  // Save order
-  const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const total = activeDiscount ? subtotal * 0.8 : subtotal;
+
+  // 4) Save order
   const orderData = {
-  employee: toTitleCase(employee),
-  customer: toTitleCase(customerRaw),
-  items: order,
-  total,
-  discountApplied: activeDiscount,
-  freeDessert,
-  timestamp: Timestamp.now(),
-  done: false,
-  deleted: false
-};
+    employee: toTitleCase(employee),
+    customer: formattedCustomer,
+    items: order,
+    total,
+    discountApplied: activeDiscount,
+    freeDessert,
+    timestamp: nowTs,
+    done: false,
+    deleted: false,
+    // optional TTL if you enabled it:
+    // expiresAt: Timestamp.fromDate(new Date(Date.now() + 30*24*60*60*1000))
+  };
 
   await addDoc(collection(db, "orders"), orderData);
-  // Reset
+
+  // 5) Reset UI
   order = [];
   updateOrderList();
   document.getElementById("customerName").value = "";
@@ -991,6 +1022,7 @@ const newVisits = await updateLoyalty(formattedCustomer);
   resetDiscountButtons();
   activeDiscount = null;
 }
+
 // Submit Order with missing ingredient confirmation
 document.getElementById("submitOrder").addEventListener("click", async () => {
   const employee = document.getElementById("employeeName").value;

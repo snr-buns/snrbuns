@@ -574,28 +574,19 @@
 </p>
       <div class="item-grid">
   <!-- Combos -->
-   <div class="item-card" data-name="Grand Opening Combo 1" data-price="1250" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="Grand Opening Combo 1" />
-    <h3>Grand Opening Combo 1</h3>
-    <p>$1250</p>
+   <div class="item-card" data-name="Big Buns Deal" data-price="1800" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/combo.png" alt="Big Buns Deal" />
+    <h3>Big Buns Deal</h3>
+    <p>$1800</p>
     <div class="add-controls">
       <input type="number" class="quantity-input" min="1" value="1" />
       <button class="add-btn">Add</button>
     </div>
   </div>
-  <div class="item-card" data-name="Grand Opening Combo 2" data-price="1000" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="Grand Opening Combo 2" />
-    <h3>Grand Opening Combo 2</h3>
-    <p>$1000</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-  <div class="item-card" data-name="The Bleeder Box" data-price="1500" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+     <div class="item-card" data-name="The Bleeder Box" data-price="1400" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="The Bleeder Box" />
     <h3>The Bleeder Box</h3>
-    <p>$1500</p>
+    <p>$1400</p>
     <div class="add-controls">
       <input type="number" class="quantity-input" min="1" value="1" />
       <button class="add-btn">Add</button>
@@ -610,16 +601,7 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
-  <div class="item-card" data-name="Heart Stopper Meal" data-price="2000" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="Heart Stopper Meal" />
-    <h3>Heart Stopper Meal</h3>
-    <p>$2000</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-   <!-- Rim Job -->
+     <!-- Rim Job -->
   <div class="item-card" data-name="Rim Job" data-price="85" data-category="Desserts" data-image="assets/images/rimjob.png">
     <img src="assets/images/rimjob.png" alt="Rim Job" />
     <h3>Rim Job</h3>
@@ -709,6 +691,15 @@ import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth
 
 const db = getFirestore();
 
+function toTitleCase(str) {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .filter(word => word.trim() !== "") // remove extra spaces
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 // Subscribe to loyalty names live
 function subscribeCustomerSuggestions() {
   const input = document.getElementById("customerName");
@@ -745,65 +736,46 @@ function subscribeCustomerSuggestions() {
 subscribeCustomerSuggestions();
 // Ingredient setup
 const productIngredients = {
-  "Burgershot Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+  "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
   "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
   "Heart Stopper Burger": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
   "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
   "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
   "Money Shot": {burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
-  "Burgershot Soda": { corn_syrup: 1 },
+  "Soda": { corn_syrup: 1 },
   "Coffee": {coffee_beans: 1},
   "Fries": { potato: 2 },
-  "Vanilla Soft Serve": { ice_cream: 1, vanilla: 2 },
+  "Ice Cream": { ice_cream: 1, vanilla: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
   "Cream Pie": { sugar: 1, flour: 1 }
 };
 const comboDetails = {
-  "The Bleeder Box": {
-    price: 1500,
+  "Big Buns Deal": {
+    price: 1800,
     components: [
-      { name: "Burgershot Bleeder", quantity: 5 },
+      { name: "The Simply", quantity: 10 },
       { name: "Fries", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 },
+      { name: "Coffee", quantity: 15 },
+      { name: "Rim Job", quantity: 1 }
+    ]
+  },
+  "The Bleeder Box": {
+    price: 1400,
+    components: [
+      { name: "The Bleeder", quantity: 5 },
+      { name: "Fries", quantity: 5 },
+      { name: "Coffee", quantity: 10 },
       { name: "Rim Job", quantity: 1 }
     ]
   },
   "Patty Pounder Combo": {
     price: 750,
     components: [
-      { name: "The Double Shot", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 5 },
+      { name: "The Prickley", quantity: 5 },
+      { name: "Coffee", quantity: 5 },
       { name: "Cream Pie", quantity: 1 }
     ]
   },
-  "Heart Stopper Meal": {
-    price: 2000,
-    components: [
-      { name: "Heart Stopper Burger", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 },
-      { name: "Fries", quantity: 5 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "Double Trouble Deal": {
-    price: 1250,
-    components: [
-      { name: "Money Shot", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 },
-      { name: "Fries", quantity: 5 },
-      { name: "Rim Job", quantity: 1 },
-      { name: "Ice Cream", quantity: 1 }
-    ]
-  },
-  "Crispy Junior Box": {
-    price: 1000,
-    components: [
-      { name: "The Prickley", quantity: 5 },
-      { name: "Burgershot Soda", quantity: 10 },
-      { name: "Rim Job", quantity: 1 },
-      { name: "Ice Cream", quantity: 1 }
-    ]
-  }
 };
 const ingredientLabels = {
   burger_buns: "burger buns",
@@ -987,10 +959,11 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
   }
   await saveInventory(inventory);
   // Loyalty update
-  const newVisits = await updateLoyalty(customerRaw);
+  const formattedCustomer = toTitleCase(customerRaw);
+const newVisits = await updateLoyalty(formattedCustomer);
   const freeDessert = newVisits % 5 === 0;
   if (freeDessert) {
-    showNotification(`🎉 ${customerRaw} reached ${newVisits} visits! Free dessert!`);
+    showNotification(`🎉 ${formattedCustomer} reached ${newVisits} visits! Free dessert!`);
   } else {
     showNotification("Order saved!");
   }
@@ -998,16 +971,17 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
   const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const total = activeDiscount ? subtotal * 0.8 : subtotal;
   const orderData = {
-    employee,
-    customer: customerRaw,
-    items: order,
-    total,
-    discountApplied: activeDiscount,
-    freeDessert,
-    timestamp: Timestamp.now(),
-    done: false,
-    deleted: false
-  };
+  employee: toTitleCase(employee),
+  customer: toTitleCase(customerRaw),
+  items: order,
+  total,
+  discountApplied: activeDiscount,
+  freeDessert,
+  timestamp: Timestamp.now(),
+  done: false,
+  deleted: false
+};
+
   await addDoc(collection(db, "orders"), orderData);
   // Reset
   order = [];

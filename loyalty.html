@@ -325,136 +325,121 @@
   </div>
 
 <script type="module">
-  import {
-  getFirestore, collection, query, where, orderBy, updateDoc, doc, onSnapshot
+import {
+  getFirestore,
+  collection,
+  query,
+  orderBy,
+  onSnapshot,
+  documentId
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { app } from "./auth.js";
 
-import { app } from "./auth.js"; // reuses the initialized app
 const db = getFirestore(app);
 
+const MAX_CIRCLES = 5;
 
-  const MAX_CIRCLES = 5;
+function capitalizeName(name) {
+  return (name || "")
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
 
-  function capitalizeName(name) {
-    return name
-      .split(" ")
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(" ");
-  }
-
-function renderLoyalty(stats) {
+function renderLoyaltyFromDocs(docs) {
   const container = document.getElementById("loyaltyList");
   container.innerHTML = "";
 
-  const customers = Object.entries(stats);
+  // Build normalized array from loyalty docs
+  const rows = docs.map(d => {
+    const data = d.data() || {};
+    return {
+      id: d.id,
+      name: data.name || d.id,
+      visits: Number(data.visits || 0),
+      spent: Number(data.totalSpent || data.spent || 0), // support either field name
+      lastVisit: data.lastVisit
+    };
+  });
 
-  if (customers.length === 0) {
+  if (rows.length === 0) {
     container.innerHTML = "<p>No customer data found.</p>";
     return;
   }
 
-  // 🏆 Leaderboard: Top Visits
-  const topVisits = [...customers].sort((a, b) => b[1].visits - a[1].visits).slice(0, 3);
+  // 🏆 Leaderboard: Top Visitors
+  const topVisits = [...rows].sort((a, b) => b.visits - a.visits).slice(0, 3);
   const visitsCard = document.createElement("div");
   visitsCard.className = "leaderboard-card";
   visitsCard.innerHTML = `
     <h2>🏆 Top Visitors</h2>
-    ${topVisits.map(([name, data], i) =>
-      `<p><strong>${i + 1}. ${capitalizeName(name)}</strong> — ${data.visits} visits</p>`
+    ${topVisits.map((r, i) =>
+      `<p><strong>${i + 1}. ${capitalizeName(r.name)}</strong> — ${r.visits} visits</p>`
     ).join("")}
   `;
   container.appendChild(visitsCard);
 
   // 💰 Leaderboard: Top Spenders
-  const topSpenders = [...customers].sort((a, b) => b[1].spent - a[1].spent).slice(0, 3);
+  const topSpenders = [...rows].sort((a, b) => b.spent - a.spent).slice(0, 3);
   const spendersCard = document.createElement("div");
   spendersCard.className = "leaderboard-card";
   spendersCard.innerHTML = `
     <h2>💰 Top Spenders</h2>
-    ${topSpenders.map(([name, data], i) =>
-      `<p><strong>${i + 1}. ${capitalizeName(name)}</strong> — £${data.spent.toFixed(2)}</p>`
+    ${topSpenders.map((r, i) =>
+      `<p><strong>${i + 1}. ${capitalizeName(r.name)}</strong> — £${r.spent.toFixed(2)}</p>`
     ).join("")}
   `;
   container.appendChild(spendersCard);
 
   // 🎁 Customer cards
-  customers.forEach(([name, data]) => {
-    const { visits, spent } = data;
-    const modVisits = visits % MAX_CIRCLES === 0 ? MAX_CIRCLES : visits % MAX_CIRCLES;
+  rows
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach(r => {
+      const modVisits = r.visits % MAX_CIRCLES === 0 && r.visits > 0 ? MAX_CIRCLES : r.visits % MAX_CIRCLES;
 
-    let circlesHTML = "";
-    for (let i = 1; i <= MAX_CIRCLES; i++) {
-      circlesHTML += `<div class="circle${i <= modVisits ? " filled" : " empty"}"></div>`;
-    }
+      let circlesHTML = "";
+      for (let i = 1; i <= MAX_CIRCLES; i++) {
+        circlesHTML += `<div class="circle${i <= modVisits ? " filled" : " empty"}"></div>`;
+      }
 
-    const card = document.createElement("div");
-    card.className = "customer-card";
-    card.innerHTML = `
-      <div class="customer-name">${capitalizeName(name)}</div>
-      <div class="circles">${circlesHTML}</div>
-      <div class="total-visits">
-        Visits: ${visits}<br>
-        Spent: £${spent.toFixed(2)}
-      </div>
-    `;
-    container.appendChild(card);
+      const card = document.createElement("div");
+      card.className = "customer-card";
+      card.innerHTML = `
+        <div class="customer-name">${capitalizeName(r.name)}</div>
+        <div class="circles">${circlesHTML}</div>
+        <div class="total-visits">
+          Visits: ${r.visits}<br>
+          Spent: £${r.spent.toFixed(2)}
+        </div>
+      `;
+      container.appendChild(card);
 
-    // Animate circles
-    const circles = card.querySelectorAll(".circle");
-    circles.forEach((c, idx) => {
-      setTimeout(() => c.classList.add("show"), idx * 120);
+      // Animate circles
+      const circles = card.querySelectorAll(".circle");
+      circles.forEach((c, idx) => setTimeout(() => c.classList.add("show"), idx * 120));
     });
-  });
 }
 
-
-  // 🔍 Filter customers live
-  document.getElementById("searchCustomers").addEventListener("input", (e) => {
-    const term = e.target.value.toLowerCase();
-    document.querySelectorAll(".customer-card").forEach(card => {
-      const name = card.querySelector(".customer-name")?.textContent.toLowerCase() || "";
-      card.style.display = name.includes(term) || card.querySelector("h2") ? "flex" : "none";
-    });
-  });
-
-  // ✅ Live listener
-  const ordersCol = collection(db, "orders");
-  onSnapshot(ordersCol, (snapshot) => {
-  const stats = {}; // { customer: { visits, spent } }
-
-  snapshot.forEach((doc) => {
-    const data = doc.data();
-    const customer = data.customer?.toLowerCase()?.trim();
-    const total = parseFloat(data.total) || 0;
-
-    if (customer) {
-      if (!stats[customer]) {
-        stats[customer] = { visits: 0, spent: 0 };
-      }
-      stats[customer].visits += 1;
-      stats[customer].spent += total;
-    }
-  });
-
-  renderLoyalty(stats);
+// ✅ Live listener on *loyalty* (not orders)
+const loyaltyQ = query(collection(db, "loyalty"), orderBy(documentId()));
+onSnapshot(loyaltyQ, (snap) => {
+  renderLoyaltyFromDocs(snap.docs);
 });
 
-</script>
-<script>
-  const menuBtn = document.getElementById("menuToggle");
-  const sidebar = document.querySelector(".sidebar");
-
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-
-    // Switch between ☰ and ✖
-    if (sidebar.classList.contains("active")) {
-      menuBtn.textContent = "✖";
-    } else {
-      menuBtn.textContent = "☰";
-    }
+// 🔍 Filter customers live (works on rendered cards)
+document.getElementById("searchCustomers").addEventListener("input", (e) => {
+  const term = e.target.value.toLowerCase().trim();
+  document.querySelectorAll(".customer-card").forEach(card => {
+    const name = (card.querySelector(".customer-name")?.textContent || "").toLowerCase();
+    card.style.display = name.includes(term) ? "flex" : "none";
   });
+
+  // Keep leaderboard cards visible
+  document.querySelectorAll(".leaderboard-card").forEach(c => c.style.display = term ? "none" : "inline-block");
+});
 </script>
+
 
 </body>
 </html>

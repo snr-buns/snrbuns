@@ -65,10 +65,10 @@
   <th>Date</th>
   <th>Employee</th>
   <th>Customer</th>
-  <th>Burgershot Bleeder</th>
-  <th>The Double Shot</th>
-  <th>Heart Stopper Burger</th>
-  <th>Burgershot Soda</th>
+  <th>The Prickley</th>
+  <th>The Bleeder</th>
+  <th>The Simply</th>
+  <th>Coffee</th>
   <th>Fries</th>
   <th>Rim Job</th>
   <th>Cream Pie</th>
@@ -105,31 +105,31 @@
 
     // ✅ Current products sold
 const PRODUCTS = [
-  "Burgershot Bleeder",
-  "The Double Shot",
-  "Heart Stopper Burger",
-  "Burgershot Soda",
+  "The Prickley",
+  "The Bleeder",
+  "The Simply",
+  "Coffee",
   "Fries",
   "Rim Job",
-  "Cream Pie"
+  "Cream Pie",
 ];
 
 // ✅ Combo breakdowns
 const comboDetails = {
   "The Bleeder Box": [
-    { name: "Burgershot Bleeder", quantity: 5 },
+    { name: "The Bleeder", quantity: 5 },
     { name: "Fries", quantity: 5 },
-    { name: "Burgershot Soda", quantity: 10 },
+    { name: "Coffee", quantity: 10 },
     { name: "Rim Job", quantity: 1 }
   ],
   "Patty Pounder Combo": [
-    { name: "The Double Shot", quantity: 5 },
-    { name: "Burgershot Soda", quantity: 5 },
+    { name: "The Prickley", quantity: 5 },
+    { name: "Coffee", quantity: 5 },
     { name: "Cream Pie", quantity: 1 }
   ],
-  "Heart Stopper Meal": [
-    { name: "Heart Stopper Burger", quantity: 5 },
-    { name: "Burgershot Soda", quantity: 10 },
+  "Big Buns Deal": [
+    { name: "The Simply", quantity: 10 },
+    { name: "Coffee", quantity: 15 },
     { name: "Fries", quantity: 5 },
     { name: "Rim Job", quantity: 1 }
   ]
@@ -184,10 +184,10 @@ const comboDetails = {
           <td>${formatEST(order.timestamp)}</td>
           <td>${order.employee || "-"}</td>
           <td>${order.customer || "-"}</td>
-          <td>${counts["Burgershot Bleeder"] || 0}</td>
-          <td>${counts["The Double Shot"] || 0}</td>
-          <td>${counts["Heart Stopper Burger"] || 0}</td>
-          <td>${counts["Burgershot Soda"] || 0}</td>
+          <td>${counts["The Prickley"] || 0}</td>
+          <td>${counts["The Bleeder"] || 0}</td>
+          <td>${counts["The Simply"] || 0}</td>
+          <td>${counts["Coffee"] || 0}</td>
           <td>${counts["Fries"] || 0}</td>
           <td>${counts["Rim Job"] || 0}</td>
           <td>${counts["Cream Pie"] || 0}</td>

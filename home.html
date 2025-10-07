@@ -641,14 +641,6 @@
           </svg>
           <span>80+ Hours</span>
         </span>
-
-        <span class="badge" aria-label="Team Impact" title="Team Impact">
-          <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
-            <circle cx="32" cy="32" r="12"/>
-            <path d="M32 6v8M32 50v8M6 32h8M50 32h8M12 12l6 6M46 46l6 6M12 52l6-6M46 18l6-6"/>
-          </svg>
-          <span>Chaotic</span>
-        </span>
       </div>
     </div>
 
@@ -674,7 +666,16 @@
 
  <script type="module">
 import {
-  getFirestore, collection, query, where, orderBy, updateDoc, doc, onSnapshot
+  getFirestore,
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  updateDoc,
+  doc,
+  onSnapshot,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
 import { app } from "./auth.js"; // reuses the initialized app
@@ -703,6 +704,14 @@ function formatDate(date) {
   }).replace(",", "");
 }
 
+/* 👇 NEW: start-of-day in EST for today */
+function startOfDayEST_Timestamp() {
+  const now = new Date();
+  const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  estNow.setHours(0, 0, 0, 0);
+  return Timestamp.fromDate(estNow);
+}
+
 /* ===== UI Update Functions ===== */
 function updateInventoryUI(inventory) {
   // Effective patties = patties + ground beef packs × 5
@@ -723,8 +732,10 @@ function updateInventoryUI(inventory) {
     lettuce: "Lettuce",
     cheese_slices: "Cheddar Cheese Slices",
     ground_beef: "Ground Beef / Patties",
-    corn_syrup: "Corn Syrup Bottles",
-    potato: "Potato Sack"
+    coffee_beans: "Coffee",
+    potato: "Potato Sack",
+    chicken: "Chicken",
+    bacon: "Bacon"
   };
 
   const alertsList = document.getElementById("inventoryAlertsList");
@@ -741,11 +752,11 @@ function updateInventoryUI(inventory) {
 }
 
 function updateOrdersUI(orders) {
-  // Orders today (EST-based)
+  // Orders today (we already query only today, but keep this just in case)
   const ordersToday = orders.filter(order => isSameDayEST(order.timestamp));
   document.getElementById("ordersToday").textContent = ordersToday.length;
 
-  // Total visits (all orders, regardless of deleted)
+  // Total visits (count of orders per-customer in today's set)
   const counts = {};
   orders.forEach(order => {
     const customer = order.customer?.toLowerCase()?.trim();
@@ -754,7 +765,7 @@ function updateOrdersUI(orders) {
   const totalVisits = Object.values(counts).reduce((sum, v) => sum + v, 0);
   document.getElementById("loyaltyVisits").textContent = totalVisits;
 
-  // Recent orders
+  // Recent orders list (from today's set)
   const list = document.getElementById("recentOrdersList");
   list.innerHTML = "";
   const last5 = orders.slice(0, 5);
@@ -763,6 +774,7 @@ function updateOrdersUI(orders) {
   } else {
     last5.forEach(order => {
       const li = document.createElement("li");
+      // we query only deleted:false, so this label should rarely show, but it's fine to keep
       const clearedLabel = order.deleted ? " ✅ Completed" : "";
       li.textContent = `${formatDate(order.timestamp)} - ${order.customer} (Total: $${order.total.toFixed(2)})${clearedLabel}`;
       list.appendChild(li);
@@ -771,33 +783,31 @@ function updateOrdersUI(orders) {
 }
 
 /* ===== Live Listeners ===== */
+
+/* Inventory (unchanged) */
 onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
   if (docSnap.exists()) updateInventoryUI(docSnap.data());
 });
 
-onSnapshot(query(collection(db, "orders"), orderBy("timestamp", "desc")), (snapshot) => {
-  const orders = snapshot.docs.map(doc => ({
-    ...doc.data(),
-    id: doc.id,
-    timestamp: doc.data().timestamp?.toDate?.() || null
-  }));
+/* ✅ Orders: only NOT-deleted & only TODAY in EST, capped */
+const qHome = query(
+  collection(db, "orders"),
+  where("deleted", "==", false),
+  where("timestamp", ">=", startOfDayEST_Timestamp()),
+  orderBy("timestamp", "desc"),
+  limit(200) // adjust as needed
+);
+
+onSnapshot(qHome, (snapshot) => {
+  const orders = snapshot.docs.map(d => {
+    const data = d.data();
+    // convert Firestore Timestamp to JS Date for your formatting helpers
+    const ts = data.timestamp?.toDate?.() || null;
+    return { ...data, id: d.id, timestamp: ts };
+  });
   updateOrdersUI(orders);
 });
 </script>
-<script>
-  const menuBtn = document.getElementById("menuToggle");
-  const sidebar = document.querySelector(".sidebar");
 
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-
-    // Switch between ☰ and ✖
-    if (sidebar.classList.contains("active")) {
-      menuBtn.textContent = "✖";
-    } else {
-      menuBtn.textContent = "☰";
-    }
-  });
-</script>
 </body>
 </html>
