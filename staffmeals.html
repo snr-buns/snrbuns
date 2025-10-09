@@ -344,7 +344,8 @@ select option:hover {
       <h1>🍽️ Staff Meals</h1>
 
       <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-        Employees are entitled to 5 drinks and 5 food items per shift. Please make sure you log it here so that the inventory stays accurate.
+        Employees are entitled to 5 drinks and 5 food items per shift. Please make sure you log it here so that the inventory stays accurate. <br><Br>
+        Heart Stopper and Money Shot's are not available for staff meals. Sorry.
       </p>
 
       <!-- Employee -->
@@ -356,12 +357,11 @@ select option:hover {
           <option value="Munch">Munch</option>
           <option value="Slade">Slade</option>
           <option value="Jack">Jack</option>
+          <option value="Moe">Moe</option>
+          <option value="James">James</option>
+          <option value="Emeric">Emeric</option>
           <option value="Stu">Stu</option>
           <option value="Tyrod">Tyrod</option>
-          <option value="James">James</option>
-          <option value="Chubbs">Chubbs</option>
-          <option value="Moe">Moe</option>
-          <option value="Oreo">Oreo</option>
           <option value="Craggie">Craggie</option>
         </select>
       </div>
@@ -374,9 +374,14 @@ select option:hover {
           <option value="The Bleeder">The Bleeder</option>
           <option value="The Prickley">The Prickley</option>
           <option value="The Simply">The Simply</option>
+          <option value="Double Shot">Double Shot</option>
+          <option value="Chicken Wrap">Chicken Wrap</option>
+          <option value="Goat Wrap">Goat Wrap</option>
+          <option value="Chicken Mexican">Chicken Mexican</option>
           <option value="Fries">Fries</option>
           <option value="Rim Job">Rim Job</option>
           <option value="Cream Pie">Cream Pie</option>
+          <option value="Ice Cream">Ice Cream</option>
         </select>
 
         <label for="foodQty">Quantity (max 5)</label>
@@ -396,6 +401,7 @@ select option:hover {
         <select id="drinkSelect">
           <option value="" disabled selected>-- None --</option>
           <option value="Coffee">Coffee</option>
+          <option value="Soda">Soda</option>
         </select>
 
         <label for="drinkQty">Quantity (max 5)</label>
@@ -430,10 +436,17 @@ const db = getFirestore(app);
   // ✅ Same ingredients map as register.html
  const productIngredients = {
   "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
   "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
   "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
+  "Chicken Wrap": {chicken: 1, tomato: 1, lettuce: 1 },
+  "Chicken Mexican": {chicken: 1, tomato: 1, tortilla: 1 },
+  "Goat Wrap": {goat_cheese: 1, chicken: 1, lettuce: 1 },
+  "Soda": { corn_syrup: 1 },
   "Coffee": {coffee_beans: 1},
   "Fries": { potato: 2 },
+  "Onion Rings": { onion: 2 },
+  "Ice Cream": { ice_cream: 1, vanilla: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
   "Cream Pie": { sugar: 1, flour: 1 }
 };

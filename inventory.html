@@ -216,6 +216,30 @@
   font-weight: 600;
 }
 
+/* Make Item Availability a 2-column list (collapses to 1 on mobile) */
+#itemCounts ul {
+  columns: 2;               /* modern browsers */
+  -webkit-columns: 2;       /* Safari */
+  -moz-columns: 2;          /* Firefox */
+  column-gap: 1.25rem;
+}
+
+#itemCounts li {
+  break-inside: avoid;      /* keep items from splitting between columns */
+  padding-right: .5rem;     /* a little breathing room near the gutter */
+  margin-bottom: .25rem;
+}
+
+/* On small screens, revert to a single column */
+@media (max-width: 768px) {
+  #itemCounts ul {
+    columns: 1;
+    -webkit-columns: 1;
+    -moz-columns: 1;
+  }
+}
+
+
 .hamburger {
   display: none;
   font-size: 2rem;
@@ -380,6 +404,10 @@
         <option value="chicken">Chicken</option>
         <option value="bacon">Bacon</option>
         <option value="coffee_beans">Coffee Beans</option>
+        <option value="tortilla">Tortillas</option>
+        <option value="tomato">Tomatoes</option>
+        <option value="goat_cheese">Goat Cheese</option>
+        <option value="onion">Onions</option>
       </select>
 
       <label for="expiredTypeSelect">Type</label>
@@ -445,25 +473,39 @@ const comboRecipes = {
 
 const itemRecipes = {
   "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+  "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
   "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
   "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
+  "Money Shot": {burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
+  "Chicken Wrap": {chicken: 1, tomato: 1, lettuce: 1 },
+  "Chicken Mexican": {chicken: 1, tomato: 1, tortilla: 1 },
+  "Goat Wrap": {goat_cheese: 1, chicken: 1, lettuce: 1 },
+  "Soda": { corn_syrup: 1 },
+  "Coffee": {coffee_beans: 1},
   "Fries": { potato: 2 },
-  "Coffee": { coffee_beans: 1 },
-  "Dessert": { sugar: 1, flour: 1 }
+  "Onion Rings": { onion: 2 },
+  "Ice Cream": { ice_cream: 1, vanilla: 2 },
+  "Rim Job": { sugar: 1, flour: 1 },
+  "Cream Pie": { sugar: 1, flour: 1 }
 };
 
 /* === Ingredient Labels === */
 const ingredientLabels = {
-  burger_buns: "Burger Buns",
-  ground_beef: "Ground Beef / Patties",
-  cheese_slices: "Cheddar Cheese Slices",
-  potato: "Potatoes",
-  lettuce: "Lettuce",
-  sugar: "Sugar",
-  flour: "Flour",
-  chicken: "Chicken",
-  bacon: "Bacon",
-  coffee_beans: "Coffee"
+  burger_buns:  "Burger Buns",
+  ground_beef:  "Ground Beef / Patties",
+  cheese_slices:"Cheddar Cheese Slices",
+  potato:       "Potatoes",
+  lettuce:      "Lettuce",
+  sugar:        "Sugar",
+  flour:        "Flour",
+  chicken:      "Chicken",
+  bacon:        "Bacon",
+  coffee_beans: "Coffee",
+  tortilla:     "Tortillas",
+  tomato:       "Tomatoes",
+  goat_cheese:  "Goat Cheese",
+  onion:        "Onions"
 };
 
 /* === Inventory Fetching === */
@@ -512,7 +554,12 @@ function renderInventoryFromData(inventory) {
     { key: 'lettuce', label: 'Lettuce' },
     { key: 'chicken', label: 'Chicken' },
     { key: 'bacon', label: 'Bacon' },
-    { key: 'coffee_beans', label: 'Coffee' }
+    { key: 'coffee_beans', label: 'Coffee' },
+    { key: 'tortilla', label: 'Tortillas' },
+    { key: 'tomato', label: 'Tomatoes' },
+    { key: 'goat_cheese', label: 'Goat Cheese' },
+    { key: 'onion', label: 'Onions' }
+
   ];
 
   ingredients.forEach(({ key, label }) => {

@@ -228,8 +228,7 @@
     <h1>🏪 Market Run</h1>
 
  <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-  Please remember to submit this form, it is ESSENTIAL for our logs. Also post in emails to confirm how much you spend. <br><br>
-  Suggested packs gives enough for 10 of each combo. 
+  Please remember to submit this form, it is ESSENTIAL for our logs. Post in 'market logs' in emails to confirm how much you spent.
 </p>
 
 <div class="mb-3">
@@ -274,6 +273,13 @@
           <td class="subtotal">$0.00</td>
           <td class="suggested"></td>
         </tr>
+        <tr>
+          <td>Tortilla Package</td>
+          <td><input type="number" min="0" value="0" data-ingredient="tortilla" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
         <tr class="divider-row">
           <td colspan="6">Fruit Stand</td>
         </tr>
@@ -292,6 +298,27 @@
           <td class="suggested"></td>
         </tr>
         <tr>
+          <td>Onion Bundle</td>
+          <td><input type="number" min="0" value="0" data-ingredient="onion" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
+         <tr>
+          <td>Tomato Bundle</td>
+          <td><input type="number" min="0" value="0" data-ingredient="tomato" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
+        <tr>
+          <td>Vanilla Bean</td>
+          <td><input type="number" min="0" value="0" data-ingredient="vanilla" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
+        <tr>
           <td>Potato Sack</td>
           <td><input type="number" min="0" value="0" data-ingredient="potato" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
@@ -304,6 +331,20 @@
         <tr>
           <td>Packaged Cheese</td>
           <td><input type="number" min="0" value="0" data-ingredient="cheese_slices" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
+        <tr>
+          <td>Goat Cheese</td>
+          <td><input type="number" min="0" value="0" data-ingredient="goat_cheese" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
+        <tr>
+          <td>Ice Cream Tub</td>
+          <td><input type="number" min="0" value="0" data-ingredient="ice_cream" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
           <td class="suggested"></td>
@@ -368,6 +409,12 @@ const ingredientNames = {
   chicken: "Chicken Package",
   bacon: "Bacon Package",
   coffee_beans: "Bag of Coffee",
+  vanilla: "Vanilla Bean",
+  ice_cream: "Ice Cream Tub",
+  onion: "Onion Bundle",
+  tomato: "Tomato Bundle",
+  tortilla: "Tortilla Package",
+  goat_cheese: "Goat Cheese"
 };
 
 
@@ -521,16 +568,23 @@ updateCosts();
 async function setSuggestedPacks() {
   // Packs required for 15 Bleeders + 10 Pounders
   const required = {
-  burger_buns: 40,
-  ground_beef: 10,
-  cheese_slices: 10,
-  lettuce: 10,
-  potato: 40,
-  sugar: 6,
-  flour: 6,
+  burger_buns: 41,
+  ground_beef: 17,
+  cheese_slices: 13,
+  lettuce: 9,
   chicken: 30,
-  bacon: 20,
-  coffee_beans: 60,
+  bacon: 21,
+  tomato: 2,
+  tortilla: 1,
+  goat_cheese: 1,
+  potato: 42,
+  onion: 2,
+  sugar: 7,
+  flour: 7,
+  ice_cream: 2,
+  vanilla: 4,
+  coffee_beans: 56,
+  corn_syrup: 3,
 };
 
   const inventory = await getLiveInventory();

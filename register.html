@@ -124,7 +124,7 @@
       user-select: none;
     }
     .item-card img {
-      max-height: 75px;
+      max-height: 110px;
       object-fit: contain;
       margin-bottom: 1rem;
       pointer-events: none;
@@ -562,19 +562,20 @@
     <main class="register-content">
       <div class="category-filter">
         <button class="category active">All</button>
-        <button class="category">Combo Deals</button>
-        <button class="category">Food</button>
+        <button class="category">Combos</button>
+        <button class="category">Burgers</button>
+        <button class="category">Wraps</button>
+         <button class="category">Sides</button>
         <button class="category">Drinks</button>
         <button class="category">Desserts</button>
         <input type="search" id="searchBar" placeholder="Search menu items..." aria-label="Search menu items" />
       </div>
       <p style="margin-top:-0.5rem; margin-bottom:1rem; font-weight:600; color:#c82333;">
-  Please note: We are only serving combo deals currently. <br><br>
-  Please use the customer's full name if you're using the register to invoice. This is for future loyalty program plans and keeping track of orders when on shift.
+  Please use the customer's full name if you're using the register to invoice.
 </p>
       <div class="item-grid">
   <!-- Combos -->
-   <div class="item-card" data-name="Big Buns Deal" data-price="1700" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+   <div class="item-card" data-name="Big Buns Deal" data-price="1700" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="Big Buns Deal" />
     <h3>Big Buns Deal</h3>
     <p>$1700</p>
@@ -583,7 +584,7 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
-     <div class="item-card" data-name="The Bleeder Box" data-price="1050" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+     <div class="item-card" data-name="The Bleeder Box" data-price="1050" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="The Bleeder Box" />
     <h3>The Bleeder Box</h3>
     <p>$1050</p>
@@ -592,7 +593,7 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
-  <div class="item-card" data-name="Patty Pounder Combo" data-price="650" data-category="Combo Deals" data-image="assets/images/bleederbox.png">
+  <div class="item-card" data-name="Patty Pounder Combo" data-price="650" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
     <h3>Patty Pounder Combo</h3>
     <p>$650</p>
@@ -601,27 +602,172 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
-     <!-- Rim Job -->
-  <div class="item-card" data-name="Rim Job" data-price="85" data-category="Desserts" data-image="assets/images/rimjob.png">
-    <img src="assets/images/rimjob.png" alt="Rim Job" />
-    <h3>Rim Job</h3>
-    <p>$85</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-  <!-- Cream Pie -->
-  <div class="item-card" data-name="Cream Pie" data-price="85" data-category="Desserts" data-image="assets/images/creampie.png">
-    <img src="assets/images/creampie.png" alt="Cream Pie" />
-    <h3>Cream Pie</h3>
-    <p>$85</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
+  <!-- ===== BURGERS ===== -->
+<div class="item-card" data-name="The Bleeder" data-price="90" data-category="Burgers" data-image="assets/images/bleeder-burger.png">
+  <img src="assets/images/bleeder-burger.png" alt="Bleeder Burger" />
+  <h3>The Bleeder</h3>
+  <p>$90</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
   </div>
 </div>
+
+<div class="item-card" data-name="The Prickley" data-price="85" data-category="Burgers" data-image="assets/images/the-prickley.png">
+  <img src="assets/images/the-prickley.png" alt="The Prickley" />
+  <h3>The Prickley</h3>
+  <p>$85</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="The Simply" data-price="95" data-category="Burgers" data-image="assets/images/the-simply.png">
+  <img src="assets/images/the-simply.png" alt="The Simply" />
+  <h3>The Simply</h3>
+  <p>$95</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Heart Stopper" data-price="170" data-category="Burgers" data-image="assets/images/heart-stopper.png">
+  <img src="assets/images/heart-stopper.png" alt="Heart Stopper" />
+  <h3>Heart Stopper</h3>
+  <p>$170</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Money Shot" data-price="130" data-category="Burgers" data-image="assets/images/money-shot.png">
+  <img src="assets/images/money-shot.png" alt="Money Shot" />
+  <h3>Money Shot</h3>
+  <p>$130</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Double Shot" data-price="90" data-category="Burgers" data-image="assets/images/double-shot.png">
+  <img src="assets/images/double-shot.png" alt="Double Shot" />
+  <h3>Double Shot</h3>
+  <p>$90</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<!-- ===== WRAPS ===== -->
+<div class="item-card" data-name="Goat Wrap" data-price="90" data-category="Wraps" data-image="assets/images/goat-wrap.png">
+  <img src="assets/images/goat-wrap.png" alt="Goat Wrap" />
+  <h3>Goat Wrap</h3>
+  <p>$90</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Chicken Wrap" data-price="100" data-category="Wraps" data-image="assets/images/chicken-wrap.png">
+  <img src="assets/images/chicken-wrap.png" alt="Chicken Wrap" />
+  <h3>Chicken Wrap</h3>
+  <p>$100</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Chicken Mexican" data-price="90" data-category="Wraps" data-image="assets/images/chicken-mexican.png">
+  <img src="assets/images/chicken-mexican.png" alt="Chicken Mexican" />
+  <h3>Chicken Mexican</h3>
+  <p>$90</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<!-- ===== SIDES ===== -->
+<div class="item-card" data-name="Fries" data-price="55" data-category="Sides" data-image="assets/images/fries.png">
+  <img src="assets/images/fries.png" alt="Fries" />
+  <h3>Fries</h3>
+  <p>$55</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Onion Rings" data-price="50" data-category="Sides" data-image="assets/images/onion-rings.png">
+  <img src="assets/images/onion-rings.png" alt="Onion Rings" />
+  <h3>Onion Rings</h3>
+  <p>$50</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<!-- ===== DESSERTS ===== -->
+<div class="item-card" data-name="Cream Pie" data-price="55" data-category="Desserts" data-image="assets/images/cream-pie.png">
+  <img src="assets/images/cream-pie.png" alt="Cream Pie" />
+  <h3>Cream Pie</h3>
+  <p>$55</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Rim Job" data-price="55" data-category="Desserts" data-image="assets/images/rimjob.png">
+  <img src="assets/images/rim-job.png" alt="Rim Job" />
+  <h3>Rim Job</h3>
+  <p>$55</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Ice Cream" data-price="55" data-category="Desserts" data-image="assets/images/ice-cream.png">
+  <img src="assets/images/ice-cream.png" alt="Ice Cream" />
+  <h3>Ice Cream</h3>
+  <p>$55</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<!-- ===== DRINKS ===== -->
+
+<div class="item-card" data-name="Soda" data-price="30" data-category="Drinks" data-image="assets/images/soda.png">
+  <img src="assets/images/soda.png" alt="Soda" />
+  <h3>Soda</h3>
+  <p>$30</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="item-card" data-name="Coffee" data-price="30" data-category="Drinks" data-image="assets/images/coffee.png">
+  <img src="assets/images/coffee.png" alt="Coffee" />
+  <h3>Coffee</h3>
+  <p>$30</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
     </main>
     <aside class="order-summary">
       <h2>🧾 New Order</h2>
@@ -635,12 +781,11 @@
     <option value="Munch">Munch</option>
     <option value="Slade">Slade</option>
     <option value="Jack">Jack</option>
+    <option value="Moe">Moe</option>
+    <option value="James">James</option>
+    <option value="Emeric">Emeric</option>
     <option value="Stu">Stu</option>
     <option value="Tyrod">Tyrod</option>
-    <option value="James">James</option>
-    <option value="Chubbs">Chubbs</option>
-    <option value="Moe">Moe</option>
-    <option value="Oreo">Oreo</option>
     <option value="Craggie">Craggie</option>
   </select>
   <!-- styled fake select -->
@@ -651,12 +796,11 @@
       <div data-value="Munch">Munch</div>
       <div data-value="Slade">Slade</div>
       <div data-value="Jack">Jack</div>
+      <div data-value="Moe">Moe</div>
+      <div data-value="James">James</div>
+      <div data-value="Emeric">Emeric</div>
       <div data-value="Stu">Stu</div>
       <div data-value="Tyrod">Tyrod</div>
-      <div data-value="James">James</div>
-      <div data-value="Chubbs">Chubbs</div>
-      <div data-value="Moe">Moe</div>
-      <div data-value="Oreo">Oreo</div>
       <div data-value="Craggie">Craggie</div>
     </div>
   </div>
@@ -772,13 +916,17 @@ subscribeCustomerSuggestions();
 const productIngredients = {
   "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
   "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-  "Heart Stopper Burger": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
+  "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
   "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
   "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
   "Money Shot": {burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
+  "Chicken Wrap": {chicken: 1, tomato: 1, lettuce: 1 },
+  "Chicken Mexican": {chicken: 1, tomato: 1, tortilla: 1 },
+  "Goat Wrap": {goat_cheese: 1, chicken: 1, lettuce: 1 },
   "Soda": { corn_syrup: 1 },
   "Coffee": {coffee_beans: 1},
   "Fries": { potato: 2 },
+  "Onion Rings": { onion: 2 },
   "Ice Cream": { ice_cream: 1, vanilla: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
   "Cream Pie": { sugar: 1, flour: 1 }
@@ -825,7 +973,11 @@ const ingredientLabels = {
   chicken: "chicken",
   bacon: "bacon",
   coffee_beans: "coffee",
-  vanilla: "vanilla"
+  vanilla: "vanilla",
+  goat_cheese: "goat cheese",
+  onion: "onion",
+  tortilla: "tortilla",
+  tomato: "tomato"
 };
 // Inventory
 async function getInventory() {
