@@ -25,22 +25,25 @@
       font-weight: 700;
       margin-bottom: 2rem;
       user-select: none;
+      text-align: center;
     }
     table {
       width: 100%;
-      max-width: 1000px;
+      max-width: 1100px;
       border-collapse: collapse;
       background: white;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
       user-select: none;
+      font-size: 0.95rem;
     }
     th, td {
       padding: 12px 15px;
       border-bottom: 1px solid #ddd;
       text-align: left;
       font-weight: 600;
+      vertical-align: middle;
     }
     th {
       background: #ffc107;
@@ -57,13 +60,15 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
-    #downloadCSV:hover {
-      background-color: #a71d2a;
-    }
+    #downloadCSV:hover { background-color: #a71d2a; }
     #noData {
       margin-top: 1rem;
       font-weight: 600;
       color: #666;
+    }
+    @media (max-width: 768px) {
+      table { font-size: 0.88rem; }
+      th, td { padding: 10px 10px; }
     }
   </style>
 </head>
@@ -73,7 +78,7 @@
   <table id="marketTable" aria-label="Market purchase logs">
     <thead>
       <tr>
-        <th>Date & Time</th>
+        <th>Date & Time (EST)</th>
         <th>Runner</th>
         <th>Items Purchased</th>
         <th>Total Cost</th>
@@ -87,7 +92,7 @@
   <button id="downloadCSV">Download CSV</button>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { app } from "./auth.js";
     import {
       getFirestore,
       collection,
@@ -97,37 +102,87 @@
       getDocs
     } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-      authDomain: "burgershotorders.firebaseapp.com",
-      projectId: "burgershotorders",
-      storageBucket: "burgershotorders.appspot.com",
-      messagingSenderId: "244133569976",
-      appId: "1:244133569976:web:0dcca3439958188439db4d",
-      measurementId: "G-2X69N31D9Q"
-    };
-
-    const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ✅ Proper names for ingredients
+    // ✅ Full ingredient nice-names (synced with market.html)
     const ingredientNames = {
-      corn_syrup: "Bottled Corn Syrup",
       flour: "Flour Sack",
       burger_buns: "Package of Buns",
       sugar: "Sugar Sack",
       lettuce: "Lettuce Head",
       potato: "Potato Sack",
       cheese_slices: "Packaged Cheese",
-      ground_beef: "Packaged Ground Beef"
+      ground_beef: "Packaged Ground Beef",
+      chicken: "Chicken Package",
+      bacon: "Bacon Package",
+      coffee_beans: "Bag of Coffee",
+      corn_syrup: "Bottled Corn Syrup",
+      vanilla: "Vanilla Bean Bundle",
+      ice_cream: "Ice Cream Tub",
+      onion: "Onion Bundle",
+      tomato: "Tomato Bundle",
+      tortilla: "Tortilla Package",
+      goat_cheese: "Goat Cheese"
     };
 
     const marketTableBody = document.getElementById('marketTableBody');
     const noDataDiv = document.getElementById('noData');
 
-    // Real-time listener
-    const q = query(collection(db, "market_runs"), orderBy("timestamp", "desc"));
-    onSnapshot(q, (snapshot) => {
+    function formatEST(tsLike) {
+      if (!tsLike) return "";
+      const d = tsLike.toDate ? tsLike.toDate() : new Date(tsLike);
+      return d.toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false
+      }).replace(",", "");
+    }
+
+    function itemsToText(run) {
+      if (Array.isArray(run.items) && run.items.length > 0) {
+        // New multi-item format
+        return run.items.map(item => {
+          const name = ingredientNames[item.ingredient] || item.ingredient || "Unknown";
+          const packs = Number(item.packsBought || 0);
+          const price = Number(item.pricePerPack || 0);
+          // Show packs and (optional) price per pack if provided
+          return price > 0
+            ? `${name} x${packs} (@ $${price.toFixed(2)})`
+            : `${name} x${packs}`;
+        }).join(", ");
+      } else if (run.ingredient) {
+        // Old single-item format
+        const name = ingredientNames[run.ingredient] || run.ingredient;
+        const packs = Number(run.packsBought || 0);
+        const price = Number(run.pricePerPack || 0);
+        return price > 0
+          ? `${name} x${packs} (@ $${price.toFixed(2)})`
+          : `${name} x${packs}`;
+      }
+      return "No items";
+    }
+
+    function computeTotal(run) {
+      if (typeof run.totalCost === "number") return run.totalCost;
+      // Fallback compute for old format
+      if (run.ingredient) {
+        return (Number(run.packsBought || 0) * Number(run.pricePerPack || 0)) || 0;
+      }
+      // Fallback compute for multi-item runs if total missing
+      if (Array.isArray(run.items)) {
+        return run.items.reduce((sum, it) => sum + Number(it.subtotal || (Number(it.packsBought||0) * Number(it.pricePerPack||0)) || 0), 0);
+      }
+      return 0;
+    }
+
+    // 🔴 Real-time listener (newest first)
+    const qRef = query(collection(db, "market_runs"), orderBy("timestamp", "desc"));
+
+    onSnapshot(qRef, (snapshot) => {
       marketTableBody.innerHTML = '';
       if (snapshot.empty) {
         noDataDiv.style.display = 'block';
@@ -138,95 +193,63 @@
         document.getElementById('marketTable').style.display = '';
       }
 
-      snapshot.forEach(doc => {
-        const run = doc.data();
-        const date = new Date(run.timestamp).toLocaleString();
-
-        let itemsList = "";
-        let totalCost = run.totalCost || 0;
-        let runner = run.runner || "N/A";
-
-        if (Array.isArray(run.items) && run.items.length > 0) {
-          // ✅ New format (multi-item run)
-          itemsList = run.items.map(item => {
-            const name = ingredientNames[item.ingredient] || item.ingredient;
-            return `${name} x${item.packsBought}`;
-          }).join(", ");
-        } else if (run.ingredient) {
-          // ✅ Old format (single item doc)
-          const name = ingredientNames[run.ingredient] || run.ingredient;
-          itemsList = `${name} x${(run.packsBought || 0)}`;
-          totalCost = (run.packsBought || 0) * (run.pricePerPack || 0);
-        } else {
-          itemsList = "No items";
-        }
+      snapshot.forEach(docSnap => {
+        const run = docSnap.data();
+        const date = formatEST(run.timestamp);
+        const itemsList = itemsToText(run);
+        const total = computeTotal(run);
+        const runner = run.runner || "N/A";
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
           <td>${date}</td>
           <td>${runner}</td>
           <td>${itemsList}</td>
-          <td>$${totalCost.toFixed(2)}</td>
+          <td>$${Number(total).toFixed(2)}</td>
         `;
         marketTableBody.appendChild(tr);
       });
     });
 
-    // CSV Export
+    // ⬇️ CSV Export
     document.getElementById('downloadCSV').addEventListener('click', async () => {
-      const snapshot = await getDocs(collection(db, "market_runs"));
+      const snapshot = await getDocs(qRef);
       if (snapshot.empty) {
         alert('No market runs to download.');
         return;
       }
 
-      const headers = ['Date & Time', 'Runner', 'Items Purchased', 'Total Cost'];
+      const headers = ['Date & Time (EST)', 'Runner', 'Items Purchased', 'Total Cost'];
       const rows = [];
 
-      snapshot.forEach(doc => {
-        const run = doc.data();
-        const date = new Date(run.timestamp).toLocaleString();
+      snapshot.forEach(docSnap => {
+        const run = docSnap.data();
+        const date = formatEST(run.timestamp);
+        const itemsList = itemsToText(run).replace(/\n/g, ' ');
+        const total = computeTotal(run);
+        const runner = run.runner || "N/A";
 
-        let itemsList = "";
-        let totalCost = run.totalCost || 0;
-        let runner = run.runner || "N/A";
-
-        if (Array.isArray(run.items) && run.items.length > 0) {
-          itemsList = run.items.map(item => {
-            const name = ingredientNames[item.ingredient] || item.ingredient;
-            return `${name} x${item.packsBought}`;
-          }).join("; ");
-        } else if (run.ingredient) {
-          const name = ingredientNames[run.ingredient] || run.ingredient;
-          itemsList = `${name} x${(run.packsBought || 0)}`;
-          totalCost = (run.packsBought || 0) * (run.pricePerPack || 0);
-        } else {
-          itemsList = "No items";
-        }
-
-        rows.push([
-          date,
-          runner,
-          itemsList,
-          `$${totalCost.toFixed(2)}`
-        ]);
+        rows.push([date, runner, itemsList, `$${Number(total).toFixed(2)}`]);
       });
 
-      const csvContent = [headers, ...rows].map(e => e.join(",")).join("\n");
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
+      // Quote + escape CSV fields
+      const csv = [
+        headers.join(","),
+        ...rows.map(r =>
+          r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")
+        )
+      ].join("\n");
 
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `market_runs_${new Date().toISOString().slice(0,10)}.csv`;
       document.body.appendChild(a);
-      setTimeout(() => {
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 0);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
     });
-    
   </script>
 </body>
 </html>

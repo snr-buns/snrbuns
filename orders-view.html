@@ -19,18 +19,20 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      max-width: 1000px;
+      max-width: 1200px;
       margin: 0 auto 20px auto;
       background: white;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
       border-radius: 8px;
       overflow: hidden;
+      font-size: 0.9rem;
     }
     th, td {
       border: 1px solid #ddd;
-      padding: 12px 8px;
+      padding: 10px 8px;
       text-align: center;
       word-break: break-word;
+      white-space: nowrap;
     }
     th {
       background-color: #ffc107;
@@ -46,11 +48,15 @@
       border-radius: 6px;
       cursor: pointer;
       font-size: 16px;
-      max-width: 250px;
+      max-width: 260px;
       text-align: center;
     }
     #downloadCSV:hover {
       background: #a71d2a;
+    }
+    @media (max-width: 900px) {
+      table { font-size: 0.8rem; }
+      th, td { padding: 8px 6px; }
     }
   </style>
 </head>
@@ -59,86 +65,103 @@
 
   <button id="downloadCSV">⬇️ Download Orders CSV</button>
 
-  <table id="ordersTable">
+  <table id="ordersTable" aria-label="All Orders">
     <thead>
       <tr>
-  <th>Date</th>
-  <th>Employee</th>
-  <th>Customer</th>
-  <th>The Prickley</th>
-  <th>The Bleeder</th>
-  <th>The Simply</th>
-  <th>Coffee</th>
-  <th>Fries</th>
-  <th>Rim Job</th>
-  <th>Cream Pie</th>
-  <th>Total</th>
-  <th>Free Dessert?</th>
-</tr>
+        <th>Date</th>
+        <th>Employee</th>
+        <th>Customer</th>
+
+        <!-- BURGERS -->
+        <th>Heart Stopper</th>
+        <th>Money Shot</th>
+        <th>The Simply</th>
+        <th>Double Shot</th>
+        <th>The Bleeder</th>
+        <th>The Prickley</th>
+
+        <!-- WRAPS -->
+        <th>Chicken Wrap</th>
+        <th>Chicken Mexican</th>
+        <th>Goat Wrap</th>
+
+        <!-- SIDES -->
+        <th>Fries</th>
+        <th>Onion Rings</th>
+
+        <!-- DRINKS -->
+        <th>Soda</th>
+        <th>Coffee</th>
+
+        <!-- DESSERTS -->
+        <th>Rim Job</th>
+        <th>Cream Pie</th>
+        <th>Ice Cream</th>
+
+        <th>Total</th>
+        <th>Free Dessert?</th>
       </tr>
     </thead>
     <tbody></tbody>
   </table>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+    import { app } from "./auth.js";
     import {
       getFirestore,
       collection,
       onSnapshot,
       query,
-      orderBy
+      orderBy,
+      where
     } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-      authDomain: "burgershotorders.firebaseapp.com",
-      projectId: "burgershotorders",
-      storageBucket: "burgershotorders.firebasestorage.app",
-      messagingSenderId: "244133569976",
-      appId: "1:244133569976:web:0dcca3439958188439db4d",
-      measurementId: "G-2X69N31D9Q"
-    };
-
-    const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // ✅ Current products sold
-const PRODUCTS = [
-  "The Prickley",
-  "The Bleeder",
-  "The Simply",
-  "Coffee",
-  "Fries",
-  "Rim Job",
-  "Cream Pie",
-];
+    // ✅ Master product list/order (matches orders.html)
+    const PRODUCTS = [
+      // BURGERS
+      "Heart Stopper",
+      "Money Shot",
+      "The Simply",
+      "Double Shot",
+      "The Bleeder",
+      "The Prickley",
+      // WRAPS
+      "Chicken Wrap",
+      "Chicken Mexican",
+      "Goat Wrap",
+      // SIDES
+      "Fries",
+      "Onion Rings",
+      // DRINKS
+      "Soda",
+      "Coffee",
+      // DESSERTS
+      "Rim Job",
+      "Cream Pie",
+      "Ice Cream"
+    ];
 
-// ✅ Combo breakdowns
-const comboDetails = {
-  "The Bleeder Box": [
-    { name: "The Bleeder", quantity: 5 },
-    { name: "Fries", quantity: 5 },
-    { name: "Coffee", quantity: 10 },
-    { name: "Rim Job", quantity: 1 }
-  ],
-  "Patty Pounder Combo": [
-    { name: "The Prickley", quantity: 5 },
-    { name: "Coffee", quantity: 5 },
-    { name: "Cream Pie", quantity: 1 }
-  ],
-  "Big Buns Deal": [
-    { name: "The Simply", quantity: 10 },
-    { name: "Coffee", quantity: 15 },
-    { name: "Fries", quantity: 5 },
-    { name: "Rim Job", quantity: 1 }
-  ]
-};
+    // ✅ Combo breakdowns (synced with orders.html)
+    const comboDetails = {
+      "Big Buns Deal": [
+        { name: "The Simply", quantity: 10 },
+        { name: "Fries", quantity: 5 },
+        { name: "Coffee", quantity: 15 },
+        { name: "Rim Job", quantity: 1 }
+      ],
+      "The Bleeder Box": [
+        { name: "The Bleeder", quantity: 5 },
+        { name: "Fries", quantity: 5 },
+        { name: "Coffee", quantity: 10 },
+        { name: "Rim Job", quantity: 1 }
+      ]
+    };
 
-
-    function formatEST(timestamp) {
-      if (!timestamp) return "";
-      const d = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    function formatEST(ts) {
+      if (!ts) return "";
+      const d = ts.toDate ? ts.toDate() : new Date(ts);
       return d.toLocaleString("en-US", {
         timeZone: "America/New_York",
         year: "numeric",
@@ -150,17 +173,24 @@ const comboDetails = {
       }).replace(",", "");
     }
 
-    function parseItems(items) {
+    // Expand combos and total per-product counts
+    function parseItems(items = []) {
       const counts = {};
       PRODUCTS.forEach(p => counts[p] = 0);
 
-      (items || []).forEach(item => {
-        if (comboDetails[item.name]) {
-          comboDetails[item.name].forEach(comp => {
-            counts[comp.name] += comp.quantity * item.quantity;
+      items.forEach(item => {
+        const qty = Number(item.quantity || 0);
+        const name = item.name;
+        if (!qty) return;
+
+        if (comboDetails[name]) {
+          comboDetails[name].forEach(comp => {
+            if (counts[comp.name] !== undefined) {
+              counts[comp.name] += qty * Number(comp.quantity || 0);
+            }
           });
-        } else if (counts[item.name] !== undefined) {
-          counts[item.name] += item.quantity;
+        } else if (counts[name] !== undefined) {
+          counts[name] += qty;
         }
       });
 
@@ -173,44 +203,42 @@ const comboDetails = {
     function renderOrders(orders) {
       tbody.innerHTML = "";
       if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10">No orders found.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${3 + PRODUCTS.length + 2}">No orders found.</td></tr>`;
         return;
       }
 
       orders.forEach(order => {
-        const counts = parseItems(order.items);
+        const counts = parseItems(order.items || []);
         const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${formatEST(order.timestamp)}</td>
-          <td>${order.employee || "-"}</td>
-          <td>${order.customer || "-"}</td>
-          <td>${counts["The Prickley"] || 0}</td>
-          <td>${counts["The Bleeder"] || 0}</td>
-          <td>${counts["The Simply"] || 0}</td>
-          <td>${counts["Coffee"] || 0}</td>
-          <td>${counts["Fries"] || 0}</td>
-          <td>${counts["Rim Job"] || 0}</td>
-          <td>${counts["Cream Pie"] || 0}</td>
-          <td>$${order.total?.toFixed(2) || "0.00"}</td>
-          <td>${order.freeDessert ? "Yes 🍰" : ""}</td>
-        `;
+
+        // Build cells
+        const cells = [
+          formatEST(order.timestamp),
+          order.employee || "-",
+          order.customer || "-",
+          ...PRODUCTS.map(p => (Number(counts[p] || 0))),
+          (typeof order.total === "number" ? `$${order.total.toFixed(2)}` : "$0.00"),
+          (order.freeDessert ? "Yes 🍰" : "")
+        ];
+
+        tr.innerHTML = cells.map(v => `<td>${v}</td>`).join("");
         tbody.appendChild(tr);
       });
     }
 
-    const q = query(
+    // 🔎 Show only non-deleted orders, newest first
+    const qRef = query(
       collection(db, "orders"),
+      where("deleted", "==", false),
       orderBy("timestamp", "desc")
     );
 
-    onSnapshot(q, (snapshot) => {
-      ordersData = [];
-      snapshot.forEach(doc => {
-        ordersData.push(doc.data());
-      });
+    onSnapshot(qRef, (snapshot) => {
+      ordersData = snapshot.docs.map(d => d.data());
       renderOrders(ordersData);
     });
 
+    // CSV download
     document.getElementById("downloadCSV").addEventListener("click", () => {
       if (ordersData.length === 0) {
         alert("No orders to export!");
@@ -231,17 +259,22 @@ const comboDetails = {
     function convertOrdersToCSV(orders) {
       const header = ["Date", "Employee", "Customer", ...PRODUCTS, "Total", "Free Dessert?"];
       const rows = orders.map(order => {
-        const counts = parseItems(order.items);
+        const counts = parseItems(order.items || []);
         return [
           formatEST(order.timestamp),
-          order.employee,
-          order.customer,
-          ...PRODUCTS.map(p => counts[p] || 0),
-          order.total?.toFixed(2),
+          order.employee || "",
+          order.customer || "",
+          ...PRODUCTS.map(p => Number(counts[p] || 0)),
+          (typeof order.total === "number" ? order.total.toFixed(2) : "0.00"),
           order.freeDessert ? "Yes" : "No"
         ];
       });
-      return [header.join(","), ...rows.map(r => r.map(v => `"${v}"`).join(","))].join("\n");
+
+      // Quote each field to be safe for commas
+      return [
+        header.join(","),
+        ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(","))
+      ].join("\n");
     }
   </script>
 </body>

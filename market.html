@@ -253,6 +253,13 @@
           <td colspan="6">Food Stand</td>
         </tr>
         <tr>
+          <td>Bottled Corn Syrup</td>
+          <td><input type="number" min="0" value="0" data-ingredient="corn_syrup" class="pack-qty" /></td>
+          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+          <td class="subtotal">$0.00</td>
+          <td class="suggested"></td>
+        </tr>
+        <tr>
           <td>Flour Sack</td>
           <td><input type="number" min="0" value="0" data-ingredient="flour" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
@@ -312,7 +319,7 @@
           <td class="suggested"></td>
         </tr>
         <tr>
-          <td>Vanilla Bean</td>
+          <td>Vanilla Bean Bundle</td>
           <td><input type="number" min="0" value="0" data-ingredient="vanilla" class="pack-qty" /></td>
           <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
           <td class="subtotal">$0.00</td>
@@ -409,7 +416,8 @@ const ingredientNames = {
   chicken: "Chicken Package",
   bacon: "Bacon Package",
   coffee_beans: "Bag of Coffee",
-  vanilla: "Vanilla Bean",
+  corn_syrup: "Bottled Corn Syrup",
+  vanilla: "Vanilla Bean Bundle",
   ice_cream: "Ice Cream Tub",
   onion: "Onion Bundle",
   tomato: "Tomato Bundle",
@@ -584,7 +592,7 @@ async function setSuggestedPacks() {
   ice_cream: 2,
   vanilla: 4,
   coffee_beans: 56,
-  corn_syrup: 3,
+  corn_syrup: 2,
 };
 
   const inventory = await getLiveInventory();
