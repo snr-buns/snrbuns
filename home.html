@@ -252,286 +252,73 @@
       main { padding: 100px 1rem 1rem; margin-left: 0; }
     }
 
-    /* Plaque styles */
-    /* (paste the award-plaque CSS block from my previous message here) */
-  :root{
-    --plaque-bg: #fff8ef;
-    --plaque-grad1:#fff1dc;
-    --plaque-grad2:#ffe0b2;
-    --frame:#741b12;
-    --frame-dark:#4f0f0a;
-    --accent-red:#d71c24;
-    --accent-gold:#f7c948;
-    --accent-gold-deep:#d9a500;
-    --ink:#2b2b2b;
-    --ink-soft:#5a5a5a;
-    --shadow: 0 12px 30px rgba(0,0,0,.20);
-  }
-  @media (prefers-color-scheme: dark){
+    /* Plaque styles (unchanged) */
     :root{
-      --plaque-bg:#26150f;
-      --plaque-grad1:#321a13;
-      --plaque-grad2:#3b1f15;
-      --frame:#3a0b07;
-      --frame-dark:#2a0704;
-      --ink:#f1ece7;
-      --ink-soft:#d9d2ca;
-      --shadow: 0 12px 30px rgba(0,0,0,.6);
+      --plaque-bg: #fff8ef;
+      --plaque-grad1:#fff1dc;
+      --plaque-grad2:#ffe0b2;
+      --frame:#741b12;
+      --frame-dark:#4f0f0a;
+      --accent-red:#d71c24;
+      --accent-gold:#f7c948;
+      --accent-gold-deep:#d9a500;
+      --ink:#2b2b2b;
+      --ink-soft:#5a5a5a;
+      --shadow: 0 12px 30px rgba(0,0,0,.20);
     }
-  }
+    @media (prefers-color-scheme: dark){
+      :root{
+        --plaque-bg:#26150f;
+        --plaque-grad1:#321a13;
+        --plaque-grad2:#3b1f15;
+        --frame:#3a0b07;
+        --frame-dark:#2a0704;
+        --ink:#f1ece7;
+        --ink-soft:#d9d2ca;
+        --shadow: 0 12px 30px rgba(0,0,0,.6);
+      }
+    }
+    .award-plaque{ display:grid; place-items:center; padding:clamp(16px, 4vw, 36px); color:var(--ink); }
+    .plaque-frame{ width:min(950px, 95vw); background:linear-gradient(180deg, var(--plaque-grad1), var(--plaque-grad2)); border-radius:22px; border:6px solid var(--frame); box-shadow: var(--shadow); position:relative; overflow:hidden; }
+    .plaque-frame::before{ content:""; position:absolute; inset:0; background: radial-gradient(circle at 12px 12px, rgba(0,0,0,.08) 8px, transparent 9px) 0 0/24px 24px; opacity:.25; pointer-events:none; }
+    .plaque-header{ position:relative; text-align:center; padding: clamp(22px, 5vw, 38px) 16px 8px; background: radial-gradient(1200px 200px at 50% -30%, rgba(255,219,88,.45), transparent 70%), linear-gradient(180deg, rgba(215,28,36,.10), transparent); }
+    .plaque-title{ margin:0; line-height:1.05; letter-spacing: .02em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 0 30px rgba(215,28,36,.6), 0 0 12px rgba(255,208,0,.45); font-weight: 900; }
+    .title-top{ display:block; font-size: clamp(28px, 6vw, 56px); background: linear-gradient(180deg, #fff 0%, #ffe38a 60%, #ffc400 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 10px 20px rgba(255, 0, 0, .15); }
+    .title-sub{ display:block; margin-top: 6px; font-size: clamp(16px, 3.2vw, 28px); color: #fff6d1; letter-spacing: .25em; }
+    .ribbon{ position:absolute; top:18px; width:130px; height:26px; background: linear-gradient(180deg, var(--accent-red), #8e0f14); border:2px solid var(--frame-dark); filter: drop-shadow(0 8px 8px rgba(0,0,0,.25)); }
+    .ribbon.left{ left:14px; transform: skewX(-12deg); }
+    .ribbon.right{ right:14px; transform: skewX(12deg); }
+    .plaque-body{ display:grid; grid-template-columns: minmax(240px, 280px) 1fr; gap: clamp(16px, 3.5vw, 36px); padding: clamp(18px, 4.5vw, 34px); align-items:center; }
+    @media (max-width: 720px){ .plaque-body{ grid-template-columns: 1fr; text-align:center; } }
+    .winner-card{ margin:0; display:grid; gap:12px; justify-items:center; }
+    .winner-photo{ border-radius:18px; border:6px solid var(--accent-gold); outline: 3px solid var(--accent-gold-deep); box-shadow: 0 12px 24px rgba(0,0,0,.25), inset 0 0 0 4px #fff3; object-fit: cover; width:100%; height:auto; max-width:280px; aspect-ratio: 1/1; background: #ddd; }
+    .winner-meta{ display:grid; gap:2px; }
+    .winner-name{ font-weight:900; font-size: clamp(20px, 3.6vw, 28px); color: var(--frame); }
+    .winner-tagline{ color: var(--ink-soft); font-size: 14px; }
+    .winner-date{ font-size: 13px; color:#7a5d19; font-weight:700; }
+    .badges{ grid-column: 1 / -1; display:flex; flex-wrap:wrap; gap:12px; padding-top:6px; }
+    .badge{ display:inline-flex; align-items:center; gap:8px; background: linear-gradient(180deg, #fff7d6, #ffe184); border:2px solid var(--accent-gold-deep); border-radius:999px; padding:8px 12px; font-weight:700; font-size:14px; color:#5d3e00; box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+    .badge svg{ width:18px; height:18px; fill:#8b5e00; filter: drop-shadow(0 1px 0 #fff8); }
+    .plaque-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 0 18px 18px; }
+    .cta{ margin: 8px 0 0; background: linear-gradient(180deg, #ffd24a, #ffb300); color:#411000; font-weight:900; border:3px solid #a45a00; border-radius:14px; padding:10px 16px; cursor:pointer; text-transform: uppercase; letter-spacing:.06em; transition: transform .08s ease, filter .2s ease; box-shadow: 0 10px 18px rgba(0,0,0,.18); }
+    .cta:hover{ transform: translateY(-1px); filter: brightness(1.03); }
+    .cta:active{ transform: translateY(1px); }
+    .accent-line{ flex:1; height:10px; background: repeating-linear-gradient(90deg, #fff, #fff 12px, #000 12px, #000 24px); border-radius: 8px; border:2px solid #000; opacity:.35; }
 
-  .award-plaque{
-    display:grid;
-    place-items:center;
-    padding:clamp(16px, 4vw, 36px);
-    font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
-    color:var(--ink);
-  }
-
-  .plaque-frame{
-    width:min(950px, 95vw);
-    background:
-      linear-gradient(180deg, var(--plaque-grad1), var(--plaque-grad2));
-    border-radius:22px;
-    border:6px solid var(--frame);
-    box-shadow: var(--shadow);
-    position:relative;
-    overflow:hidden;
-  }
-
-  /* subtle checker edge for diner vibe */
-  .plaque-frame::before{
-    content:"";
-    position:absolute; inset:0;
-    background:
-      radial-gradient(circle at 12px 12px, rgba(0,0,0,.08) 8px, transparent 9px) 0 0/24px 24px;
-    opacity:.25;
-    pointer-events:none;
-  }
-
-  .plaque-header{
-    position:relative;
-    text-align:center;
-    padding: clamp(22px, 5vw, 38px) 16px 8px;
-    background:
-      radial-gradient(1200px 200px at 50% -30%, rgba(255,219,88,.45), transparent 70%),
-      linear-gradient(180deg, rgba(215,28,36,.10), transparent);
-  }
-
-  .plaque-title{
-    margin:0;
-    line-height:1.05;
-    letter-spacing: .02em;
-    text-transform: uppercase;
-    color: #fff;
-    text-shadow:
-      0 2px 0 rgba(0,0,0,.35),
-      0 0 30px rgba(215,28,36,.6),
-      0 0 12px rgba(255,208,0,.45);
-    font-weight: 900;
-  }
-  .title-top{
-    display:block;
-    font-size: clamp(28px, 6vw, 56px);
-    background: linear-gradient(180deg, #fff 0%, #ffe38a 60%, #ffc400 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    text-shadow:
-      0 2px 0 rgba(0,0,0,.35),
-      0 10px 20px rgba(255, 0, 0, .15);
-  }
-  .title-sub{
-    display:block;
-    margin-top: 6px;
-    font-size: clamp(16px, 3.2vw, 28px);
-    color: #fff6d1;
-    letter-spacing: .25em;
-  }
-
-  .ribbon{
-    position:absolute; top:18px; width:130px; height:26px;
-    background: linear-gradient(180deg, var(--accent-red), #8e0f14);
-    border:2px solid var(--frame-dark);
-    filter: drop-shadow(0 8px 8px rgba(0,0,0,.25));
-  }
-  .ribbon.left{ left:14px; transform: skewX(-12deg); }
-  .ribbon.right{ right:14px; transform: skewX(12deg); }
-
-  .plaque-body{
-    display:grid;
-    grid-template-columns: minmax(240px, 280px) 1fr;
-    gap: clamp(16px, 3.5vw, 36px);
-    padding: clamp(18px, 4.5vw, 34px);
-    align-items:center;
-  }
-  @media (max-width: 720px){
-    .plaque-body{ grid-template-columns: 1fr; text-align:center; }
-  }
-
-  .winner-card{
-    margin:0;
-    display:grid;
-    gap:12px;
-    justify-items:center;
-  }
-  .winner-photo{
-    border-radius:18px;
-    border:6px solid var(--accent-gold);
-    outline: 3px solid var(--accent-gold-deep);
-    box-shadow: 0 12px 24px rgba(0,0,0,.25), inset 0 0 0 4px #fff3;
-    object-fit: cover;
-    width:100%;
-    height:auto;
-    max-width:280px;
-    aspect-ratio: 1/1;
-    background: #ddd;
-  }
-  .winner-meta{
-    display:grid; gap:2px;
-  }
-  .winner-name{
-    font-weight:900;
-    font-size: clamp(20px, 3.6vw, 28px);
-    color: var(--frame);
-  }
-  .winner-tagline{
-    color: var(--ink-soft);
-    font-size: 14px;
-  }
-  .winner-date{
-    font-size: 13px;
-    color:#7a5d19;
-    font-weight:700;
-  }
-
-  .blurb{
-    font-size: clamp(15px, 2.4vw, 17px);
-    line-height:1.6;
-    background: #fff9;
-    border:1px solid #00000010;
-    border-radius:14px;
-    padding:16px 18px;
-  }
-
-  .badges{
-    grid-column: 1 / -1;
-    display:flex; flex-wrap:wrap; gap:12px;
-    padding-top:6px;
-  }
-  .badge{
-    display:inline-flex; align-items:center; gap:8px;
-    background: linear-gradient(180deg, #fff7d6, #ffe184);
-    border:2px solid var(--accent-gold-deep);
-    border-radius:999px;
-    padding:8px 12px;
-    font-weight:700; font-size:14px;
-    color:#5d3e00;
-    box-shadow: 0 6px 14px rgba(0,0,0,.15);
-  }
-  .badge svg{
-    width:18px; height:18px; fill:#8b5e00;
-    filter: drop-shadow(0 1px 0 #fff8);
-  }
-
-  .plaque-footer{
-    display:flex; align-items:center; justify-content:space-between;
-    gap:12px;
-    padding: 0 18px 18px;
-  }
-  .cta{
-    margin: 8px 0 0;
-    background:
-      linear-gradient(180deg, #ffd24a, #ffb300);
-    color:#411000;
-    font-weight:900;
-    border:3px solid #a45a00;
-    border-radius:14px;
-    padding:10px 16px;
-    cursor:pointer;
-    text-transform: uppercase;
-    letter-spacing:.06em;
-    transition: transform .08s ease, filter .2s ease;
-    box-shadow: 0 10px 18px rgba(0,0,0,.18);
-  }
-  .cta:hover{ transform: translateY(-1px); filter: brightness(1.03); }
-  .cta:active{ transform: translateY(1px); }
-
-  .accent-line{
-    flex:1;
-    height:10px;
-    background:
-      repeating-linear-gradient(90deg, #fff, #fff 12px, #000 12px, #000 24px);
-    border-radius: 8px;
-    border:2px solid #000;
-    opacity:.35;
-  }
-  .plaque-frame{
-  width: min(680px, 92vw);     /* smaller overall */
-  border-width: 5px;
-}
-
-.plaque-header{
-  padding: 18px 12px 6px;      /* tighter header */
-}
-
-.title-top{
-  font-size: clamp(22px, 5vw, 40px); /* smaller main title */
-}
-.title-sub{
-  font-size: clamp(13px, 2.6vw, 20px); /* smaller sub title */
-  letter-spacing: .2em;
-}
-
-/* Center the body & switch to single column */
-.plaque-body{
-  grid-template-columns: 1fr;  /* single column */
-  justify-items: center;       /* center content horizontally */
-  text-align: center;          /* center text */
-  gap: 14px;
-  padding: 16px 18px 18px;
-}
-
-/* Winner card tighter + centered */
-.winner-card{
-  gap: 8px;
-  justify-items: center;
-}
-
-.winner-photo{
-  max-width: 220px;            /* smaller photo */
-  border-width: 5px;
-  outline-width: 2px;
-}
-
-.winner-name{
-  font-size: clamp(18px, 3.2vw, 24px);
-}
-.winner-tagline, .winner-date{
-  font-size: 12px;
-}
-
-/* If you removed the blurb, tighten badges spacing too */
-.badges{
-  padding-top: 4px;
-  justify-content: center;     /* center badges row */
-  gap: 10px;
-}
-
-.badge{
-  padding: 6px 10px;
-  font-size: 13px;
-  border-width: 2px;
-}
-
-.plaque-footer{
-  padding: 0 14px 14px;
-}
-.cta{
-  padding: 8px 14px;
-  border-width: 2px;
-  font-size: 0.9rem;
-}
+    /* compact plaque tweaks */
+    .plaque-frame{ width: min(680px, 92vw); border-width: 5px; }
+    .plaque-header{ padding: 18px 12px 6px; }
+    .title-top{ font-size: clamp(22px, 5vw, 40px); }
+    .title-sub{ font-size: clamp(13px, 2.6vw, 20px); letter-spacing: .2em; }
+    .plaque-body{ grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 14px; padding: 16px 18px 18px; }
+    .winner-card{ gap: 8px; justify-items: center; }
+    .winner-photo{ max-width: 220px; border-width: 5px; outline-width: 2px; }
+    .winner-name{ font-size: clamp(18px, 3.2vw, 24px); }
+    .winner-tagline, .winner-date{ font-size: 12px; }
+    .badges{ padding-top: 4px; justify-content: center; gap: 10px; }
+    .badge{ padding: 6px 10px; font-size: 13px; border-width: 2px; }
+    .plaque-footer{ padding: 0 14px 14px; }
+    .cta{ padding: 8px 14px; border-width: 2px; font-size: 0.9rem; }
   </style>
 </head>
 <body>
@@ -571,9 +358,7 @@
         </p>
       </header>
 
-      <!-- Award Plaque section -->
-      
-
+      <!-- Quick stats: removed Total Visits card -->
       <section class="quick-stats" aria-label="Key statistics summary">
         <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
           <p>Orders Today</p>
@@ -583,11 +368,8 @@
           <p>Low Stock Items</p>
           <h3 id="lowStockCount">0</h3>
         </div>
-        <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
-          <p>Total Visits</p>
-          <h3 id="loyaltyVisits">0</h3>
-        </div>
       </section>
+
       <section class="quick-nav" aria-label="Quick navigation links">
         <a href="register.html">🖋️ Register</a>
         <a href="orders.html">📋 Orders</a>
@@ -596,226 +378,219 @@
         <a href="staffmeals.html">🍽️ Staff Meals</a>
         <a href="loyalty.html">🎁 Customers</a>
       </section>
+
+      <!-- Award Plaque -->
       <section class="award-plaque" aria-labelledby="plaque-title">
-  <div class="plaque-frame">
-    <div class="plaque-header">
-      <span class="ribbon left" aria-hidden="true"></span>
-      <h2 id="plaque-title" class="plaque-title">
-        <span class="title-top">Patty Slinger</span>
-        <span class="title-sub">of the Month</span>
-      </h2>
-      <span class="ribbon right" aria-hidden="true"></span>
-    </div>
+        <div class="plaque-frame">
+          <div class="plaque-header">
+            <span class="ribbon left" aria-hidden="true"></span>
+            <h2 id="plaque-title" class="plaque-title">
+              <span class="title-top">Patty Slinger</span>
+              <span class="title-sub">of the Month</span>
+            </h2>
+            <span class="ribbon right" aria-hidden="true"></span>
+          </div>
 
-    <div class="plaque-body">
-      <figure class="winner-card">
-        <img
-          src="assets/images/Jack.png"
-          alt="Portrait of Jack Crumble"
-          class="winner-photo"
-          width="240" height="240"
-          loading="lazy"
-        />
-        <figcaption class="winner-meta">
-          <div class="winner-name">Jack Crumble</div>
-          <div class="winner-tagline">Our inaugural Patty Slinger</div>
-          <div class="winner-date">October 2025</div>
-        </figcaption>
-      </figure>
+          <div class="plaque-body">
+            <figure class="winner-card">
+              <img
+                src="assets/images/Jack.png"
+                alt="Portrait of Jack Crumble"
+                class="winner-photo"
+                width="240" height="240"
+                loading="lazy"
+              />
+              <figcaption class="winner-meta">
+                <div class="winner-name">Jack Crumble</div>
+                <div class="winner-tagline">Our inaugural Patty Slinger</div>
+                <div class="winner-date">October 2025</div>
+              </figcaption>
+            </figure>
 
-      <div class="badges">
-        <!-- Burger trophy SVG -->
-        <span class="badge" aria-label="Burger Trophy" title="Burger Trophy">
-          <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
-            <path d="M10 8h44v8a10 10 0 0 1-10 10H20A10 10 0 0 1 10 16V8z" />
-            <rect x="14" y="30" width="36" height="6" rx="3" />
-            <rect x="12" y="38" width="40" height="8" rx="4" />
-            <rect x="18" y="48" width="28" height="4" rx="2" />
-          </svg>
-          <span>150+ Orders</span>
-        </span>
+            <div class="badges">
+              <span class="badge" aria-label="Burger Trophy" title="Burger Trophy">
+                <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+                  <path d="M10 8h44v8a10 10 0 0 1-10 10H20A10 10 0 0 1 10 16V8z" />
+                  <rect x="14" y="30" width="36" height="6" rx="3" />
+                  <rect x="12" y="38" width="40" height="8" rx="4" />
+                  <rect x="18" y="48" width="28" height="4" rx="2" />
+                </svg>
+                <span>150+ Orders</span>
+              </span>
 
-        <span class="badge" aria-label="Activity Star" title="Activity Star">
-          <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
-            <path d="M32 6l7.7 15.6 17.3 2.5-12.5 12.2 3 17.1L32 45.9 16.5 53.4l3-17.1L7 24.1l17.3-2.5L32 6z"/>
-          </svg>
-          <span>80+ Hours</span>
-        </span>
-      </div>
-    </div>
+              <span class="badge" aria-label="Activity Star" title="Activity Star">
+                <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+                  <path d="M32 6l7.7 15.6 17.3 2.5-12.5 12.2 3 17.1L32 45.9 16.5 53.4l3-17.1L7 24.1l17.3-2.5L32 6z"/>
+                </svg>
+                <span>80+ Hours</span>
+              </span>
+            </div>
+          </div>
 
-    <div class="plaque-footer">
-      <div class="accent-line" aria-hidden="true"></div>
-    </div>
-  </div>
+          <div class="plaque-footer">
+            <div class="accent-line" aria-hidden="true"></div>
+          </div>
+        </div>
       </section>
+
       <section class="recent-orders" aria-label="Recent orders">
         <h2>🧾 Recent Orders</h2>
-        <ul id="recentOrdersList" tabindex="0">
-          <!-- Populated by JS -->
-        </ul>
+        <ul id="recentOrdersList" tabindex="0"></ul>
       </section>
+
       <section class="alerts" aria-label="Inventory alerts">
         <h2>⚠️ Inventory Alerts</h2>
-        <ul id="inventoryAlertsList">
-          <!-- Populated by JS -->
-        </ul>
+        <ul id="inventoryAlertsList"></ul>
       </section>
     </main>
   </div>
 
- <script type="module">
-import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  onSnapshot,
-  doc,
-  Timestamp
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-import { app } from "./auth.js";
+  <script type="module">
+    import {
+      getFirestore,
+      collection,
+      query,
+      where,
+      orderBy,
+      limit,
+      onSnapshot,
+      doc,
+      Timestamp
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    import { app } from "./auth.js";
 
-const db = getFirestore(app);
-const LOW_STOCK_THRESHOLD = 21;
+    const db = getFirestore(app);
+    const LOW_STOCK_THRESHOLD = 21;
 
-/* ===== Date Helpers ===== */
-function isSameDayEST(date) {
-  if (!date) return false;
-  const estDate = new Date(date.toLocaleString("en-US", { timeZone: "America/New_York" }));
-  const todayEST = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-  return estDate.toDateString() === todayEST.toDateString();
-}
+    /* ===== Date Helpers ===== */
+    function isSameDayEST(date) {
+      if (!date) return false;
+      const estDate = new Date(date.toLocaleString("en-US", { timeZone: "America/New_York" }));
+      const todayEST = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+      return estDate.toDateString() === todayEST.toDateString();
+    }
 
-function formatDate(date) {
-  if (!date) return "-";
-  return date.toLocaleString("en-US", {
-    timeZone: "America/New_York",
-    month: "2-digit",
-    day: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true
-  }).replace(",", "");
-}
+    function formatDate(date) {
+      if (!date) return "-";
+      return date.toLocaleString("en-US", {
+        timeZone: "America/New_York",
+        month: "2-digit",
+        day: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      }).replace(",", "");
+    }
 
-/* Start-of-day (today) in EST as Firestore Timestamp */
-function startOfDayEST_Timestamp() {
-  const now = new Date();
-  const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
-  estNow.setHours(0, 0, 0, 0);
-  return Timestamp.fromDate(estNow);
-}
+    function startOfDayEST_Timestamp() {
+      const now = new Date();
+      const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+      estNow.setHours(0, 0, 0, 0);
+      return Timestamp.fromDate(estNow);
+    }
 
-/* ===== UI Updates ===== */
-function updateInventoryUI(inventory) {
-  // Effective patties = patties + ground beef packs × 5
-  const patties = Number(inventory.burger_patties || 0);
-  const groundBeefPacks = Number(inventory.ground_beef || 0);
-  const effectivePatties = patties + (groundBeefPacks * 5);
+    /* ===== UI Updates ===== */
+    function updateInventoryUI(inventory) {
+      const patties = Number(inventory.burger_patties || 0);
+      const groundBeefPacks = Number(inventory.ground_beef || 0);
+      const effectivePatties = patties + (groundBeefPacks * 5);
 
-  const adjustedInventory = { ...inventory, ground_beef: effectivePatties };
+      const adjustedInventory = { ...inventory, ground_beef: effectivePatties };
 
-  // Low stock count
-  const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => Number(qty) < LOW_STOCK_THRESHOLD);
-  document.getElementById("lowStockCount").textContent = lowStock.length;
+      const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => Number(qty) < LOW_STOCK_THRESHOLD);
+      document.getElementById("lowStockCount").textContent = lowStock.length;
 
-  const ingredients = {
-    flour: "Flour Sack",
-    burger_buns: "Package of Buns",
-    sugar: "Sugar Sack",
-    lettuce: "Lettuce Head",
-    potato: "Potato Sack",
-    cheese_slices: "Packaged Cheese",
-    ground_beef: "Packaged Ground Beef",
-    chicken: "Chicken Package",
-    bacon: "Bacon Package",
-    coffee_beans: "Bag of Coffee",
-    corn_syrup: "Bottled Corn Syrup",
-    vanilla: "Vanilla Bean Bundle",
-    ice_cream: "Ice Cream Tub",
-    onion: "Onion Bundle",
-    tomato: "Tomato Bundle",
-    tortilla: "Tortilla Package",
-    goat_cheese: "Goat Cheese"
-  };
+      const ingredients = {
+        flour: "Flour Sack",
+        burger_buns: "Package of Buns",
+        sugar: "Sugar Sack",
+        lettuce: "Lettuce Head",
+        potato: "Potato Sack",
+        cheese_slices: "Packaged Cheese",
+        ground_beef: "Packaged Ground Beef",
+        chicken: "Chicken Package",
+        bacon: "Bacon Package",
+        coffee_beans: "Bag of Coffee",
+        corn_syrup: "Bottled Corn Syrup",
+        vanilla: "Vanilla Bean Bundle",
+        ice_cream: "Ice Cream Tub",
+        onion: "Onion Bundle",
+        tomato: "Tomato Bundle",
+        tortilla: "Tortilla Package",
+        goat_cheese: "Goat Cheese"
+      };
 
-  const alertsList = document.getElementById("inventoryAlertsList");
-  alertsList.innerHTML = "";
-  if (lowStock.length === 0) {
-    alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
-  } else {
-    lowStock.forEach(([key]) => {
-      const li = document.createElement("li");
-      li.textContent = `⚠️ Low stock: ${ingredients[key] || key}`;
-      alertsList.appendChild(li);
+      const alertsList = document.getElementById("inventoryAlertsList");
+      alertsList.innerHTML = "";
+      if (lowStock.length === 0) {
+        alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
+      } else {
+        lowStock.forEach(([key]) => {
+          const li = document.createElement("li");
+          li.textContent = `⚠️ Low stock: ${ingredients[key] || key}`;
+          alertsList.appendChild(li);
+        });
+      }
+    }
+
+    function updateOrdersUI(ordersTodayOnly) {
+      document.getElementById("ordersToday").textContent = ordersTodayOnly.length;
+
+      const list = document.getElementById("recentOrdersList");
+      list.innerHTML = "";
+      const last5 = ordersTodayOnly.slice(0, 5);
+      if (last5.length === 0) {
+        list.innerHTML = `<li>No orders placed yet.</li>`;
+      } else {
+        last5.forEach(order => {
+          const li = document.createElement("li");
+          const clearedLabel = order.deleted ? " ✅ Completed" : "";
+          const total = typeof order.total === "number" ? order.total.toFixed(2) : "0.00";
+          li.textContent = `${formatDate(order.timestamp)} - ${order.customer || "-"} (Total: $${total})${clearedLabel}`;
+          list.appendChild(li);
+        });
+      }
+    }
+
+    /* ===== Live Listeners ===== */
+
+    // Inventory
+    onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
+      if (docSnap.exists()) updateInventoryUI(docSnap.data());
     });
-  }
-}
 
-function updateOrdersUI(ordersTodayOnly) {
-  // Orders today
-  document.getElementById("ordersToday").textContent = ordersTodayOnly.length;
+    // Orders Today (non-deleted), newest first
+    const qHome = query(
+      collection(db, "orders"),
+      where("deleted", "==", false),
+      where("timestamp", ">=", startOfDayEST_Timestamp()),
+      orderBy("timestamp", "desc"),
+      limit(200)
+    );
 
-  // Recent orders (today)
-  const list = document.getElementById("recentOrdersList");
-  list.innerHTML = "";
-  const last5 = ordersTodayOnly.slice(0, 5);
-  if (last5.length === 0) {
-    list.innerHTML = `<li>No orders placed yet.</li>`;
-  } else {
-    last5.forEach(order => {
-      const li = document.createElement("li");
-      const clearedLabel = order.deleted ? " ✅ Completed" : "";
-      const total = typeof order.total === "number" ? order.total.toFixed(2) : "0.00";
-      li.textContent = `${formatDate(order.timestamp)} - ${order.customer || "-"} (Total: $${total})${clearedLabel}`;
-      list.appendChild(li);
+    onSnapshot(qHome, (snapshot) => {
+      let orders = snapshot.docs.map(d => {
+        const data = d.data();
+        const ts = data.timestamp?.toDate?.() || (data.timestamp ? new Date(data.timestamp) : null);
+        return { ...data, id: d.id, timestamp: ts };
+      });
+
+      // Defensive filter for EST day boundaries
+      orders = orders.filter(o => isSameDayEST(o.timestamp));
+      updateOrdersUI(orders);
     });
-  }
-}
 
-/* ===== Live Listeners ===== */
+    // (Total Visits removed)
+  </script>
 
-/* Inventory */
-onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
-  if (docSnap.exists()) updateInventoryUI(docSnap.data());
-});
-
-/* Orders Today (non-deleted), newest first
-   Note: This assumes timestamp is a Firestore Timestamp for current orders (as in your register.html).
-   If you still have some legacy ISO strings, we also defensively filter by day below. */
-const qHome = query(
-  collection(db, "orders"),
-  where("deleted", "==", false),
-  where("timestamp", ">=", startOfDayEST_Timestamp()),
-  orderBy("timestamp", "desc"),
-  limit(200)
-);
-
-onSnapshot(qHome, (snapshot) => {
-  // Map to plain objects and convert timestamp → JS Date
-  let orders = snapshot.docs.map(d => {
-    const data = d.data();
-    const ts = data.timestamp?.toDate?.() || (data.timestamp ? new Date(data.timestamp) : null);
-    return { ...data, id: d.id, timestamp: ts };
-  });
-
-  // Defensive: ensure they're truly "today" in EST (covers any odd timestamps)
-  orders = orders.filter(o => isSameDayEST(o.timestamp));
-
-  updateOrdersUI(orders);
-});
-
-/* ✅ TOTAL VISITS = ALL orders ever (includes soft-deleted), as requested */
-const qAllVisits = query(collection(db, "orders"));
-onSnapshot(qAllVisits, (snapshot) => {
-  document.getElementById("loyaltyVisits").textContent = snapshot.size;
-});
-</script>
-
-
+  <script>
+    const menuBtn = document.getElementById("menuToggle");
+    const sidebar = document.querySelector(".sidebar");
+    menuBtn.addEventListener("click", () => {
+      sidebar.classList.toggle("active");
+      menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
+    });
+  </script>
 </body>
 </html>
