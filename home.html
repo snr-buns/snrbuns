@@ -672,15 +672,13 @@ import {
   where,
   orderBy,
   limit,
-  updateDoc,
-  doc,
   onSnapshot,
+  doc,
   Timestamp
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+import { app } from "./auth.js";
 
-import { app } from "./auth.js"; // reuses the initialized app
 const db = getFirestore(app);
-
 const LOW_STOCK_THRESHOLD = 21;
 
 /* ===== Date Helpers ===== */
@@ -704,7 +702,7 @@ function formatDate(date) {
   }).replace(",", "");
 }
 
-/* 👇 NEW: start-of-day in EST for today */
+/* Start-of-day (today) in EST as Firestore Timestamp */
 function startOfDayEST_Timestamp() {
   const now = new Date();
   const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
@@ -712,37 +710,37 @@ function startOfDayEST_Timestamp() {
   return Timestamp.fromDate(estNow);
 }
 
-/* ===== UI Update Functions ===== */
+/* ===== UI Updates ===== */
 function updateInventoryUI(inventory) {
   // Effective patties = patties + ground beef packs × 5
   const patties = Number(inventory.burger_patties || 0);
-  const groundBeef = Number(inventory.ground_beef || 0);
-  const effectivePatties = patties + (groundBeef * 5);
+  const groundBeefPacks = Number(inventory.ground_beef || 0);
+  const effectivePatties = patties + (groundBeefPacks * 5);
 
   const adjustedInventory = { ...inventory, ground_beef: effectivePatties };
 
-  // Low stock
-  const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => qty < LOW_STOCK_THRESHOLD);
+  // Low stock count
+  const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => Number(qty) < LOW_STOCK_THRESHOLD);
   document.getElementById("lowStockCount").textContent = lowStock.length;
 
   const ingredients = {
-  flour: "Flour Sack",
-  burger_buns: "Package of Buns",
-  sugar: "Sugar Sack",
-  lettuce: "Lettuce Head",
-  potato: "Potato Sack",
-  cheese_slices: "Packaged Cheese",
-  ground_beef: "Packaged Ground Beef",
-  chicken: "Chicken Package",
-  bacon: "Bacon Package",
-  coffee_beans: "Bag of Coffee",
-  corn_syrup: "Bottled Corn Syrup",
-  vanilla: "Vanilla Bean Bundle",
-  ice_cream: "Ice Cream Tub",
-  onion: "Onion Bundle",
-  tomato: "Tomato Bundle",
-  tortilla: "Tortilla Package",
-  goat_cheese: "Goat Cheese"
+    flour: "Flour Sack",
+    burger_buns: "Package of Buns",
+    sugar: "Sugar Sack",
+    lettuce: "Lettuce Head",
+    potato: "Potato Sack",
+    cheese_slices: "Packaged Cheese",
+    ground_beef: "Packaged Ground Beef",
+    chicken: "Chicken Package",
+    bacon: "Bacon Package",
+    coffee_beans: "Bag of Coffee",
+    corn_syrup: "Bottled Corn Syrup",
+    vanilla: "Vanilla Bean Bundle",
+    ice_cream: "Ice Cream Tub",
+    onion: "Onion Bundle",
+    tomato: "Tomato Bundle",
+    tortilla: "Tortilla Package",
+    goat_cheese: "Goat Cheese"
   };
 
   const alertsList = document.getElementById("inventoryAlertsList");
@@ -752,38 +750,28 @@ function updateInventoryUI(inventory) {
   } else {
     lowStock.forEach(([key]) => {
       const li = document.createElement("li");
-      li.textContent = `⚠️ Low stock: ${ingredients[key]}`;
+      li.textContent = `⚠️ Low stock: ${ingredients[key] || key}`;
       alertsList.appendChild(li);
     });
   }
 }
 
-function updateOrdersUI(orders) {
-  // Orders today (we already query only today, but keep this just in case)
-  const ordersToday = orders.filter(order => isSameDayEST(order.timestamp));
-  document.getElementById("ordersToday").textContent = ordersToday.length;
+function updateOrdersUI(ordersTodayOnly) {
+  // Orders today
+  document.getElementById("ordersToday").textContent = ordersTodayOnly.length;
 
-  // Total visits (count of orders per-customer in today's set)
-  const counts = {};
-  orders.forEach(order => {
-    const customer = order.customer?.toLowerCase()?.trim();
-    if (customer) counts[customer] = (counts[customer] || 0) + 1;
-  });
-  const totalVisits = Object.values(counts).reduce((sum, v) => sum + v, 0);
-  document.getElementById("loyaltyVisits").textContent = totalVisits;
-
-  // Recent orders list (from today's set)
+  // Recent orders (today)
   const list = document.getElementById("recentOrdersList");
   list.innerHTML = "";
-  const last5 = orders.slice(0, 5);
+  const last5 = ordersTodayOnly.slice(0, 5);
   if (last5.length === 0) {
     list.innerHTML = `<li>No orders placed yet.</li>`;
   } else {
     last5.forEach(order => {
       const li = document.createElement("li");
-      // we query only deleted:false, so this label should rarely show, but it's fine to keep
       const clearedLabel = order.deleted ? " ✅ Completed" : "";
-      li.textContent = `${formatDate(order.timestamp)} - ${order.customer} (Total: $${order.total.toFixed(2)})${clearedLabel}`;
+      const total = typeof order.total === "number" ? order.total.toFixed(2) : "0.00";
+      li.textContent = `${formatDate(order.timestamp)} - ${order.customer || "-"} (Total: $${total})${clearedLabel}`;
       list.appendChild(li);
     });
   }
@@ -791,30 +779,43 @@ function updateOrdersUI(orders) {
 
 /* ===== Live Listeners ===== */
 
-/* Inventory (unchanged) */
+/* Inventory */
 onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
   if (docSnap.exists()) updateInventoryUI(docSnap.data());
 });
 
-/* ✅ Orders: only NOT-deleted & only TODAY in EST, capped */
+/* Orders Today (non-deleted), newest first
+   Note: This assumes timestamp is a Firestore Timestamp for current orders (as in your register.html).
+   If you still have some legacy ISO strings, we also defensively filter by day below. */
 const qHome = query(
   collection(db, "orders"),
   where("deleted", "==", false),
   where("timestamp", ">=", startOfDayEST_Timestamp()),
   orderBy("timestamp", "desc"),
-  limit(200) // adjust as needed
+  limit(200)
 );
 
 onSnapshot(qHome, (snapshot) => {
-  const orders = snapshot.docs.map(d => {
+  // Map to plain objects and convert timestamp → JS Date
+  let orders = snapshot.docs.map(d => {
     const data = d.data();
-    // convert Firestore Timestamp to JS Date for your formatting helpers
-    const ts = data.timestamp?.toDate?.() || null;
+    const ts = data.timestamp?.toDate?.() || (data.timestamp ? new Date(data.timestamp) : null);
     return { ...data, id: d.id, timestamp: ts };
   });
+
+  // Defensive: ensure they're truly "today" in EST (covers any odd timestamps)
+  orders = orders.filter(o => isSameDayEST(o.timestamp));
+
   updateOrdersUI(orders);
 });
+
+/* ✅ TOTAL VISITS = ALL orders ever (includes soft-deleted), as requested */
+const qAllVisits = query(collection(db, "orders"));
+onSnapshot(qAllVisits, (snapshot) => {
+  document.getElementById("loyaltyVisits").textContent = snapshot.size;
+});
 </script>
+
 
 </body>
 </html>
