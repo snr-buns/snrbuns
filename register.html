@@ -576,6 +576,15 @@
 </p>
       <div class="item-grid">
   <!-- Combos -->
+   <div class="item-card" data-name="Daisy Family Box" data-price="2500" data-category="Combos" data-image="assets/images/combo.png">
+  <img src="assets/images/patty-slinger.png" alt="Daisy Family Box" />
+  <h3>Daisy Family Box</h3>
+  <p>$2500</p> <!-- TODO: set price when you’re ready -->
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
    <div class="item-card" data-name="Big Buns Deal" data-price="1700" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="Big Buns Deal" />
     <h3>Big Buns Deal</h3>
@@ -959,7 +968,7 @@ subscribeCustomerSuggestions();
 /* --------------------------- products, combos, inventory --------------------------- */
 const productIngredients = {
   "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+  "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
   "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
   "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
   "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
@@ -975,6 +984,7 @@ const productIngredients = {
   "Rim Job": { sugar: 1, flour: 1 },
   "Cream Pie": { sugar: 1, flour: 1 }
 };
+
 const comboDetails = {
   "Big Buns Deal": {
     price: 1700,
@@ -1003,6 +1013,7 @@ const comboDetails = {
     ]
   }
 };
+
 const ingredientLabels = {
   burger_buns: "burger buns",
   burger_patties: "burger patties",
@@ -1024,6 +1035,23 @@ const ingredientLabels = {
   tomato: "tomato"
 };
 
+/* --------------------------- DAISY: config --------------------------- */
+const DAISY_NAME = "Daisy Family Box";
+const DAISY_BURGERS_PER_BOX = 15;
+const DAISY_EXTRAS = [
+  { name: "Coffee", quantity: 20 },
+  { name: "Cream Pie", quantity: 5 }
+];
+const DAISY_BURGER_OPTIONS = [
+  "The Bleeder",
+  "The Prickley",
+  "The Simply",
+  "Heart Stopper",
+  "Money Shot",
+  "Double Shot"
+];
+
+/* --------------------------- inventory helpers --------------------------- */
 async function getInventory() {
   const snap = await getDoc(doc(db, "inventory", "current"));
   return snap.exists() ? snap.data() : {};
@@ -1054,16 +1082,16 @@ async function upsertPassOnPayment({ customerName, passType, price }) {
   const key = loyaltyKey(customerName);
   const id = passDocId(key, passType);
   const ref = doc(db, "passes", id);
-  const snap = await getDoc(ref);
+  await getDoc(ref); // read (kept from your flow)
   const now = new Date();
 
-  const start = now; // simple model: start now; extend by resetting end window
-  const endDate = addDays(start, 30); // change to 31 if you prefer calendar months
+  const start = now;
+  const endDate = addDays(start, 30);
 
   await setDoc(ref, {
     customer: toTitleCase(customerName),
     key,
-    type: passType,                 // 'bleeder' | 'bigbuns' | 'pounder'
+    type: passType,
     startDate: Timestamp.fromDate(start),
     endDate: Timestamp.fromDate(endDate),
     active: true,
@@ -1082,7 +1110,7 @@ async function listActivePasses(search = "") {
     const x = d.data();
     if (!x.active) return;
     const end = x.endDate?.toDate?.() || new Date(0);
-    if (end < new Date()) return; // expired
+    if (end < new Date()) return;
     const name = x.customer || "";
     if (search && !name.toLowerCase().includes(search.trim().toLowerCase())) return;
     out.push({ id: d.id, name, type: x.type });
@@ -1106,10 +1134,8 @@ function itemsForPassType(type, qty = 1) {
 
 /* --------------------------- redeem ticket (no daily tracking) --------------------------- */
 async function redeemPassTicket({ passId, passType, employee, customer, qty = 1 }) {
-  // Build items with desired qty
   const items = itemsForPassType(passType, qty);
 
-  // Deduct inventory
   const inv = await getInventory();
   const totalNeeded = {};
   items.forEach(item => {
@@ -1133,7 +1159,6 @@ async function redeemPassTicket({ passId, passType, employee, customer, qty = 1 
   }
   await saveInventory(inv);
 
-  // Save a $0 kitchen order
   await addDoc(collection(db, "orders"), {
     employee: toTitleCase(employee),
     customer: toTitleCase(customer),
@@ -1144,12 +1169,10 @@ async function redeemPassTicket({ passId, passType, employee, customer, qty = 1 
     timestamp: Timestamp.now(),
     done: false,
     deleted: false,
-    kitchen: true,          // goes to kitchen
+    kitchen: true,
     isPassRedemption: true,
     passType
   });
-
-  // No daily mark/log — unlimited redemptions allowed
 }
 
 /* --------------------------- UI state --------------------------- */
@@ -1165,6 +1188,61 @@ const discountModal = document.getElementById("discountModal");
 const yesBtn = discountModal.querySelector(".yes-btn");
 const noBtn = discountModal.querySelector(".no-btn");
 let discountToApply = null;
+
+/* --------------------------- DAISY: modal (auto-inject if missing) --------------------------- */
+function ensureDaisyModal() {
+  if (document.getElementById("daisyModal")) return;
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+<div id="daisyModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1250;">
+  <div style="background:#fff; padding:20px; border-radius:12px; width:420px; max-height:80vh; overflow:auto; font-weight:700;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="font-size:1.2rem;">Daisy Family Box</div>
+      <button id="daisyClose" style="border:none; border-radius:8px; padding:6px 10px; background:#f44336; color:#fff; font-weight:800; cursor:pointer;">Close</button>
+    </div>
+
+    <div style="margin:14px 0; display:flex; flex-direction:column; gap:8px;">
+      <label for="daisyOneSelect" style="font-weight:800;">Choose burger (x${DAISY_BURGERS_PER_BOX} per box):</label>
+      <select id="daisyOneSelect" style="border:2px solid #c82333; border-radius:8px; padding:10px; font-weight:800;">
+        <option value="">— choose a burger —</option>
+      </select>
+      <div style="font-weight:600; color:#555;">
+        Each box also includes 20 coffees and 5 cream pies automatically.
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
+      <button id="daisyConfirm" style="border:none; border-radius:8px; padding:10px 16px; background:#4caf50; color:#fff; font-weight:900; cursor:pointer;">Add to Order</button>
+    </div>
+  </div>
+</div>`;
+  document.body.appendChild(wrap.firstElementChild);
+}
+ensureDaisyModal();
+
+const daisyModal = document.getElementById("daisyModal");
+const daisyClose = document.getElementById("daisyClose");
+const daisyConfirm = document.getElementById("daisyConfirm");
+const daisyOneSelect = document.getElementById("daisyOneSelect");
+
+function buildDaisySelect() {
+  daisyOneSelect.innerHTML = '<option value="">— choose a burger —</option>';
+  DAISY_BURGER_OPTIONS.forEach(n => {
+    const opt = document.createElement("option");
+    opt.value = n; opt.textContent = n;
+    daisyOneSelect.appendChild(opt);
+  });
+}
+
+function openDaisyModal() {
+  buildDaisySelect();
+  daisyModal.style.display = "flex";
+}
+function closeDaisyModal() {
+  daisyModal.style.display = "none";
+}
+daisyClose.addEventListener("click", closeDaisyModal);
 
 /* --------------------------- order list UI --------------------------- */
 function updateOrderList() {
@@ -1251,7 +1329,7 @@ document.addEventListener("click", e => {
   if (!customSelect.contains(e.target)) optionsBox.classList.add("select-hide");
 });
 
-/* --------------------------- add items (keep pass flags) --------------------------- */
+/* --------------------------- add items (with Daisy intercept) --------------------------- */
 document.querySelectorAll(".add-btn").forEach(button => {
   button.addEventListener("click", e => {
     const card = e.target.closest(".item-card");
@@ -1262,6 +1340,39 @@ document.querySelectorAll(".add-btn").forEach(button => {
     const passType = card.dataset.passType || null;
     const isPassPayment = (card.dataset.isPassPayment === "true");
 
+    // Special: Daisy Family Box → pick ONE burger, we add 15 of it per box
+    if (name === DAISY_NAME) {
+      openDaisyModal();
+      daisyConfirm.onclick = null;
+      daisyConfirm.onclick = () => {
+        const chosen = daisyOneSelect.value;
+        if (!chosen) { showNotification("Please choose a burger for the Daisy Family Box."); return; }
+
+        // store single choice; quantity remains number of boxes
+        const item = {
+          name,
+          price,
+          quantity,          // number of boxes
+          image,
+          isPassPayment: false,
+          passType: null,
+          daisyChoice: chosen  // single burger choice
+        };
+
+        // merge if same choice already in cart
+        const existing = order.find(i => i.name === name && i.daisyChoice === chosen);
+        if (existing) {
+          existing.quantity += quantity;
+        } else {
+          order.push(item);
+        }
+        updateOrderList();
+        closeDaisyModal();
+      };
+      return;
+    }
+
+    // Normal add flow
     const existingItem = order.find(item => item.name === name && item.isPassPayment === isPassPayment);
     if (existingItem) {
       existingItem.quantity += quantity;
@@ -1311,11 +1422,9 @@ function extractPassesFromOrder(items) {
 async function processOrder(employee, customerRaw, inventory, totalNeeded) {
   const formattedCustomer = toTitleCase(customerRaw);
 
-  // Split pass purchases vs normal items
   const passPurchases = extractPassesFromOrder(order);
   const normalItems = order.filter(i => !i.isPassPayment && !((i?.name || '').toLowerCase().includes('pass')));
 
-  // Create/extend passes if present
   if (passPurchases.length) {
     for (const p of passPurchases) {
       for (let n = 0; n < p.qty; n++) {
@@ -1323,7 +1432,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
       }
     }
 
-    // Save a payment/audit order (no kitchen)
     const passSubtotal = passPurchases.reduce((s, p) => s + (p.price * p.qty), 0);
     await addDoc(collection(db, "orders"), {
       employee: toTitleCase(employee),
@@ -1340,7 +1448,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     });
   }
 
-  // If only pass purchases → finish
   if (passPurchases.length && normalItems.length === 0) {
     order = [];
     updateOrderList();
@@ -1351,21 +1458,17 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     return;
   }
 
-  // Proceed with normal food items (kitchen order)
   order = normalItems;
 
-  // Deduct inventory for normal items
   for (const ing in totalNeeded) {
     inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
     if (inventory[ing] < 0) inventory[ing] = 0;
   }
   await saveInventory(inventory);
 
-  // Totals
   const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const total = activeDiscount ? subtotal * 0.8 : subtotal;
 
-  // Loyalty for paid food items only
   const nowTs = Timestamp.now();
   const newVisits = await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
   const freeDessert = newVisits % 5 === 0;
@@ -1376,7 +1479,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     showNotification("Order saved!");
   }
 
-  // Save kitchen order
   await addDoc(collection(db, "orders"), {
     employee: toTitleCase(employee),
     customer: formattedCustomer,
@@ -1391,7 +1493,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     isPassPayment: false
   });
 
-  // Reset UI
   order = [];
   updateOrderList();
   document.getElementById("customerName").value = "";
@@ -1408,11 +1509,32 @@ document.getElementById("submitOrder").addEventListener("click", async () => {
     return;
   }
 
-  // Build ingredient needs for ONLY normal items (ignore pass payments)
   const inventory = await getInventory();
   const totalNeeded = {};
   order.forEach(item => {
-    if (item.isPassPayment) return; // do not consume stock on pass payments
+    if (item.isPassPayment) return;
+
+    // DAISY: for each box, deduct 15 of the chosen burger + extras
+    if (item.name === DAISY_NAME && item.daisyChoice) {
+      const neededBurger = productIngredients[item.daisyChoice] || {};
+      for (let q = 0; q < item.quantity; q++) {
+        // 15 burgers per box
+        for (let i = 0; i < DAISY_BURGERS_PER_BOX; i++) {
+          for (const ing in neededBurger) {
+            totalNeeded[ing] = (totalNeeded[ing] || 0) + neededBurger[ing];
+          }
+        }
+        // extras per box
+        DAISY_EXTRAS.forEach(ex => {
+          const n = productIngredients[ex.name] || {};
+          for (const ing in n) {
+            totalNeeded[ing] = (totalNeeded[ing] || 0) + n[ing] * ex.quantity;
+          }
+        });
+      }
+      return;
+    }
+
     if (comboDetails[item.name]) {
       comboDetails[item.name].components.forEach(comp => {
         const needed = productIngredients[comp.name];
@@ -1430,7 +1552,6 @@ document.getElementById("submitOrder").addEventListener("click", async () => {
     }
   });
 
-  // Check missing
   const missing = [];
   for (const ing in totalNeeded) {
     const invVal = Number(inventory[ing] || 0);
@@ -1484,7 +1605,6 @@ async function refreshRedeemList() {
     redeem.textContent = "Redeem";
     redeem.style.cssText = "padding:6px 12px; border-radius:8px; border:none; background:#ffc107; font-weight:800; cursor:pointer;";
 
-    // single-click = one combo; staff can click again (no disable, no close)
     redeem.addEventListener("click", async () => {
       const employee = document.getElementById("employeeName").value;
       if (!employee) { showNotification("Select employee first."); return; }
@@ -1492,14 +1612,13 @@ async function refreshRedeemList() {
       try {
         await redeemPassTicket({ passId: p.id, passType: p.type, employee, customer: p.name, qty: 1 });
         showNotification(`✅ Redeemed for ${p.name}. Sent to kitchen.`);
-        // quick visual feedback
         row.style.outline = "3px solid #4caf50";
         setTimeout(() => { row.style.outline = "none"; }, 600);
       } catch (e) {
         console.error(e);
         showNotification("❌ Could not redeem. Check console/logs.");
       } finally {
-        redeem.disabled = false; // allow another redemption immediately
+        redeem.disabled = false;
       }
     });
 
@@ -1508,7 +1627,6 @@ async function refreshRedeemList() {
     redeemList.appendChild(row);
   });
 }
-
 
 redeemBtn.addEventListener("click", async () => {
   await refreshRedeemList();
@@ -1521,19 +1639,6 @@ closeRedeem.addEventListener("click", hideRedeemModal);
 </script>
 
 
-<script>
-  const menuBtn = document.getElementById("menuToggle");
-  const sidebar = document.querySelector(".sidebar");
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-    // Switch between ☰ and ✖
-    if (sidebar.classList.contains("active")) {
-      menuBtn.textContent = "✖";
-    } else {
-      menuBtn.textContent = "☰";
-    }
-  });
-</script>
 </body>
 </html>
 

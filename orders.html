@@ -509,7 +509,6 @@ import {
   onSnapshot,
   collection,
   query,
-  where,
   orderBy,
   limit
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -523,7 +522,7 @@ const modal = document.getElementById("clearConfirmModal");
 const yesBtn = modal.querySelector(".yes-btn");
 const noBtn = modal.querySelector(".no-btn");
 
-/* -------- Combos (updated names) -------- */
+/* -------- Combos (non-configurable) -------- */
 const comboDetails = {
   "Big Buns Deal": {
     price: 1700,
@@ -550,10 +549,18 @@ const comboDetails = {
       { name: "Coffee", quantity: 5 },
       { name: "Rim Job", quantity: 1 }
     ]
-  },
+  }
 };
 
-/* -------- Menu columns (minus Very Vegan + The Torpedo) -------- */
+/* -------- Daisy config (expandable) -------- */
+const DAISY_NAME = "Daisy Family Box";
+const DAISY_BURGERS_PER_BOX = 15;
+const DAISY_EXTRAS = [
+  { name: "Coffee", quantity: 20 },
+  { name: "Cream Pie", quantity: 5 }
+];
+
+/* -------- Menu columns -------- */
 const PRODUCTS = [
   // BURGERS
   "Heart Stopper",
@@ -562,6 +569,7 @@ const PRODUCTS = [
   "Double Shot",
   "The Bleeder",
   "The Prickley",
+  // WRAPS
   "Chicken Wrap",
   "Chicken Mexican",
   "Goat Wrap",
@@ -577,33 +585,51 @@ const PRODUCTS = [
   "Ice Cream"
 ];
 
-
+/* -------- Query (no where() → no composite index needed) -------- */
 const q = query(
   collection(db, "orders"),
-  where("deleted", "==", false),
   orderBy("timestamp", "desc"),
   limit(50)
 );
 
 let currentOrders = [];
 
-/* Map items to per-product counts, expanding combos */
+/* Expand items (combos + Daisy) to per-product counts */
 function parseItems(items = []) {
   const counts = {};
   PRODUCTS.forEach(p => (counts[p] = 0));
 
   items.forEach(item => {
     const qty = Number(item.quantity || 0);
-    const name = item.name;
+    const name = item?.name || "";
     if (!qty) return;
 
+    // Daisy Family Box → 15 of chosen burger per box + extras
+    if (name === DAISY_NAME && item.daisyChoice) {
+      const burger = item.daisyChoice;
+      if (counts[burger] !== undefined) {
+        counts[burger] += qty * DAISY_BURGERS_PER_BOX;
+      }
+      DAISY_EXTRAS.forEach(ex => {
+        if (counts[ex.name] !== undefined) {
+          counts[ex.name] += qty * ex.quantity;
+        }
+      });
+      return;
+    }
+
+    // Regular combos
     if (comboDetails[name]) {
       comboDetails[name].components.forEach(c => {
         if (counts[c.name] !== undefined) {
           counts[c.name] += qty * c.quantity;
         }
       });
-    } else if (counts[name] !== undefined) {
+      return;
+    }
+
+    // Single items
+    if (counts[name] !== undefined) {
       counts[name] += qty;
     }
   });
@@ -612,18 +638,16 @@ function parseItems(items = []) {
 }
 
 /* Render */
-onSnapshot(q, (snapshot) => {
-  currentOrders = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
-  renderOrders(currentOrders);
-});
-
 function renderOrders(orders) {
   tbody.innerHTML = "";
   orders.forEach(({ id, data: order }) => {
+    // client-side filter for deleted
+    if (order.deleted) return;
+
     const tr = document.createElement("tr");
     if (order.done) tr.classList.add("done");
 
-    const counts = parseItems(order.items);
+    const counts = parseItems(order.items || []);
 
     const estDate = order.timestamp?.toDate?.();
     const formattedDate = estDate
@@ -645,28 +669,24 @@ function renderOrders(orders) {
       await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
     });
 
-    // Build row
-    const staticCells = [
-      formattedDate,
-      order.employee || "-",
-      order.customer || "-"
-    ];
-    staticCells.forEach(v => {
+    // Date / Employee / Customer
+    [formattedDate, order.employee || "-", order.customer || "-"].forEach(v => {
       const td = document.createElement("td");
       td.textContent = v;
       tr.appendChild(td);
     });
 
+    // Menu counts
     PRODUCTS.forEach(p => {
-  const td = document.createElement("td");
-  const n = Number(counts[p] || 0);
-  td.textContent = n > 0 ? n : "";   // show empty when zero
-  tr.appendChild(td);
-});
+      const td = document.createElement("td");
+      const n = Number(counts[p] || 0);
+      td.textContent = n > 0 ? n : "";
+      tr.appendChild(td);
+    });
 
-
+    // Total / Free Dessert / Done
     const totalTd = document.createElement("td");
-    totalTd.textContent = `$${(order.total ?? 0).toFixed(2)}`;
+    totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
     tr.appendChild(totalTd);
 
     const freeTd = document.createElement("td");
@@ -681,10 +701,22 @@ function renderOrders(orders) {
   });
 }
 
+/* Listen + basic error handler */
+onSnapshot(
+  q,
+  (snapshot) => {
+    currentOrders = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
+    renderOrders(currentOrders);
+  },
+  (err) => {
+    console.error("[orders] Firestore onSnapshot error:", err?.message || err);
+  }
+);
+
 /* Clear completed orders (soft delete) */
 clearBtn.addEventListener("click", () => (modal.style.display = "flex"));
 yesBtn.addEventListener("click", async () => {
-  const doneOrders = currentOrders.filter(o => o.data.done);
+  const doneOrders = currentOrders.filter(o => o.data.done && !o.data.deleted);
   const updates = doneOrders.map(o =>
     updateDoc(doc(db, "orders", o.id), { deleted: true })
   );
@@ -694,33 +726,6 @@ yesBtn.addEventListener("click", async () => {
 noBtn.addEventListener("click", () => (modal.style.display = "none"));
 </script>
 
-<script>
-  const menuBtn = document.getElementById("menuToggle");
-  const sidebar = document.querySelector(".sidebar");
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-    menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
-  });
-</script>
-<script>
-  // Stack two-word headers in the menu section (skip first 3 and last 3 columns)
-  (function () {
-    const ths = document.querySelectorAll('#ordersTable thead th');
-    ths.forEach((th, i) => {
-      if (i > 2 && i < ths.length - 3) {           // only menu item columns
-        const text = th.textContent.trim().replace(/\s+/g, ' ');
-        const parts = text.split(' ');
-        if (parts.length === 2) {
-          th.classList.add('menu-wrap');
-          th.innerHTML = `${parts[0]}<br>${parts[1]}`;
-        } else {
-          // single-word or 3+ words: just allow wrap without forcing a break
-          th.classList.add('menu-wrap');
-        }
-      }
-    });
-  })();
-</script>
 
 </body>
 </html>
