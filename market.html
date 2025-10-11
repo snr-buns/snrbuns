@@ -485,6 +485,8 @@ function updateCosts() {
     if (ingredient) {
       if (ingredient === "lettuce") {
         weight += qty * 2.5;
+      } else if (ingredient === "goat cheese") {
+        weight += qty * 1;
       } else {
         weight += qty * 5;
       }
