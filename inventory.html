@@ -510,6 +510,47 @@ const ingredientLabels = {
   onion:        "Onions"
 };
 
+/* ===== Ensure inventory has every known key (adds missing as 0) ===== */
+const KNOWN_INGREDIENT_KEYS = [
+  "burger_buns","ground_beef","sugar","flour","cheese_slices","potato","lettuce",
+  "chicken","bacon","coffee_beans","corn_syrup","tortilla","tomato","goat_cheese","onion",
+  // if you ever add more, keep this list in sync with item/combo recipes
+];
+
+/* Optional: migrate old field names -> new ones */
+const LEGACY_KEY_MAP = {
+  // "syrup": "corn_syrup",      // uncomment if you had a field named "syrup"
+  // "coffee": "coffee_beans",   // example
+};
+
+async function ensureInventoryKeys() {
+  try {
+    const snap = await getDoc(inventoryDocRef);
+    let data = snap.exists() ? snap.data() : {};
+
+    // migrate legacy keys if present
+    const updates = {};
+    for (const [oldKey, newKey] of Object.entries(LEGACY_KEY_MAP)) {
+      if (oldKey in data && !(newKey in data)) {
+        updates[newKey] = Number(data[oldKey]) || 0;
+        updates[oldKey] = 0;
+      }
+    }
+
+    // add any missing known keys as 0 (including corn_syrup)
+    KNOWN_INGREDIENT_KEYS.forEach(k => {
+      if (!(k in data)) updates[k] = 0;
+    });
+
+    if (Object.keys(updates).length) {
+      await setDoc(inventoryDocRef, updates, { merge: true });
+    }
+  } catch (e) {
+    console.error("ensureInventoryKeys failed:", e);
+  }
+}
+
+
 /* === Inventory Fetching === */
 async function fetchInventory() {
   try {

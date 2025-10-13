@@ -173,7 +173,7 @@
     }
     aside.order-summary {
       width: 300px;
-      height: 700px;
+      height: 800px;
       background: white;
       border-radius: 12px;
       padding: 2rem;
@@ -857,14 +857,15 @@
   autocomplete="off"
 />
         <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
-        🚑👮 Reminder: EMS and PD customers are on a tab.  
-        Place the order but do NOT invoice them — log it on emails. <br><br>
+        🚑 Reminder: EMS customers are on a tab.  
+        Place the order but don't invoice them — log it on emails. <br><br>
         </small>
         <datalist id="customerSuggestions"></datalist>
       </div>
       <ul id="orderList"></ul>
       <p>Subtotal: $<span id="subtotal">0</span></p>
       <p><strong>Total: $<span id="total">0</span></strong></p>
+      <button id="uniformDiscountBtn" class="discount-btn">👮 Apply PD Discount</button>
       <button id="redeemPassBtn" class="discount-btn">Redeem Pass</button>
       <div id="redeemPassModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1200;">
   <div style="background:#fff; padding:20px; border-radius:12px; width:360px; max-height:70vh; overflow:auto;">
@@ -964,6 +965,40 @@ function subscribeCustomerSuggestions() {
   });
 }
 subscribeCustomerSuggestions();
+
+/* --------------------------- special customer reminder --------------------------- */
+/* Pops a reminder when certain customers are entered in the Customer Name field. */
+const SPECIAL_CUSTOMERS = {
+  "steve earwig": {
+    message: "🏆 Steve Earwig gets a free Patty Pounder meal – dont charge him"
+  }
+};
+
+let lastSpecialAlertFor = null;
+
+/* small helper so we don't spam popups while typing */
+function debounce(fn, delay = 200) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
+function checkSpecialCustomerReminder() {
+  const input = document.getElementById("customerName");
+  const key = (input.value || "").trim().toLowerCase().replace(/\s+/g, " ");
+  if (!key) return;
+
+  if (SPECIAL_CUSTOMERS[key] && lastSpecialAlertFor !== key) {
+    showNotification(SPECIAL_CUSTOMERS[key].message, 6000);
+    lastSpecialAlertFor = key; // prevent repeat until the name changes
+  }
+}
+
+/* trigger on typing, datalist selection, or leaving the field */
+const debouncedCheck = debounce(checkSpecialCustomerReminder, 180);
+document.getElementById("customerName").addEventListener("input", debouncedCheck);
+document.getElementById("customerName").addEventListener("change", checkSpecialCustomerReminder);
+document.getElementById("customerName").addEventListener("blur", checkSpecialCustomerReminder);
+
 
 /* --------------------------- products, combos, inventory --------------------------- */
 const productIngredients = {
@@ -1186,8 +1221,17 @@ const itemCards = document.querySelectorAll(".item-card");
 const searchBar = document.getElementById("searchBar");
 const discountModal = document.getElementById("discountModal");
 const yesBtn = discountModal.querySelector(".yes-btn");
+const uniformBtn = document.getElementById("uniformDiscountBtn");
 const noBtn = discountModal.querySelector(".no-btn");
 let discountToApply = null;
+const UNIFORM_DISCOUNT = 0.15;   // 15%
+let discountPercentToApply = 0;
+function calcTotal(subtotal) {
+  return (activeDiscount && activeDiscount.percent)
+    ? subtotal * (1 - activeDiscount.percent)
+    : subtotal;
+}
+
 
 /* --------------------------- DAISY: modal (auto-inject if missing) --------------------------- */
 function ensureDaisyModal() {
@@ -1265,7 +1309,7 @@ function updateOrderList() {
     orderList.appendChild(li);
   });
   subtotalSpan.textContent = subtotal.toFixed(2);
-  totalSpan.textContent = (activeDiscount ? subtotal * 0.8 : subtotal).toFixed(2);
+  totalSpan.textContent = calcTotal(subtotal).toFixed(2);
 
   document.querySelectorAll(".qty-btn").forEach(btn => {
     btn.addEventListener("click", e => {
@@ -1384,23 +1428,52 @@ document.querySelectorAll(".add-btn").forEach(button => {
 });
 
 /* --------------------------- discount modal --------------------------- */
-function resetDiscountButtons() {}
+function resetDiscountButtons() {
+  const btn = document.getElementById("uniformDiscountBtn");
+  if (!btn) return;
+  if (activeDiscount?.code === "uniform") {
+    btn.classList.add("active");
+    btn.textContent = "Discount Applied (15%)";
+  } else {
+    btn.classList.remove("active");
+    btn.textContent = "Apply Discount (15%)";
+  }
+}
 function applyDiscount(type) {
   activeDiscount = type;
   resetDiscountButtons();
   updateOrderList();
 }
 yesBtn.addEventListener("click", () => {
-  applyDiscount(discountToApply);
+  if (!discountPercentToApply) {
+    discountModal.style.display = "none";
+    showNotification("No discount selected.");
+    return;
+  }
+  // store a structured discount so it’s clear in Firestore
+  activeDiscount = { code: discountToApply || "uniform", percent: discountPercentToApply, uniform: true };
+  resetDiscountButtons();
+  updateOrderList();
   discountModal.style.display = "none";
-  showNotification(`✅ ${discountToApply} discount applied!`);
+  showNotification(`✅ ${Math.round(activeDiscount.percent * 100)}% uniform discount applied!`);
   discountToApply = null;
+  discountPercentToApply = 0;
 });
+
 noBtn.addEventListener("click", () => {
   discountModal.style.display = "none";
   showNotification("No discount applied.");
   discountToApply = null;
+  discountPercentToApply = 0;
 });
+
+uniformBtn.addEventListener("click", () => {
+  // set what we’re about to apply, then ask the question
+  discountToApply = "uniform";
+  discountPercentToApply = UNIFORM_DISCOUNT;
+  discountModal.style.display = "flex";
+});
+
 
 /* --------------------------- pass extraction --------------------------- */
 function extractPassesFromOrder(items) {
@@ -1467,7 +1540,7 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
   await saveInventory(inventory);
 
   const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const total = activeDiscount ? subtotal * 0.8 : subtotal;
+  const total = calcTotal(subtotal);
 
   const nowTs = Timestamp.now();
   const newVisits = await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
@@ -1484,7 +1557,7 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     customer: formattedCustomer,
     items: order,
     total,
-    discountApplied: activeDiscount,
+    discountApplied: activeDiscount, // will be { code:'uniform', percent:0.15, uniform:true } or null
     freeDessert,
     timestamp: nowTs,
     done: false,
