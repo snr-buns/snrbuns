@@ -387,7 +387,7 @@ function renderLoyaltyFromDocs(docs) {
   spendersCard.innerHTML = `
     <h2>💰 Top Spenders</h2>
     ${topSpenders.map((r, i) =>
-      `<p><strong>${i + 1}. ${capitalizeName(r.name)}</strong> — £${r.spent.toFixed(2)}</p>`
+      `<p><strong>${i + 1}. ${capitalizeName(r.name)}</strong> — $${r.spent.toFixed(2)}</p>`
     ).join("")}
   `;
   container.appendChild(spendersCard);
@@ -410,7 +410,7 @@ function renderLoyaltyFromDocs(docs) {
         <div class="circles">${circlesHTML}</div>
         <div class="total-visits">
           Visits: ${r.visits}<br>
-          Spent: £${r.spent.toFixed(2)}
+          Spent: $${r.spent.toFixed(2)}
         </div>
       `;
       container.appendChild(card);
