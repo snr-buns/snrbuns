@@ -568,7 +568,7 @@
          <button class="category">Sides</button>
         <button class="category">Drinks</button>
         <button class="category">Desserts</button>
-        <button class="category">Passes</button>
+        <button class="category">Membership</button>
         <input type="search" id="searchBar" placeholder="Search menu items..." aria-label="Search menu items" />
       </div>
       <p style="margin-top:-0.5rem; margin-bottom:1rem; font-weight:600; color:#c82333;">
@@ -778,31 +778,17 @@
   </div>
 </div>
 
-<!-- PASSES (purchase only) -->
- <div class="item-card" data-name="Pounder Pass" data-price="15000" data-category="Passes" data-image="assets/images/pass.png" data-pass-type="pounder" data-is-pass-payment="true">
-  <img src="assets/images/monthlypass.png" alt="The Pounder Pass" />
-  <h3>Pounder Pass</h3>
-  <p>$15000</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Bleeder Pass" data-price="25000" data-category="Passes" data-image="assets/images/pass.png" data-pass-type="bleeder" data-is-pass-payment="true">
-  <img src="assets/images/monthlypass.png" alt="The Bleeder Pass" />
-  <h3>Bleeder Pass</h3>
+<div class="item-card"
+  data-name="Golden Bun Club"
+  data-price="25000"
+  data-category="Membership"
+  data-image="assets/images/bunclub.png"
+  data-pass-type="golden"
+  data-is-pass-payment="true">
+  
+  <img src="assets/images/bunclub.png" alt="Golden Bun Club" />
+  <h3>Golden Bun Club</h3>
   <p>$25000</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Big Buns Pass" data-price="35000" data-category="Passes" data-image="assets/images/pass.png" data-pass-type="bigbuns" data-is-pass-payment="true">
-  <img src="assets/images/monthlypass.png" alt="Big Buns Pass" />
-  <h3>Big Buns Pass</h3>
-  <p>$35000</p>
   <div class="add-controls">
     <input type="number" class="quantity-input" min="1" value="1" />
     <button class="add-btn">Add</button>
@@ -879,10 +865,10 @@
       <p>Subtotal: $<span id="subtotal">0</span></p>
       <p><strong>Total: $<span id="total">0</span></strong></p>
       <button id="uniformDiscountBtn" class="discount-btn">👮 Apply PD Discount</button>
-      <button id="redeemPassBtn" class="discount-btn">Redeem Pass</button>
+      <button id="redeemPassBtn" class="discount-btn">Redeem Membership</button>
       <div id="redeemPassModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1200;">
   <div style="background:#fff; padding:20px; border-radius:12px; width:360px; max-height:70vh; overflow:auto;">
-    <div style="font-weight:800; margin-bottom:10px;">Redeem Monthly Pass</div>
+    <div style="font-weight:800; margin-bottom:10px;">Redeem Membership</div>
     <input id="redeemSearch" placeholder="Search name..." style="width:100%; padding:8px; border:2px solid #c82333; border-radius:8px; font-weight:700;">
     <div id="redeemList" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;"></div>
     <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
@@ -1180,47 +1166,44 @@ function itemsForPassType(type, qty = 1) {
 }
 
 /* --------------------------- redeem ticket (no daily tracking) --------------------------- */
-async function redeemPassTicket({ passId, passType, employee, customer, qty = 1 }) {
-  const items = itemsForPassType(passType, qty);
-
-  const inv = await getInventory();
-  const totalNeeded = {};
-  items.forEach(item => {
-    if (comboDetails[item.name]) {
-      comboDetails[item.name].components.forEach(comp => {
-        const n = productIngredients[comp.name] || {};
-        for (const ing in n) {
-          totalNeeded[ing] = (totalNeeded[ing] || 0) + n[ing] * comp.quantity * item.quantity;
-        }
-      });
-    } else {
-      const n = productIngredients[item.name] || {};
-      for (const ing in n) {
-        totalNeeded[ing] = (totalNeeded[ing] || 0) + n[ing] * item.quantity;
-      }
+async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
+  const items = [
+    {
+      name: "Patty Pounder Combo",
+      price: 0,
+      quantity: qty,
+      image: "assets/images/combo.png",
+      isMembershipRedeem: true
     }
-  });
-  for (const ing in totalNeeded) {
-    inv[ing] = Number(inv[ing] || 0) - totalNeeded[ing];
-    if (inv[ing] < 0) inv[ing] = 0;
-  }
-  await saveInventory(inv);
+  ];
 
-  await addDoc(collection(db, "orders"), {
-    employee: toTitleCase(employee),
-    customer: toTitleCase(customer),
+  const orderData = {
+    employee,
+    customer,
     items,
     total: 0,
-    discountApplied: null,
+    discountApplied: true,
     freeDessert: false,
-    timestamp: Timestamp.now(),
+    membershipRedeem: true,
+    timestamp: new Date(),
     done: false,
-    deleted: false,
-    kitchen: true,
-    isPassRedemption: true,
-    passType
-  });
+    deleted: false
+  };
+
+  // ✅ THIS is the critical success step
+  await addDoc(collection(db, "orders"), orderData);
+
+  // ⚠️ This should NEVER block redemption UI
+  try {
+    await updateDoc(doc(db, "passes", passId), {
+      lastRedeemedAt: new Date()
+    });
+  } catch (err) {
+    console.warn("Pass updated failed, but order was sent:", err);
+  }
 }
+
+
 
 /* --------------------------- UI state --------------------------- */
 let order = [];
@@ -1371,6 +1354,27 @@ const selected = customSelect.querySelector(".select-selected");
 const optionsBox = customSelect.querySelector(".select-items");
 const options = optionsBox.querySelectorAll("div");
 const hiddenSelect = document.getElementById("employeeName");
+
+// --- INSERT PERSISTENCE HERE ---
+const employeeSelect = hiddenSelect;
+
+// Save selection whenever it changes
+employeeSelect.addEventListener("change", () => {
+    localStorage.setItem("currentEmployee", employeeSelect.value);
+
+    // Update the styled div
+    const selectedDiv = document.querySelector(".select-selected");
+    if (selectedDiv) selectedDiv.textContent = employeeSelect.value;
+});
+
+// Restore selection on page load
+window.addEventListener("DOMContentLoaded", () => {
+    const saved = localStorage.getItem("currentEmployee");
+    if (saved) employeeSelect.value = saved;
+
+    const selectedDiv = document.querySelector(".select-selected");
+    if (selectedDiv) selectedDiv.textContent = saved || "Select employee";
+});
 selected.addEventListener("click", () => {
   optionsBox.classList.toggle("select-hide");
 });
@@ -1490,18 +1494,14 @@ uniformBtn.addEventListener("click", () => {
 /* --------------------------- pass extraction --------------------------- */
 function extractPassesFromOrder(items) {
   return items
-    .filter(i => i && (i.isPassPayment || (i?.name || '').toLowerCase().includes('pass')))
-    .map(i => {
-      const n = (i?.name || '').toLowerCase();
-      const inferred =
-        n.includes('bleeder') ? 'bleeder' :
-        n.includes('big buns') || n.includes('bigbuns') ? 'bigbuns' :
-        n.includes('pounder') ? 'pounder' :
-        null;
-      const passType = i.passType || inferred || 'bleeder';
-      return { passType, price: i.price, qty: i.quantity || 1 };
-    });
+    .filter(i => i?.isPassPayment)
+    .map(i => ({
+      passType: "golden",
+      price: i.price,
+      qty: i.quantity || 1
+    }));
 }
+
 
 /* --------------------------- process order (split logic) --------------------------- */
 async function processOrder(employee, customerRaw, inventory, totalNeeded) {
@@ -1539,7 +1539,7 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     document.getElementById("customerName").value = "";
     document.getElementById("employeeName").value = "";
     activeDiscount = null;
-    showNotification("✅ Pass activated");
+    showNotification("✅ Membership activated");
     return;
   }
 
@@ -1681,9 +1681,10 @@ async function refreshRedeemList() {
 
     const label = document.createElement("div");
     label.style.cssText = "font-weight:800;";
-    const typeLabel = p.type === "bleeder" ? "Bleeder Pass"
-                    : p.type === "bigbuns" ? "Big Buns Pass"
-                    : "Pounder Pass";
+    const typeLabel =
+    p.type === "golden"
+    ? "Golden Buns Membership"
+    : "Membership";
     label.textContent = `${p.name} — ${typeLabel}`;
 
     const redeem = document.createElement("button");
@@ -1696,7 +1697,7 @@ async function refreshRedeemList() {
       redeem.disabled = true;
       try {
         await redeemPassTicket({ passId: p.id, passType: p.type, employee, customer: p.name, qty: 1 });
-        showNotification(`✅ Redeemed for ${p.name}. Sent to kitchen.`);
+        showNotification(`✅ Confirmed — Patty Pounder Combo sent to kitchen for ${p.name}`);
         row.style.outline = "3px solid #4caf50";
         setTimeout(() => { row.style.outline = "none"; }, 600);
       } catch (e) {
