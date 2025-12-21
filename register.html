@@ -585,19 +585,19 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
-     <div class="item-card" data-name="The Bleeder Box" data-price="1200" data-category="Combos" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="The Bleeder Box" />
-    <h3>The Bleeder Box</h3>
-    <p>$1200</p>
+  <div class="item-card" data-name="Patty Pounder Combo" data-price="1100" data-category="Combos" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
+    <h3>Patty Pounder Combo</h3>
+    <p>$1100</p>
     <div class="add-controls">
       <input type="number" class="quantity-input" min="1" value="1" />
       <button class="add-btn">Add</button>
     </div>
   </div>
-  <div class="item-card" data-name="Patty Pounder Combo" data-price="650" data-category="Combos" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
-    <h3>Patty Pounder Combo</h3>
-    <p>$650</p>
+     <div class="item-card" data-name="The Bleeder Box" data-price="600" data-category="Combos" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/combo.png" alt="The Bleeder Box" />
+    <h3>The Bleeder Box</h3>
+    <p>$600</p>
     <div class="add-controls">
       <input type="number" class="quantity-input" min="1" value="1" />
       <button class="add-btn">Add</button>
@@ -981,13 +981,6 @@ subscribeCustomerSuggestions();
 
 /* --------------------------- special customer reminder --------------------------- */
 /* Pops a reminder when certain customers are entered in the Customer Name field. */
-const SPECIAL_CUSTOMERS = {
-  "steve earwig": {
-    message: "🏆 Steve Earwig gets a free Patty Pounder meal – dont charge him"
-  }
-};
-
-let lastSpecialAlertFor = null;
 
 /* small helper so we don't spam popups while typing */
 function debounce(fn, delay = 200) {
@@ -1044,10 +1037,11 @@ const comboDetails = {
     ]
   },
   "The Bleeder Box": {
-    price: 1200,
+    price: 600,
     components: [
-      { name: "The Bleeder", quantity: 10 },
-      { name: "Soda", quantity: 10 }
+      { name: "The Bleeder", quantity: 5 },
+      { name: "Soda", quantity: 5 },
+      { name: "Rim Job", quantity: 1 }
     ]
   },
   "Filthy Rich Combo": {
@@ -1055,6 +1049,13 @@ const comboDetails = {
     components: [
       { name: "Money Shot", quantity: 5 },
       { name: "Soda", quantity: 5 },
+    ]
+  },
+  "Patty Pounder Combo": {
+    price: 1100,
+    components: [
+      { name: "The Prickley", quantity: 10 },
+      { name: "Soda", quantity: 10 },
     ]
   }
 };
