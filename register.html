@@ -576,6 +576,15 @@
 </p>
       <div class="item-grid">
   <!-- Combos -->
+  <div class="item-card" data-name="The Heartstopper Meal" data-price="1800" data-category="Combos" data-image="assets/images/bleederbox.png">
+    <img src="assets/images/combo.png" alt="The Heartstopper Meal" />
+    <h3>The Heartstopper Meal</h3>
+    <p>$1800</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
    <div class="item-card" data-name="Big Buns Deal" data-price="1700" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="Big Buns Deal" />
     <h3>Big Buns Deal</h3>
@@ -995,6 +1004,15 @@ const productIngredients = {
 };
 
 const comboDetails = {
+  "The Heartstopper Meal": {
+    price: 1800,
+    components: [
+      { name: "Heart Stopper", quantity: 5 },
+      { name: "Fries", quantity: 5 },
+      { name: "Soda", quantity: 15 },
+      { name: "Ice Cream", quantity: 5 }
+    ]
+  },
   "Big Buns Deal": {
     price: 1700,
     components: [

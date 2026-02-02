@@ -1,735 +1,870 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snr. Buns - Order Sheet</title>
-
-  <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
-
-  <script type="module" src="auth.js"></script>
-
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #fff4d6;
-      margin: 0;
-      display: flex;
-      min-height: 100vh;
-      color: #333;
-    }
-
-    /* Sidebar */
-    .sidebar {
-      background-color: #c82333;
-      width: 220px;
-      color: white;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-    }
-    .sidebar h2 {
-      font-weight: 700;
-      font-size: 1.8rem;
-      margin-bottom: 2rem;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      white-space: nowrap;
-    }
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.75rem 0.5rem;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      background-color: #a71d2a;
-      text-decoration: none;
-    }
-
-    /* Main content */
-    .main {
-      flex-grow: 1;
-      padding: 2rem 2.5rem;
-      background-color: #fff4d6;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    h1 {
-      color: #c82333;
-      font-weight: 700;
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      user-select: none;
-      text-align: center;
-    }
-
-    #clearDone {
-      align-self: center;
-      background-color: #ffc107;
-      border: none;
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    #clearDone:hover { background-color: #e0a800; }
-
-
-    /* Smaller table font + tighter padding on desktop too */
-    table#ordersTable {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 900px;
-      font-weight: 600;
-      user-select: none;
-      font-size: 0.85rem;          /* << smaller table text */
-    }
-    table#ordersTable th, table#ordersTable td {
-      border: 1px solid #ddd;
-      padding: 8px 8px;            /* << tighter padding */
-      text-align: center;
-      vertical-align: middle;
-      white-space: nowrap;
-      word-break: break-word;
-    }
-
-    /* Only menu item headers can wrap, but don't break inside words */
-#ordersTable thead th.menu-wrap {
-  white-space: normal !important;   /* allow lines to wrap */
-  word-break: keep-all !important;  /* <-- prevent mid-word breaks */
-  overflow-wrap: normal !important; /* no extra splitting */
-  hyphens: none;
-  line-height: 1.1;
-  padding: 6px 6px;
-  font-size: 0.82rem;               /* optional: tighter */
-}
-
-    table#ordersTable th {
-      background-color: #ffc107;
-      font-weight: 700;
-      user-select: none;
-    }
-
-    /* Make completed orders clearly "done" */
-#ordersTable tbody tr.done td {
-  /* stronger visual change */
-  color: #666;                              /* dim text a bit */
-  text-decoration: line-through;            /* keep strike */
-  text-decoration-thickness: 4px;           /* thicker line */
-  text-decoration-color: #393737;   /* darker strike color */
-}
-
-/* If you want the whole row slightly faded too (optional) */
-#ordersTable tbody tr.done { opacity: .8; }
-
-
-    /* allow wrapping only for menu headers we tag in JS */
-#ordersTable thead th.menu-wrap {
-  white-space: normal;    /* override your nowrap */
-  line-height: 1.1;
-  padding: 6px 6px;       /* a bit tighter */
-}
-#ordersTable thead th.menu-wrap br {
-  content: "";
-}
-
-/* Section band styling */
-#ordersTable thead .group-row th.group {
-  background: #f8d877;        /* light peach band */
-  color: #333;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.78rem;
-  border: 1px solid #ddd;
-}
-
-/* Keep the normal header look on the other cells */
-#ordersTable thead th[rowspan="2"] {
-  background: #ffc107;
-  vertical-align: middle;
-}
-
-/* Make second header row slightly tighter */
-#ordersTable thead tr + tr th {
-  padding-top: 6px;
-  padding-bottom: 6px;
-}
-
-/* Optional: allow two-word wraps nicely for menu headers */
-#ordersTable thead tr + tr th {
-  white-space: normal;
-  word-break: keep-all;
-  overflow-wrap: normal;
-  line-height: 1.15;
-}
-
-/* Row 1 (bands + Date/Employee/Customer/Total/etc.) */
-#ordersTable thead .group-row th.group,
-#ordersTable thead th[rowspan="2"] {
-  background: #ffc107;     /* same gold as other headers */
-  color: #1a1a1a;
-}
-
-/* Row 2 (individual menu items): lighter gold */
-#ordersTable thead tr + tr th {
-  background: #ffefb5;     /* lighter gold for contrast */
-  color: #2b2b2b;
-  border-color: #e2c86a;   /* slightly warmer border looks cleaner */
-  font-weight: 700;        /* keep them bold but slightly softer is ok */
-}
-
-/* ===== Column group dividers (header row 2 + body) ===== */
-:root { --divider:#b07d00; }
-
-/* --- LEFT edges of groups --- */
-/* Burgers start (header col 1, body col 4) */
-#ordersTable thead tr + tr th:nth-child(1),
-#ordersTable tbody td:nth-child(4)  { border-left: 3px solid var(--divider) !important; }
-
-/* Wraps start (header col 7, body col 10) */
-#ordersTable thead tr + tr th:nth-child(7),
-#ordersTable tbody td:nth-child(10) { border-left: 3px solid var(--divider) !important; }
-
-/* Sides start (header col 10, body col 13) */
-#ordersTable thead tr + tr th:nth-child(10),
-#ordersTable tbody td:nth-child(13) { border-left: 3px solid var(--divider) !important; }
-
-/* Drinks start (header col 12, body col 15) */
-#ordersTable thead tr + tr th:nth-child(12),
-#ordersTable tbody td:nth-child(15) { border-left: 3px solid var(--divider) !important; }
-
-/* Desserts start (header col 14, body col 17) */
-#ordersTable thead tr + tr th:nth-child(14),
-#ordersTable tbody td:nth-child(17) { border-left: 3px solid var(--divider) !important; }
-
-/* --- RIGHT edges of groups --- */
-/* Burgers end (header col 6, body col 9) */
-#ordersTable thead tr + tr th:nth-child(6),
-#ordersTable tbody td:nth-child(9)  { border-right: 3px solid var(--divider) !important; }
-
-/* Wraps end (header col 9, body col 12) */
-#ordersTable thead tr + tr th:nth-child(9),
-#ordersTable tbody td:nth-child(12) { border-right: 3px solid var(--divider) !important; }
-
-/* Sides end (header col 11, body col 14) */
-#ordersTable thead tr + tr th:nth-child(11),
-#ordersTable tbody td:nth-child(14) { border-right: 3px solid var(--divider) !important; }
-
-/* Drinks end (header col 13, body col 16) */
-#ordersTable thead tr + tr th:nth-child(13),
-#ordersTable tbody td:nth-child(16) { border-right: 3px solid var(--divider) !important; }
-
-/* Desserts end (header col 16, body col 19) */
-#ordersTable thead tr + tr th:nth-child(16),
-#ordersTable tbody td:nth-child(19) { border-right: 3px solid var(--divider) !important; }
-
-/* keep normal grid light so the dividers pop */
-#ordersTable th, #ordersTable td { border-color: #ddd; }
-
-
-#ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3) {
-  /* thick line after Customer → before Burgers */
-  border-right: 3px solid var(--divider) !important;
-}
-
-#ordersTable thead .group-row th.group {
-  /* right edge of every band */
-  border-right: 3px solid var(--divider) !important;
-}
-
-#ordersTable thead .group-row th.group:first-of-type {
-  /* left edge of the first band (BURGERS) */
-  border-left: 3px solid var(--divider) !important;
-}
-/* subtle inner grid so groups still dominate */
-#ordersTable tbody td {
-  border-left: 1px solid rgba(0,0,0,.06);
-  border-right: 1px solid rgba(0,0,0,.06);
-  border-bottom: 1px solid rgba(0,0,0,.07);
-}
-#ordersTable thead tr + tr th {
-  border-left: 1px solid rgba(0,0,0,.08);
-  border-right: 1px solid rgba(0,0,0,.08);
-  border-bottom: 1px solid rgba(0,0,0,.10);
-}
-
-/* light zebra striping for readability */
-#ordersTable tbody tr:nth-child(even) td {
-  background: #fff9e8; /* very pale gold */
-}
-
-/* row hover for quick scanning (optional) */
-#ordersTable tbody tr:hover td {
-  background: #fff4d1;
-}
-
-/* keep your thick group dividers on top of the subtle grid */
-#ordersTable thead tr + tr th,
-#ordersTable tbody td {
-  position: relative;
-  z-index: 0; /* group divider rules with !important still win */
-}
-
-/* slightly stronger bottom border below headers */
-#ordersTable thead { box-shadow: inset 0 -1px 0 rgba(0,0,0,.12); }
-
-/* ========== Outer frame around the table (very subtle) ========== */
-/* Outer frame around the table */
-.table-container{
-  overflow-x: auto;
-  background: #fff;
-  border-radius: 12px;
-  /* keep the soft shadow */
-  box-shadow: 0 4px 12px rgba(0,0,0,.10);
-  /* make the frame visible */
-  border: 3px solid #b07d00 !important;  /* was 1px .10 */
-  /* (optional) inner hairline to crisp up the edge */
-  outline: 2px solid #b07d00;
-  outline-offset: -1px;
-}
-
-
-/* Stronger bottom border under header area */
-#ordersTable thead { box-shadow: inset 0 -1.5px 0 rgba(0,0,0,.18); }
-
-/* ========== Slight emphasis on static columns ========== */
-/* Left trio: Date, Employee, Customer (cols 1–3 in tbody) */
-#ordersTable tbody td:nth-child(1),
-#ordersTable tbody td:nth-child(2),
-#ordersTable tbody td:nth-child(3) {
-  background: #fffdfa;                               /* barely warmer */
-  border-right-color: rgba(0,0,0,.10);               /* a hair stronger */
-}
-
-/* Right trio: Total(20), Free Dessert?(21), Done?(22) */
-#ordersTable tbody td:nth-child(20),
-#ordersTable tbody td:nth-child(21),
-#ordersTable tbody td:nth-child(22) {
-  background: #fffdfa;
-  border-left-color: rgba(0,0,0,.10);
-}
-
-/* Match their headers too */
-#ordersTable thead th[rowspan="2"] {
-  border-left-color: rgba(0,0,0,.14);
-  border-right-color: rgba(0,0,0,.14);
-}
-
-/* Optional: a slightly stronger right edge after Customer to balance */
-#ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3),
-#ordersTable tbody td:nth-child(3) {
-  border-right: 3px solid var(--divider) !important; /* same divider tone */
-}
-/* Bigger checkbox just in the last column ("Done?") */
-#ordersTable td:last-child input[type="checkbox"] {
-  transform: scale(1.5);        /* size up */
-  transform-origin: center;     /* keep it centered */
-  width: 18px;                  /* helps some browsers */
-  height: 18px;
-  cursor: pointer;
-  accent-color: #28a745;        /* optional: green check color */
-}
-
-/* Tweak cell padding so the scaled box isn’t clipped */
-#ordersTable td:last-child {
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-/* Optional: nicer focus ring for keyboard users */
-#ordersTable td:last-child input[type="checkbox"]:focus-visible {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.35);
-  border-radius: 4px;
-}
-
-
-
-    /* Notification */
-    #notification {
-      position: fixed;
-      top: 20px; left: 50%;
-      transform: translateX(-50%);
-      background: #c82333; color: white;
-      padding: 15px 25px; border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      font-weight: 700;
-      display: none; z-index: 1000; max-width: 90vw;
-      text-align: center; white-space: pre-line;
-    }
-
-    /* Modal */
-    #clearConfirmModal {
-      position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-      display: none; align-items: center; justify-content: center; z-index: 1100;
-    }
-    #clearConfirmModal .modal-content {
-      background: white; padding: 20px 30px; border-radius: 12px; max-width: 320px; text-align: center; font-weight: 600; color: #333;
-    }
-    #clearConfirmModal button {
-      margin: 15px 10px 0 10px; padding: 0.5rem 1.5rem; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 1rem;
-    }
-    #clearConfirmModal .yes-btn { background-color: #4caf50; color: white; }
-    #clearConfirmModal .no-btn  { background-color: #f44336; color: white; }
-
-    .hamburger {
-      display: none; font-size: 2rem; background: #c82333; color: white; border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer;
-      position: fixed; top: 15px; left: 15px; z-index: 3000; box-shadow: 0 2px 6px rgba(0,0,0,0.25); transition: background 0.2s;
-    }
-    .hamburger:hover { background: #a71d2a; }
-
-    /* Mobile */
-    @media (max-width: 768px) {
-      .hamburger { display: block !important; }
-      .sidebar { position: fixed; top: 0; left: 0; height: 100vh; width: 220px; background-color: #c82333; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 2500; }
-      .sidebar.active { transform: translateX(0); }
-      .main-container { display: flex; flex-direction: column; }
-      main { margin-left: 0; padding: 1rem; }
-
-      .table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -0.5rem; }
-      table#ordersTable { font-size: 0.78rem; min-width: 780px; }
-      table#ordersTable th, table#ordersTable td { padding: 6px 6px; }
-    }
-  </style>
-</head>
-<body>
-  <button id="menuToggle" class="hamburger">☰</button>
-  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
-    <!-- Sidebar -->
-    <aside class="sidebar">
-      <h2>🍔 Snr. Buns</h2>
-      <nav>
-        <ul class="list-unstyled">
-          <li><a href="home.html">🏠 Home</a></li>
-          <li><a href="register.html">🖋️ Register</a></li>
-          <li><a href="orders.html" class="active">📋 Orders</a></li>
-          <li><a href="inventory.html">📦 Inventory</a></li>
-          <li><a href="market.html">🏪 Market Run</a></li>
-          <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
-          <li><a href="loyalty.html">🎁 Customers</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <!-- Main Content -->
-    <main class="main">
-      <h1>🔪 Order Sheet</h1>
-        <div class="table-container">
-        <table id="ordersTable" aria-label="Order Sheet">
-          <thead>
-  <!-- Row 1: section bands -->
-  <tr class="group-row">
-    <th rowspan="2">Date</th>
-    <th rowspan="2">Employee</th>
-    <th rowspan="2">Customer</th>
-
-    <th class="group" colspan="6">BURGERS</th>
-    <th class="group" colspan="3">WRAPS</th>
-    <th class="group" colspan="2">SIDES</th>
-    <th class="group" colspan="2">DRINKS</th>
-    <th class="group" colspan="3">DESSERTS</th>
-
-    <th rowspan="2">Total</th>
-    <th rowspan="2">Free Dessert?</th>
-    <th rowspan="2">Done?</th>
-  </tr>
-
-  <!-- Row 2: individual items (order matters) -->
-  <tr>
-    <!-- BURGERS -->
-    <th>Heart Stopper</th>
-    <th>Money Shot</th>
-    <th>The Simply</th>
-    <th>Double Shot</th>
-    <th>The Bleeder</th>
-    <th>The Prickley</th>
-    <th>Chicken Wrap</th>
-    <th>Chicken Mexican</th>
-    <th>Goat Wrap</th>
-
-    <!-- SIDES -->
-    <th>Fries</th>
-    <th>Onion Rings</th>
-
-    <!-- DRINKS -->
-    <th>Soda</th>
-    <th>Coffee</th>
-
-    <!-- DESSERTS -->
-    <th>Rim Job</th>
-    <th>Cream Pie</th>
-    <th>Ice Cream</th>
-  </tr>
-</thead>
-
-          <tbody id="ordersBody"></tbody>
-        </table>
-      </div>
-    </main>
-  </div>
-
-  <!-- Notification -->
-  <div id="notification"></div>
-
-  <!-- Clear Confirmation Modal -->
-  <div id="clearConfirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmDesc">
-    <div class="modal-content">
-      <div id="confirmTitle" style="font-size:1.2rem; margin-bottom: 10px;">Are you sure you want to clear completed orders?</div>
-      <button class="yes-btn">Yes</button>
-      <button class="no-btn">No</button>
-    </div>
-  </div>
-
-<script type="module">
-import {
-  getFirestore,
-  doc,
-  updateDoc,
-  onSnapshot,
-  collection,
-  query,
-  orderBy,
-  limit
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-import { app } from "./auth.js";
-const db = getFirestore(app);
-
-const tbody = document.getElementById("ordersBody");
-const clearBtn = document.getElementById("clearDone");
-const modal = document.getElementById("clearConfirmModal");
-const yesBtn = modal.querySelector(".yes-btn");
-const noBtn = modal.querySelector(".no-btn");
-
-/* -------- Combos (non-configurable) -------- */
-const comboDetails = {
-  "Big Buns Deal": {
-    price: 1700,
-    components: [
-      { name: "The Simply", quantity: 10 },
-      { name: "Fries", quantity: 5 },
-      { name: "Soda", quantity: 15 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "The Bleeder Box": {
-    price: 600,
-    components: [
-      { name: "The Bleeder", quantity: 5 },
-      { name: "Soda", quantity: 5 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "Filthy Rich Combo": {
-    price: 800,
-    components: [
-      { name: "Money Shot", quantity: 5 },
-      { name: "Soda", quantity: 5 },
-    ]
-  },
-  "Patty Pounder Combo": {
-    price: 1100,
-    components: [
-      { name: "The Prickley", quantity: 10 },
-      { name: "Soda", quantity: 10 },
-    ]
-  }
-};
-
-/* -------- Daisy config (expandable) -------- */
-const DAISY_NAME = "Daisy Family Box";
-const DAISY_BURGERS_PER_BOX = 15;
-const DAISY_EXTRAS = [
-  { name: "Coffee", quantity: 20 },
-  { name: "Cream Pie", quantity: 5 }
-];
-
-/* -------- Menu columns -------- */
-const PRODUCTS = [
-  // BURGERS
-  "Heart Stopper",
-  "Money Shot",
-  "The Simply",
-  "Double Shot",
-  "The Bleeder",
-  "The Prickley",
-  // WRAPS
-  "Chicken Wrap",
-  "Chicken Mexican",
-  "Goat Wrap",
-  // SIDES
-  "Fries",
-  "Onion Rings",
-  // DRINKS
-  "Soda",
-  "Coffee",
-  // DESSERTS
-  "Rim Job",
-  "Cream Pie",
-  "Ice Cream"
-];
-
-/* -------- Query (no where() → no composite index needed) -------- */
-const q = query(
-  collection(db, "orders"),
-  orderBy("timestamp", "desc"),
-  limit(50)
-);
-
-let currentOrders = [];
-
-/* Expand items (combos + Daisy) to per-product counts */
-function parseItems(items = []) {
-  const counts = {};
-  PRODUCTS.forEach(p => (counts[p] = 0));
-
-  items.forEach(item => {
-    const qty = Number(item.quantity || 0);
-    const name = item?.name || "";
-    if (!qty) return;
-
-    // Daisy Family Box → 15 of chosen burger per box + extras
-    if (name === DAISY_NAME && item.daisyChoice) {
-      const burger = item.daisyChoice;
-      if (counts[burger] !== undefined) {
-        counts[burger] += qty * DAISY_BURGERS_PER_BOX;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snr. Buns - Order Sheet</title>
+
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script type="module" src="auth.js"></script>
+
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: #fff4d6;
+        margin: 0;
+        display: flex;
+        min-height: 100vh;
+        color: #333;
       }
-      DAISY_EXTRAS.forEach(ex => {
-        if (counts[ex.name] !== undefined) {
-          counts[ex.name] += qty * ex.quantity;
+
+      /* Sidebar */
+      .sidebar {
+        background-color: #c82333;
+        width: 220px;
+        color: white;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+      .sidebar h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        white-space: nowrap;
+      }
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background-color: #a71d2a;
+        text-decoration: none;
+      }
+
+      /* Main content */
+      .main {
+        flex-grow: 1;
+        padding: 2rem 2.5rem;
+        background-color: #fff4d6;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      h1 {
+        color: #c82333;
+        font-weight: 700;
+        font-size: 2rem;
+        margin-bottom: 1rem;
+        user-select: none;
+        text-align: center;
+      }
+
+      #clearDone {
+        align-self: center;
+        background-color: #ffc107;
+        border: none;
+        border-radius: 8px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
+      #clearDone:hover {
+        background-color: #e0a800;
+      }
+
+      /* Smaller table font + tighter padding on desktop too */
+      table#ordersTable {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+        font-weight: 600;
+        user-select: none;
+        font-size: 0.85rem; /* << smaller table text */
+      }
+      table#ordersTable th,
+      table#ordersTable td {
+        border: 1px solid #ddd;
+        padding: 8px 8px; /* << tighter padding */
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        word-break: break-word;
+      }
+
+      /* Only menu item headers can wrap, but don't break inside words */
+      #ordersTable thead th.menu-wrap {
+        white-space: normal !important; /* allow lines to wrap */
+        word-break: keep-all !important; /* <-- prevent mid-word breaks */
+        overflow-wrap: normal !important; /* no extra splitting */
+        hyphens: none;
+        line-height: 1.1;
+        padding: 6px 6px;
+        font-size: 0.82rem; /* optional: tighter */
+      }
+
+      table#ordersTable th {
+        background-color: #ffc107;
+        font-weight: 700;
+        user-select: none;
+      }
+
+      /* Make completed orders clearly "done" */
+      #ordersTable tbody tr.done td {
+        /* stronger visual change */
+        color: #666; /* dim text a bit */
+        text-decoration: line-through; /* keep strike */
+        text-decoration-thickness: 4px; /* thicker line */
+        text-decoration-color: #393737; /* darker strike color */
+      }
+
+      /* If you want the whole row slightly faded too (optional) */
+      #ordersTable tbody tr.done {
+        opacity: 0.8;
+      }
+
+      /* allow wrapping only for menu headers we tag in JS */
+      #ordersTable thead th.menu-wrap {
+        white-space: normal; /* override your nowrap */
+        line-height: 1.1;
+        padding: 6px 6px; /* a bit tighter */
+      }
+      #ordersTable thead th.menu-wrap br {
+        content: "";
+      }
+
+      /* Section band styling */
+      #ordersTable thead .group-row th.group {
+        background: #f8d877; /* light peach band */
+        color: #333;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.78rem;
+        border: 1px solid #ddd;
+      }
+
+      /* Keep the normal header look on the other cells */
+      #ordersTable thead th[rowspan="2"] {
+        background: #ffc107;
+        vertical-align: middle;
+      }
+
+      /* Make second header row slightly tighter */
+      #ordersTable thead tr + tr th {
+        padding-top: 6px;
+        padding-bottom: 6px;
+      }
+
+      /* Optional: allow two-word wraps nicely for menu headers */
+      #ordersTable thead tr + tr th {
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        line-height: 1.15;
+      }
+
+      /* Row 1 (bands + Date/Employee/Customer/Total/etc.) */
+      #ordersTable thead .group-row th.group,
+      #ordersTable thead th[rowspan="2"] {
+        background: #ffc107; /* same gold as other headers */
+        color: #1a1a1a;
+      }
+
+      /* Row 2 (individual menu items): lighter gold */
+      #ordersTable thead tr + tr th {
+        background: #ffefb5; /* lighter gold for contrast */
+        color: #2b2b2b;
+        border-color: #e2c86a; /* slightly warmer border looks cleaner */
+        font-weight: 700; /* keep them bold but slightly softer is ok */
+      }
+
+      /* ===== Column group dividers (header row 2 + body) ===== */
+      :root {
+        --divider: #b07d00;
+      }
+
+      /* --- LEFT edges of groups --- */
+      /* Burgers start (header col 1, body col 4) */
+      #ordersTable thead tr + tr th:nth-child(1),
+      #ordersTable tbody td:nth-child(4) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* Wraps start (header col 7, body col 10) */
+      #ordersTable thead tr + tr th:nth-child(7),
+      #ordersTable tbody td:nth-child(10) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* Sides start (header col 10, body col 13) */
+      #ordersTable thead tr + tr th:nth-child(10),
+      #ordersTable tbody td:nth-child(13) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* Drinks start (header col 12, body col 15) */
+      #ordersTable thead tr + tr th:nth-child(12),
+      #ordersTable tbody td:nth-child(15) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* Desserts start (header col 14, body col 17) */
+      #ordersTable thead tr + tr th:nth-child(14),
+      #ordersTable tbody td:nth-child(17) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* --- RIGHT edges of groups --- */
+      /* Burgers end (header col 6, body col 9) */
+      #ordersTable thead tr + tr th:nth-child(6),
+      #ordersTable tbody td:nth-child(9) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Wraps end (header col 9, body col 12) */
+      #ordersTable thead tr + tr th:nth-child(9),
+      #ordersTable tbody td:nth-child(12) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Sides end (header col 11, body col 14) */
+      #ordersTable thead tr + tr th:nth-child(11),
+      #ordersTable tbody td:nth-child(14) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Drinks end (header col 13, body col 16) */
+      #ordersTable thead tr + tr th:nth-child(13),
+      #ordersTable tbody td:nth-child(16) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Desserts end (header col 16, body col 19) */
+      #ordersTable thead tr + tr th:nth-child(16),
+      #ordersTable tbody td:nth-child(19) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* keep normal grid light so the dividers pop */
+      #ordersTable th,
+      #ordersTable td {
+        border-color: #ddd;
+      }
+
+      #ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3) {
+        /* thick line after Customer → before Burgers */
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      #ordersTable thead .group-row th.group {
+        /* right edge of every band */
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      #ordersTable thead .group-row th.group:first-of-type {
+        /* left edge of the first band (BURGERS) */
+        border-left: 3px solid var(--divider) !important;
+      }
+      /* subtle inner grid so groups still dominate */
+      #ordersTable tbody td {
+        border-left: 1px solid rgba(0, 0, 0, 0.06);
+        border-right: 1px solid rgba(0, 0, 0, 0.06);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+      }
+      #ordersTable thead tr + tr th {
+        border-left: 1px solid rgba(0, 0, 0, 0.08);
+        border-right: 1px solid rgba(0, 0, 0, 0.08);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      }
+
+      /* light zebra striping for readability */
+      #ordersTable tbody tr:nth-child(even) td {
+        background: #fff9e8; /* very pale gold */
+      }
+
+      /* row hover for quick scanning (optional) */
+      #ordersTable tbody tr:hover td {
+        background: #fff4d1;
+      }
+
+      /* keep your thick group dividers on top of the subtle grid */
+      #ordersTable thead tr + tr th,
+      #ordersTable tbody td {
+        position: relative;
+        z-index: 0; /* group divider rules with !important still win */
+      }
+
+      /* slightly stronger bottom border below headers */
+      #ordersTable thead {
+        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12);
+      }
+
+      /* ========== Outer frame around the table (very subtle) ========== */
+      /* Outer frame around the table */
+      .table-container {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 12px;
+        /* keep the soft shadow */
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        /* make the frame visible */
+        border: 3px solid #b07d00 !important; /* was 1px .10 */
+        /* (optional) inner hairline to crisp up the edge */
+        outline: 2px solid #b07d00;
+        outline-offset: -1px;
+      }
+
+      /* Stronger bottom border under header area */
+      #ordersTable thead {
+        box-shadow: inset 0 -1.5px 0 rgba(0, 0, 0, 0.18);
+      }
+
+      /* ========== Slight emphasis on static columns ========== */
+      /* Left trio: Date, Employee, Customer (cols 1–3 in tbody) */
+      #ordersTable tbody td:nth-child(1),
+      #ordersTable tbody td:nth-child(2),
+      #ordersTable tbody td:nth-child(3) {
+        background: #fffdfa; /* barely warmer */
+        border-right-color: rgba(0, 0, 0, 0.1); /* a hair stronger */
+      }
+
+      /* Right trio: Total(20), Free Dessert?(21), Done?(22) */
+      #ordersTable tbody td:nth-child(20),
+      #ordersTable tbody td:nth-child(21),
+      #ordersTable tbody td:nth-child(22) {
+        background: #fffdfa;
+        border-left-color: rgba(0, 0, 0, 0.1);
+      }
+
+      /* Match their headers too */
+      #ordersTable thead th[rowspan="2"] {
+        border-left-color: rgba(0, 0, 0, 0.14);
+        border-right-color: rgba(0, 0, 0, 0.14);
+      }
+
+      /* Optional: a slightly stronger right edge after Customer to balance */
+      #ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3),
+      #ordersTable tbody td:nth-child(3) {
+        border-right: 3px solid var(--divider) !important; /* same divider tone */
+      }
+      /* Bigger checkbox just in the last column ("Done?") */
+      #ordersTable td:last-child input[type="checkbox"] {
+        transform: scale(1.5); /* size up */
+        transform-origin: center; /* keep it centered */
+        width: 18px; /* helps some browsers */
+        height: 18px;
+        cursor: pointer;
+        accent-color: #28a745; /* optional: green check color */
+      }
+
+      /* Tweak cell padding so the scaled box isn’t clipped */
+      #ordersTable td:last-child {
+        padding-top: 10px;
+        padding-bottom: 10px;
+      }
+
+      /* Optional: nicer focus ring for keyboard users */
+      #ordersTable td:last-child input[type="checkbox"]:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.35);
+        border-radius: 4px;
+      }
+
+      /* Notification */
+      #notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #c82333;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 700;
+        display: none;
+        z-index: 1000;
+        max-width: 90vw;
+        text-align: center;
+        white-space: pre-line;
+      }
+
+      /* Modal */
+      #clearConfirmModal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1100;
+      }
+      #clearConfirmModal .modal-content {
+        background: white;
+        padding: 20px 30px;
+        border-radius: 12px;
+        max-width: 320px;
+        text-align: center;
+        font-weight: 600;
+        color: #333;
+      }
+      #clearConfirmModal button {
+        margin: 15px 10px 0 10px;
+        padding: 0.5rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        font-size: 1rem;
+      }
+      #clearConfirmModal .yes-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+      #clearConfirmModal .no-btn {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 2rem;
+        background: #c82333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 3000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        transition: background 0.2s;
+      }
+      .hamburger:hover {
+        background: #a71d2a;
+      }
+
+      /* Mobile */
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block !important;
         }
-      });
-      return;
-    }
-
-    // Regular combos
-    if (comboDetails[name]) {
-      comboDetails[name].components.forEach(c => {
-        if (counts[c.name] !== undefined) {
-          counts[c.name] += qty * c.quantity;
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 220px;
+          background-color: #c82333;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 2500;
         }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+        .main-container {
+          display: flex;
+          flex-direction: column;
+        }
+        main {
+          margin-left: 0;
+          padding: 1rem;
+        }
+
+        .table-container {
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          margin: 0 -0.5rem;
+        }
+        table#ordersTable {
+          font-size: 0.78rem;
+          min-width: 780px;
+        }
+        table#ordersTable th,
+        table#ordersTable td {
+          padding: 6px 6px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="menuToggle" class="hamburger">☰</button>
+    <div
+      class="main-container"
+      style="display: flex; width: 100%; min-height: 100vh"
+    >
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <h2>🍔 Snr. Buns</h2>
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html">🏠 Home</a></li>
+            <li><a href="register.html">🖋️ Register</a></li>
+            <li><a href="orders.html" class="active">📋 Orders</a></li>
+            <li><a href="inventory.html">📦 Inventory</a></li>
+            <li><a href="market.html">🏪 Market Run</a></li>
+            <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+            <li><a href="loyalty.html">🎁 Customers</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main">
+        <h1>🔪 Order Sheet</h1>
+        <div class="table-container">
+          <table id="ordersTable" aria-label="Order Sheet">
+            <thead>
+              <!-- Row 1: section bands -->
+              <tr class="group-row">
+                <th rowspan="2">Date</th>
+                <th rowspan="2">Employee</th>
+                <th rowspan="2">Customer</th>
+
+                <th class="group" colspan="6">BURGERS</th>
+                <th class="group" colspan="3">WRAPS</th>
+                <th class="group" colspan="2">SIDES</th>
+                <th class="group" colspan="2">DRINKS</th>
+                <th class="group" colspan="3">DESSERTS</th>
+
+                <th rowspan="2">Total</th>
+                <th rowspan="2">Free Dessert?</th>
+                <th rowspan="2">Done?</th>
+              </tr>
+
+              <!-- Row 2: individual items (order matters) -->
+              <tr>
+                <!-- BURGERS -->
+                <th>Heart Stopper</th>
+                <th>Money Shot</th>
+                <th>The Simply</th>
+                <th>Double Shot</th>
+                <th>The Bleeder</th>
+                <th>The Prickley</th>
+                <th>Chicken Wrap</th>
+                <th>Chicken Mexican</th>
+                <th>Goat Wrap</th>
+
+                <!-- SIDES -->
+                <th>Fries</th>
+                <th>Onion Rings</th>
+
+                <!-- DRINKS -->
+                <th>Soda</th>
+                <th>Coffee</th>
+
+                <!-- DESSERTS -->
+                <th>Rim Job</th>
+                <th>Cream Pie</th>
+                <th>Ice Cream</th>
+              </tr>
+            </thead>
+
+            <tbody id="ordersBody"></tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification"></div>
+
+    <!-- Clear Confirmation Modal -->
+    <div
+      id="clearConfirmModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmTitle"
+      aria-describedby="confirmDesc"
+    >
+      <div class="modal-content">
+        <div id="confirmTitle" style="font-size: 1.2rem; margin-bottom: 10px">
+          Are you sure you want to clear completed orders?
+        </div>
+        <button class="yes-btn">Yes</button>
+        <button class="no-btn">No</button>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        getFirestore,
+        doc,
+        updateDoc,
+        onSnapshot,
+        collection,
+        query,
+        orderBy,
+        limit,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+      import { app } from "./auth.js";
+      const db = getFirestore(app);
+
+      const tbody = document.getElementById("ordersBody");
+      const clearBtn = document.getElementById("clearDone");
+      const modal = document.getElementById("clearConfirmModal");
+      const yesBtn = modal.querySelector(".yes-btn");
+      const noBtn = modal.querySelector(".no-btn");
+
+      /* -------- Combos (non-configurable) -------- */
+      const comboDetails = {
+        "The Heartstopper Meal": {
+          price: 1800,
+          components: [
+            { name: "Heart Stopper", quantity: 5 },
+            { name: "Fries", quantity: 5 },
+            { name: "Soda", quantity: 15 },
+            { name: "Ice Cream", quantity: 5 },
+          ],
+        },
+        "Big Buns Deal": {
+          price: 1700,
+          components: [
+            { name: "The Simply", quantity: 10 },
+            { name: "Fries", quantity: 5 },
+            { name: "Soda", quantity: 15 },
+            { name: "Rim Job", quantity: 1 },
+          ],
+        },
+        "The Bleeder Box": {
+          price: 600,
+          components: [
+            { name: "The Bleeder", quantity: 5 },
+            { name: "Soda", quantity: 5 },
+            { name: "Rim Job", quantity: 1 },
+          ],
+        },
+        "Filthy Rich Combo": {
+          price: 800,
+          components: [
+            { name: "Money Shot", quantity: 5 },
+            { name: "Soda", quantity: 5 },
+          ],
+        },
+        "Patty Pounder Combo": {
+          price: 1100,
+          components: [
+            { name: "The Prickley", quantity: 10 },
+            { name: "Soda", quantity: 10 },
+          ],
+        },
+      };
+
+      /* -------- Daisy config (expandable) -------- */
+      const DAISY_NAME = "Daisy Family Box";
+      const DAISY_BURGERS_PER_BOX = 15;
+      const DAISY_EXTRAS = [
+        { name: "Coffee", quantity: 20 },
+        { name: "Cream Pie", quantity: 5 },
+      ];
+
+      /* -------- Menu columns -------- */
+      const PRODUCTS = [
+        // BURGERS
+        "Heart Stopper",
+        "Money Shot",
+        "The Simply",
+        "Double Shot",
+        "The Bleeder",
+        "The Prickley",
+        // WRAPS
+        "Chicken Wrap",
+        "Chicken Mexican",
+        "Goat Wrap",
+        // SIDES
+        "Fries",
+        "Onion Rings",
+        // DRINKS
+        "Soda",
+        "Coffee",
+        // DESSERTS
+        "Rim Job",
+        "Cream Pie",
+        "Ice Cream",
+      ];
+
+      /* -------- Query (no where() → no composite index needed) -------- */
+      const q = query(
+        collection(db, "orders"),
+        orderBy("timestamp", "desc"),
+        limit(50)
+      );
+
+      let currentOrders = [];
+
+      /* Expand items (combos + Daisy) to per-product counts */
+      function parseItems(items = []) {
+        const counts = {};
+        PRODUCTS.forEach((p) => (counts[p] = 0));
+
+        items.forEach((item) => {
+          const qty = Number(item.quantity || 0);
+          const name = item?.name || "";
+          if (!qty) return;
+
+          // Daisy Family Box → 15 of chosen burger per box + extras
+          if (name === DAISY_NAME && item.daisyChoice) {
+            const burger = item.daisyChoice;
+            if (counts[burger] !== undefined) {
+              counts[burger] += qty * DAISY_BURGERS_PER_BOX;
+            }
+            DAISY_EXTRAS.forEach((ex) => {
+              if (counts[ex.name] !== undefined) {
+                counts[ex.name] += qty * ex.quantity;
+              }
+            });
+            return;
+          }
+
+          // Regular combos
+          if (comboDetails[name]) {
+            comboDetails[name].components.forEach((c) => {
+              if (counts[c.name] !== undefined) {
+                counts[c.name] += qty * c.quantity;
+              }
+            });
+            return;
+          }
+
+          // Single items
+          if (counts[name] !== undefined) {
+            counts[name] += qty;
+          }
+        });
+
+        return counts;
+      }
+
+      /* Render */
+      function renderOrders(orders) {
+        tbody.innerHTML = "";
+        orders.forEach(({ id, data: order }) => {
+          // client-side filter for deleted
+          if (order.deleted) return;
+
+          const tr = document.createElement("tr");
+          if (order.done) tr.classList.add("done");
+
+          const counts = parseItems(order.items || []);
+
+          const estDate = order.timestamp?.toDate?.();
+          const formattedDate = estDate
+            ? estDate.toLocaleString("en-US", {
+                timeZone: "America/New_York",
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit",
+                hour12: false,
+              })
+            : "-";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = !!order.done;
+          checkbox.addEventListener("change", async () => {
+            await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
+          });
+
+          // Date / Employee / Customer
+          [formattedDate, order.employee || "-", order.customer || "-"].forEach(
+            (v) => {
+              const td = document.createElement("td");
+              td.textContent = v;
+              tr.appendChild(td);
+            }
+          );
+
+          // Menu counts
+          PRODUCTS.forEach((p) => {
+            const td = document.createElement("td");
+            const n = Number(counts[p] || 0);
+            td.textContent = n > 0 ? n : "";
+            tr.appendChild(td);
+          });
+
+          // Total / Free Dessert / Done
+          const totalTd = document.createElement("td");
+          totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
+          tr.appendChild(totalTd);
+
+          const freeTd = document.createElement("td");
+          freeTd.textContent = order.freeDessert ? "Yes 🍰" : "";
+          tr.appendChild(freeTd);
+
+          const doneTd = document.createElement("td");
+          doneTd.appendChild(checkbox);
+          tr.appendChild(doneTd);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      /* Listen + basic error handler */
+      onSnapshot(
+        q,
+        (snapshot) => {
+          currentOrders = snapshot.docs.map((d) => ({
+            id: d.id,
+            data: d.data(),
+          }));
+          renderOrders(currentOrders);
+        },
+        (err) => {
+          console.error(
+            "[orders] Firestore onSnapshot error:",
+            err?.message || err
+          );
+        }
+      );
+
+      /* Clear completed orders (soft delete) */
+      clearBtn.addEventListener("click", () => (modal.style.display = "flex"));
+      yesBtn.addEventListener("click", async () => {
+        const doneOrders = currentOrders.filter(
+          (o) => o.data.done && !o.data.deleted
+        );
+        const updates = doneOrders.map((o) =>
+          updateDoc(doc(db, "orders", o.id), { deleted: true })
+        );
+        await Promise.all(updates);
+        modal.style.display = "none";
       });
-      return;
-    }
-
-    // Single items
-    if (counts[name] !== undefined) {
-      counts[name] += qty;
-    }
-  });
-
-  return counts;
-}
-
-/* Render */
-function renderOrders(orders) {
-  tbody.innerHTML = "";
-  orders.forEach(({ id, data: order }) => {
-    // client-side filter for deleted
-    if (order.deleted) return;
-
-    const tr = document.createElement("tr");
-    if (order.done) tr.classList.add("done");
-
-    const counts = parseItems(order.items || []);
-
-    const estDate = order.timestamp?.toDate?.();
-    const formattedDate = estDate
-      ? estDate.toLocaleString("en-US", {
-          timeZone: "America/New_York",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false
-        })
-      : "-";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = !!order.done;
-    checkbox.addEventListener("change", async () => {
-      await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
-    });
-
-    // Date / Employee / Customer
-    [formattedDate, order.employee || "-", order.customer || "-"].forEach(v => {
-      const td = document.createElement("td");
-      td.textContent = v;
-      tr.appendChild(td);
-    });
-
-    // Menu counts
-    PRODUCTS.forEach(p => {
-      const td = document.createElement("td");
-      const n = Number(counts[p] || 0);
-      td.textContent = n > 0 ? n : "";
-      tr.appendChild(td);
-    });
-
-    // Total / Free Dessert / Done
-    const totalTd = document.createElement("td");
-    totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
-    tr.appendChild(totalTd);
-
-    const freeTd = document.createElement("td");
-    freeTd.textContent = order.freeDessert ? "Yes 🍰" : "";
-    tr.appendChild(freeTd);
-
-    const doneTd = document.createElement("td");
-    doneTd.appendChild(checkbox);
-    tr.appendChild(doneTd);
-
-    tbody.appendChild(tr);
-  });
-}
-
-/* Listen + basic error handler */
-onSnapshot(
-  q,
-  (snapshot) => {
-    currentOrders = snapshot.docs.map(d => ({ id: d.id, data: d.data() }));
-    renderOrders(currentOrders);
-  },
-  (err) => {
-    console.error("[orders] Firestore onSnapshot error:", err?.message || err);
-  }
-);
-
-/* Clear completed orders (soft delete) */
-clearBtn.addEventListener("click", () => (modal.style.display = "flex"));
-yesBtn.addEventListener("click", async () => {
-  const doneOrders = currentOrders.filter(o => o.data.done && !o.data.deleted);
-  const updates = doneOrders.map(o =>
-    updateDoc(doc(db, "orders", o.id), { deleted: true })
-  );
-  await Promise.all(updates);
-  modal.style.display = "none";
-});
-noBtn.addEventListener("click", () => (modal.style.display = "none"));
-
-</script>
-
-
-</body>
+      noBtn.addEventListener("click", () => (modal.style.display = "none"));
+    </script>
+  </body>
 </html>
