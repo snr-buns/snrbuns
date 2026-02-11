@@ -1,569 +1,610 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snr. Buns - Staff Meals</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snr. Buns - Staff Meals</title>
 
-  <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <script type="module" src="auth.js"></script>
+    <script type="module" src="auth.js"></script>
 
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #fff4d6;
-      margin: 0;
-      display: flex;
-      min-height: 100vh;
-      color: #333;
-    }
-    .sidebar {
-      background-color: #c82333;
-      width: 220px;
-      color: white;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-    }
-   .sidebar h2 {
-  font-weight: 700;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  white-space: nowrap;   /* ✅ prevents wrapping */
-}
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: #fff4d6;
+        margin: 0;
+        display: flex;
+        min-height: 100vh;
+        color: #333;
+      }
+      .sidebar {
+        background-color: #c82333;
+        width: 220px;
+        color: white;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+      }
+      .sidebar h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        white-space: nowrap; /* ✅ prevents wrapping */
+      }
 
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.75rem 0.5rem;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      background-color: #a71d2a;
-      text-decoration: none;
-    }
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background-color: #a71d2a;
+        text-decoration: none;
+      }
 
-    main {
-      flex-grow: 1;
-      padding: 2rem 3rem;
-      background-color: #fff4d6;
-      overflow-y: auto;
-    }
+      main {
+        flex-grow: 1;
+        padding: 2rem 3rem;
+        background-color: #fff4d6;
+        overflow-y: auto;
+      }
 
-    h1 {
-      color: #c82333;
-      font-weight: 700;
-      margin-bottom: 2rem;
-      user-select: none;
-    }
+      h1 {
+        color: #c82333;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        user-select: none;
+      }
 
-    .form-group {
-      margin-bottom: 1rem;
-    }
+      .form-group {
+        margin-bottom: 1rem;
+      }
 
-    .form-group label {
-  display: block;
-  font-weight: 700;
-  margin-bottom: 0.2rem; /* space below each label */
-}
+      .form-group label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 0.2rem; /* space below each label */
+      }
 
-.form-group select,
-.form-group input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border-radius: 10px;
-  border: 2px solid #c82333;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #333;
-  margin-bottom: 0.5rem; /* ✅ consistent spacing below each field */
-  box-sizing: border-box;
-}
-/* Style the expanded dropdown list to match register.html */
-.form-group select option {
-  font-weight: 600;
-  padding: 8px;
-  background: #fff;
-  color: #333;
-}
+      .form-group select,
+      .form-group input {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        border: 2px solid #c82333;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #333;
+        margin-bottom: 0.5rem; /* ✅ consistent spacing below each field */
+        box-sizing: border-box;
+      }
+      /* Style the expanded dropdown list to match register.html */
+      .form-group select option {
+        font-weight: 600;
+        padding: 8px;
+        background: #fff;
+        color: #333;
+      }
 
-.form-group select option:checked {
-  background: #fff4d6; /* light yellow for selected option */
-  color: #c82333;
-}
+      .form-group select option:checked {
+        background: #fff4d6; /* light yellow for selected option */
+        color: #c82333;
+      }
 
+      label {
+        font-weight: 700;
+        user-select: none;
+        display: block;
+        margin-bottom: 0.3rem;
+      }
 
-    label {
-      font-weight: 700;
-      user-select: none;
-      display: block;
-      margin-bottom: 0.3rem;
-    }
+      /* Staff meals selects styled like Register page */
+      select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-top: 0.4rem;
+        border-radius: 10px;
+        border: 2px solid #c82333; /* red by default */
+        background-color: #fff;
+        font-weight: 700;
+        font-size: 1rem;
+        color: #333;
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='%23c82333' d='M5.5 7l4.5 5 4.5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
 
-/* Staff meals selects styled like Register page */
-select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-top: 0.4rem;
-  border-radius: 10px;
-  border: 2px solid #c82333;   /* red by default */
-  background-color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #333;
-  appearance: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='%23c82333' d='M5.5 7l4.5 5 4.5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
+      select:hover {
+        border-color: #a71d2a;
+      }
 
-select:hover {
-  border-color: #a71d2a;
-}
+      select:focus {
+        outline: none;
+        border-color: #ff8800; /* orange on focus */
+        box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
+      }
 
-select:focus {
-  outline: none;
-  border-color: #ff8800; /* orange on focus */
-  box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
-}
+      /* Style the dropdown menu itself */
+      select option {
+        font-weight: 600;
+        padding: 8px;
+        border: none;
+        background: #fff;
+        color: #333;
+      }
 
-/* Style the dropdown menu itself */
-select option {
-  font-weight: 600;
-  padding: 8px;
-  border: none;
-  background: #fff;
-  color: #333;
-}
+      /* Highlight when hovered */
+      select option:hover {
+        background-color: #fff4d6; /* light yellow background */
+        color: #c82333;
+      }
 
-/* Highlight when hovered */
-select option:hover {
-  background-color: #fff4d6; /* light yellow background */
-  color: #c82333;
-}
+      button {
+        background-color: #c82333;
+        border: none;
+        color: white;
+        font-weight: 700;
+        padding: 0.7rem 1.5rem;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color 0.3s ease;
+        margin-top: 1rem;
+        display: inline-block;
+      }
+      button:hover {
+        background-color: #a71d2a;
+      }
 
+      #notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #c82333;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 700;
+        font-family: "Montserrat", sans-serif;
+        display: none;
+        z-index: 1000;
+        max-width: 90vw;
+        text-align: center;
+        white-space: nowrap;
+      }
 
-    button {
-      background-color: #c82333;
-      border: none;
-      color: white;
-      font-weight: 700;
-      padding: 0.7rem 1.5rem;
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s ease;
-      margin-top: 1rem;
-      display: inline-block;
-    }
-    button:hover {
-      background-color: #a71d2a;
-    }
+      main h1 + p {
+        margin-top: 0.5rem; /* nice spacing below headings */
+      }
 
-    #notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #c82333;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      font-weight: 700;
-      font-family: 'Montserrat', sans-serif;
-      display: none;
-      z-index: 1000;
-      max-width: 90vw;
-      text-align: center;
-      white-space: nowrap;
-    }
+      /* Hamburger button */
+      .hamburger {
+        display: none;
+        font-size: 2rem;
+        background: #c82333;
+        color: white;
+        border: none;
+        border-radius: 8px; /* matches other buttons */
+        padding: 6px 12px;
+        cursor: pointer;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 3000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); /* permanent shadow */
+        transition: background 0.2s;
+      }
+      .hamburger:hover {
+        background: #a71d2a;
+      }
 
-    main h1 + p {
-  margin-top: 0.5rem; /* nice spacing below headings */
-}
+      /* Mobile behavior */
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block; /* show only on small screens */
+        }
 
-    /* Hamburger button */
-.hamburger {
-  display: none;
-  font-size: 2rem;
-  background: #c82333;
-  color: white;
-  border: none;
-  border-radius: 8px;     /* matches other buttons */
-  padding: 6px 12px;
-  cursor: pointer;
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 3000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* permanent shadow */
-  transition: background 0.2s;
-}
-.hamburger:hover {
-  background: #a71d2a;
-}
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 220px;
+          background-color: #c82333;
+          transform: translateX(-100%); /* start hidden */
+          transition: transform 0.3s ease;
+          z-index: 2500;
+        }
 
-/* Mobile behavior */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block; /* show only on small screens */
-  }
+        .sidebar.active {
+          transform: translateX(0); /* slide in */
+        }
 
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 220px;
-    background-color: #c82333;
-    transform: translateX(-100%); /* start hidden */
-    transition: transform 0.3s ease;
-    z-index: 2500;
-  }
+        /* prevent main content from squashing */
+        .main-container {
+          flex-direction: column;
+        }
+        main {
+          margin-left: 0;
+          padding: 100px 1rem 1rem; /* 👈 top padding clears hamburger */
+        }
+        .custom-select-wrapper {
+          position: relative;
+          width: 100%;
+        }
 
-  .sidebar.active {
-    transform: translateX(0); /* slide in */
-  }
+        .custom-select {
+          position: relative;
+          font-weight: 700;
+          font-size: 1rem;
+          user-select: none;
+        }
 
-  /* prevent main content from squashing */
-  .main-container {
-    flex-direction: column;
-  }
-  main {
-    margin-left: 0;
-    padding: 100px 1rem 1rem; /* 👈 top padding clears hamburger */
-  }
-  .custom-select-wrapper {
-  position: relative;
-  width: 100%;
-}
+        .select-selected {
+          background-color: #fff;
+          border: 2px solid #c82333;
+          border-radius: 10px;
+          padding: 0.75rem 1rem;
+          cursor: pointer;
+          color: #333;
+          transition: all 0.2s ease;
+        }
 
-.custom-select {
-  position: relative;
-  font-weight: 700;
-  font-size: 1rem;
-  user-select: none;
-}
+        .select-selected:hover {
+          background-color: #fff0e6;
+        }
 
-.select-selected {
-  background-color: #fff;
-  border: 2px solid #c82333;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  color: #333;
-  transition: all 0.2s ease;
-}
+        .select-selected:after {
+          content: "▼";
+          position: absolute;
+          right: 1rem;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 0.8rem;
+          color: #c82333;
+        }
 
-.select-selected:hover {
-  background-color: #fff0e6;
-}
+        .select-items {
+          position: absolute;
+          background-color: #fff;
+          border: 2px solid #c82333;
+          border-radius: 10px;
+          top: 100%;
+          left: 0;
+          right: 0;
+          z-index: 99;
+          display: flex;
+          flex-direction: column;
+          margin-top: 5px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
 
-.select-selected:after {
-  content: "▼";
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.8rem;
-  color: #c82333;
-}
+        .select-items div {
+          padding: 10px;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
 
-.select-items {
-  position: absolute;
-  background-color: #fff;
-  border: 2px solid #c82333;
-  border-radius: 10px;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  display: flex;
-  flex-direction: column;
-  margin-top: 5px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
+        .select-items div:hover {
+          background-color: #ffc107;
+          color: #000;
+        }
 
-.select-items div {
-  padding: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.select-items div:hover {
-  background-color: #ffc107;
-  color: #000;
-}
-
-.select-hide {
-  display: none;
-}
-
-}</style>
-</head>
-<body>
-<button id="menuToggle" class="hamburger">☰</button>
-  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
-    <aside class="sidebar">
-      <h2>🍔 Snr. Buns</h2>
-      <nav>
-        <ul class="list-unstyled">
-          <li><a href="home.html">🏠 Home</a></li>
-          <li><a href="register.html">🖋️ Register</a></li>
-          <li><a href="orders.html">📋 Orders</a></li>
-          <li><a href="inventory.html">📦 Inventory</a></li>
-          <li><a href="market.html">🏪 Market Run</a></li>
-          <li><a href="staffmeals.html" class="active">🍽️ Staff Meals</a></li>
-          <li><a href="loyalty.html">🎁 Customers</a></li>
-        </ul>
-      </nav>
-    </aside>
-
-    <main>
-      <h1>🍽️ Staff Meals</h1>
-
-      <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-        Employees are entitled to 5 drinks and 5 food items per shift. Please make sure you log it here so that the inventory stays accurate. <br><Br>
-        Heart Stopper and Money Shot's are not available for staff meals. Sorry.
-      </p>
-
-      <!-- Employee -->
-      <div class="form-group">
-        <label for="employeeSelect">Select Employee</label>
-        <select id="employeeSelect" required>
-          <option value="" disabled selected>Select employee</option>
-           <option value="Savannah">Savannah</option>
-    <option value="Slade">Slade</option>
-    <option value="Jack">Jack</option>
-    <option value="Rico">Rico</option>
-    <option value="Jesus">Jesus</option>
-    <option value="Torch">Torch</option>
-    <option value="Audrey">Audrey</option>
-    <option value="Rufus">Rufus</option>
-    <option value="Andy">Andy</option>
-    <option value="Bezzy">Bezzy</option>
-    <option value="Wyatt">Wyatt</option>
-    <option value="Justin">Justin</option>
-        </select>
-      </div>
-
-      <!-- Food -->
-      <div class="form-group">
-        <label for="foodSelect">Select Food Item</label>
-        <select id="foodSelect">
-          <option value="" disabled selected>-- None --</option>
-          <option value="The Bleeder">The Bleeder</option>
-          <option value="The Prickley">The Prickley</option>
-          <option value="The Simply">The Simply</option>
-          <option value="Double Shot">Double Shot</option>
-          <option value="Chicken Wrap">Chicken Wrap</option>
-          <option value="Goat Wrap">Goat Wrap</option>
-          <option value="Chicken Mexican">Chicken Mexican</option>
-          <option value="Fries">Fries</option>
-          <option value="Rim Job">Rim Job</option>
-          <option value="Cream Pie">Cream Pie</option>
-          <option value="Ice Cream">Ice Cream</option>
-        </select>
-
-        <label for="foodQty">Quantity (max 5)</label>
-        <select id="foodQty">
-          <option value="0" selected>0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
-
-      <!-- Drink -->
-      <div class="form-group">
-        <label for="drinkSelect">Select Drink Item</label>
-        <select id="drinkSelect">
-          <option value="" disabled selected>-- None --</option>
-          <option value="Coffee">Coffee</option>
-          <option value="Soda">Soda</option>
-        </select>
-
-        <label for="drinkQty">Quantity (max 5)</label>
-        <select id="drinkQty">
-          <option value="0" selected>0</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </div>
-
-      <button id="submitMeal">Submit Staff Meal</button>
-    </main>
-  </div>
-
-  <div id="notification"></div>
-
-
-  <script type="module">
-  import {
-  getFirestore, collection, query, where, orderBy, updateDoc, doc, onSnapshot, getDoc, addDoc, setDoc
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-import { app } from "./auth.js"; // reuses the initialized app
-const db = getFirestore(app);
-
-  const inventoryDocRef = doc(db, "inventory", "current");
-  const staffMealsCollection = collection(db, "staff_meals");
-
-  // ✅ Same ingredients map as register.html
- const productIngredients = {
-  "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-  "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-  "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
-  "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
-  "Chicken Wrap": {chicken: 1, tomato: 1, lettuce: 1 },
-  "Chicken Mexican": {chicken: 1, tomato: 1, tortilla: 1 },
-  "Goat Wrap": {goat_cheese: 1, chicken: 1, lettuce: 1 },
-  "Soda": { corn_syrup: 1 },
-  "Coffee": {coffee_beans: 1},
-  "Fries": { potato: 2 },
-  "Onion Rings": { onion: 2 },
-  "Ice Cream": { ice_cream: 1, vanilla: 2 },
-  "Rim Job": { sugar: 1, flour: 1 },
-  "Cream Pie": { sugar: 1, flour: 1 }
-};
-
-  function showNotification(message, duration = 4000) {
-    const n = document.getElementById('notification');
-    n.textContent = message;
-    n.style.display = 'block';
-    n.style.opacity = '1';
-
-    if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
-
-    showNotification.timeoutId = setTimeout(() => {
-      n.style.transition = 'opacity 0.5s ease';
-      n.style.opacity = '0';
-      n.addEventListener('transitionend', () => {
-        n.style.display = 'none';
-        n.style.transition = '';
-      }, { once: true });
-    }, duration);
-  }
-
-  async function submitStaffMeal() {
-    const employee = document.getElementById('employeeSelect').value;
-    const foodItem = document.getElementById('foodSelect').value;
-    const foodQty = parseInt(document.getElementById('foodQty').value) || 0;
-    const drinkItem = document.getElementById('drinkSelect').value;
-    const drinkQty = parseInt(document.getElementById('drinkQty').value) || 0;
-
-    if (!employee) {
-      showNotification("Please select your name.");
-      return;
-    }
-
-    const items = [];
-    if (foodItem && foodQty > 0) items.push({ name: foodItem, quantity: foodQty });
-    if (drinkItem && drinkQty > 0) items.push({ name: drinkItem, quantity: drinkQty });
-
-    if (items.length === 0) {
-      showNotification("Please select at least one food or drink with quantity.");
-      return;
-    }
-
-    const docSnap = await getDoc(inventoryDocRef);
-    if (!docSnap.exists()) {
-      showNotification("No inventory found!");
-      return;
-    }
-    const inventory = docSnap.data();
-    const totalNeeded = {};
-
-    // build required ingredients
-    items.forEach(item => {
-      const needed = productIngredients[item.name];
-      if (needed) {
-        for (const ing in needed) {
-          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+        .select-hide {
+          display: none;
         }
       }
-    });
+    </style>
+  </head>
+  <body>
+    <button id="menuToggle" class="hamburger">☰</button>
+    <div
+      class="main-container"
+      style="display: flex; width: 100%; min-height: 100vh"
+    >
+      <aside class="sidebar">
+        <h2>🍔 Snr. Buns</h2>
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html">🏠 Home</a></li>
+            <li><a href="register.html">🖋️ Register</a></li>
+            <li><a href="orders.html">📋 Orders</a></li>
+            <li><a href="inventory.html">📦 Inventory</a></li>
+            <li><a href="market.html">🏪 Market Run</a></li>
+            <li><a href="staffmeals.html" class="active">🍽️ Staff Meals</a></li>
+            <li><a href="loyalty.html">🎁 Customers</a></li>
+          </ul>
+        </nav>
+      </aside>
 
-    // check shortages
-    const missing = [];
-    for (const ing in totalNeeded) {
-      if ((inventory[ing] || 0) < totalNeeded[ing]) {
-        missing.push(`${ing} (need ${totalNeeded[ing]}, have ${inventory[ing] || 0})`);
+      <main>
+        <h1>🍽️ Staff Meals</h1>
+
+        <p
+          style="
+            font-weight: 600;
+            color: #c82333;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+          "
+        >
+          Employees are entitled to 5 drinks and 5 food items per shift. Please
+          make sure you log it here so that the inventory stays accurate.
+          <br /><br />
+          Heart Stopper and Money Shot's are not available for staff meals.
+          Sorry.
+        </p>
+
+        <!-- Employee -->
+        <div class="form-group">
+          <label for="employeeSelect">Select Employee</label>
+          <select id="employeeSelect" required>
+            <option value="" disabled selected>Select employee</option>
+            <option value="Savannah">Savannah</option>
+            <option value="Slade">Slade</option>
+            <option value="Jack">Jack</option>
+            <option value="Rico">Rico</option>
+            <option value="Jesus">Jesus</option>
+            <option value="Torch">Torch</option>
+            <option value="Bart">Bart</option>
+            <option value="Audrey">Audrey</option>
+            <option value="Rufus">Rufus</option>
+            <option value="Andy">Andy</option>
+            <option value="Bezzy">Bezzy</option>
+            <option value="Wyatt">Wyatt</option>
+            <option value="Justin">Justin</option>
+          </select>
+        </div>
+
+        <!-- Food -->
+        <div class="form-group">
+          <label for="foodSelect">Select Food Item</label>
+          <select id="foodSelect">
+            <option value="" disabled selected>-- None --</option>
+            <option value="The Bleeder">The Bleeder</option>
+            <option value="The Prickley">The Prickley</option>
+            <option value="The Simply">The Simply</option>
+            <option value="Double Shot">Double Shot</option>
+            <option value="Chicken Wrap">Chicken Wrap</option>
+            <option value="Goat Wrap">Goat Wrap</option>
+            <option value="Chicken Mexican">Chicken Mexican</option>
+            <option value="Fries">Fries</option>
+            <option value="Rim Job">Rim Job</option>
+            <option value="Cream Pie">Cream Pie</option>
+            <option value="Ice Cream">Ice Cream</option>
+          </select>
+
+          <label for="foodQty">Quantity (max 5)</label>
+          <select id="foodQty">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <!-- Drink -->
+        <div class="form-group">
+          <label for="drinkSelect">Select Drink Item</label>
+          <select id="drinkSelect">
+            <option value="" disabled selected>-- None --</option>
+            <option value="Coffee">Coffee</option>
+            <option value="Soda">Soda</option>
+          </select>
+
+          <label for="drinkQty">Quantity (max 5)</label>
+          <select id="drinkQty">
+            <option value="0" selected>0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+          </select>
+        </div>
+
+        <button id="submitMeal">Submit Staff Meal</button>
+      </main>
+    </div>
+
+    <div id="notification"></div>
+
+    <script type="module">
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        orderBy,
+        updateDoc,
+        doc,
+        onSnapshot,
+        getDoc,
+        addDoc,
+        setDoc,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+      import { app } from "./auth.js"; // reuses the initialized app
+      const db = getFirestore(app);
+
+      const inventoryDocRef = doc(db, "inventory", "current");
+      const staffMealsCollection = collection(db, "staff_meals");
+
+      // ✅ Same ingredients map as register.html
+      const productIngredients = {
+        "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+        "The Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+        "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
+        "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
+        "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
+        "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
+        "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
+        Soda: { corn_syrup: 1 },
+        Coffee: { coffee_beans: 1 },
+        Fries: { potato: 2 },
+        "Onion Rings": { onion: 2 },
+        "Ice Cream": { ice_cream: 1, vanilla: 2 },
+        "Rim Job": { sugar: 1, flour: 1 },
+        "Cream Pie": { sugar: 1, flour: 1 },
+      };
+
+      function showNotification(message, duration = 4000) {
+        const n = document.getElementById("notification");
+        n.textContent = message;
+        n.style.display = "block";
+        n.style.opacity = "1";
+
+        if (showNotification.timeoutId)
+          clearTimeout(showNotification.timeoutId);
+
+        showNotification.timeoutId = setTimeout(() => {
+          n.style.transition = "opacity 0.5s ease";
+          n.style.opacity = "0";
+          n.addEventListener(
+            "transitionend",
+            () => {
+              n.style.display = "none";
+              n.style.transition = "";
+            },
+            { once: true }
+          );
+        }, duration);
       }
-    }
-    if (missing.length > 0) {
-      showNotification("Not enough ingredients: " + missing.join(", "));
-      return;
-    }
 
-    // deduct inventory
-    for (const ing in totalNeeded) {
-      inventory[ing] -= totalNeeded[ing];
-    }
-    await setDoc(inventoryDocRef, inventory, { merge: true });
+      async function submitStaffMeal() {
+        const employee = document.getElementById("employeeSelect").value;
+        const foodItem = document.getElementById("foodSelect").value;
+        const foodQty = parseInt(document.getElementById("foodQty").value) || 0;
+        const drinkItem = document.getElementById("drinkSelect").value;
+        const drinkQty =
+          parseInt(document.getElementById("drinkQty").value) || 0;
 
-    // log staff meal
-    await addDoc(staffMealsCollection, {
-      employee,
-      items,
-      timestamp: new Date()
-    });
+        if (!employee) {
+          showNotification("Please select your name.");
+          return;
+        }
 
-    showNotification("✅ Staff meal recorded and inventory updated!");
+        const items = [];
+        if (foodItem && foodQty > 0)
+          items.push({ name: foodItem, quantity: foodQty });
+        if (drinkItem && drinkQty > 0)
+          items.push({ name: drinkItem, quantity: drinkQty });
 
-    // reset selects
-    document.getElementById('employeeSelect').selectedIndex = 0;
-    document.getElementById('foodSelect').selectedIndex = 0;
-    document.getElementById('foodQty').selectedIndex = 0;
-    document.getElementById('drinkSelect').selectedIndex = 0;
-    document.getElementById('drinkQty').selectedIndex = 0;
-  }
+        if (items.length === 0) {
+          showNotification(
+            "Please select at least one food or drink with quantity."
+          );
+          return;
+        }
 
-  document.getElementById('submitMeal').addEventListener('click', submitStaffMeal);
-</script>
+        const docSnap = await getDoc(inventoryDocRef);
+        if (!docSnap.exists()) {
+          showNotification("No inventory found!");
+          return;
+        }
+        const inventory = docSnap.data();
+        const totalNeeded = {};
 
-<script>
-  const menuBtn = document.getElementById("menuToggle");
-  const sidebar = document.querySelector(".sidebar");
+        // build required ingredients
+        items.forEach((item) => {
+          const needed = productIngredients[item.name];
+          if (needed) {
+            for (const ing in needed) {
+              totalNeeded[ing] =
+                (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+            }
+          }
+        });
 
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
+        // check shortages
+        const missing = [];
+        for (const ing in totalNeeded) {
+          if ((inventory[ing] || 0) < totalNeeded[ing]) {
+            missing.push(
+              `${ing} (need ${totalNeeded[ing]}, have ${inventory[ing] || 0})`
+            );
+          }
+        }
+        if (missing.length > 0) {
+          showNotification("Not enough ingredients: " + missing.join(", "));
+          return;
+        }
 
-    // Switch between ☰ and ✖
-    if (sidebar.classList.contains("active")) {
-      menuBtn.textContent = "✖";
-    } else {
-      menuBtn.textContent = "☰";
-    }
-  });
-</script>
+        // deduct inventory
+        for (const ing in totalNeeded) {
+          inventory[ing] -= totalNeeded[ing];
+        }
+        await setDoc(inventoryDocRef, inventory, { merge: true });
 
+        // log staff meal
+        await addDoc(staffMealsCollection, {
+          employee,
+          items,
+          timestamp: new Date(),
+        });
 
-</body>
+        showNotification("✅ Staff meal recorded and inventory updated!");
+
+        // reset selects
+        document.getElementById("employeeSelect").selectedIndex = 0;
+        document.getElementById("foodSelect").selectedIndex = 0;
+        document.getElementById("foodQty").selectedIndex = 0;
+        document.getElementById("drinkSelect").selectedIndex = 0;
+        document.getElementById("drinkQty").selectedIndex = 0;
+      }
+
+      document
+        .getElementById("submitMeal")
+        .addEventListener("click", submitStaffMeal);
+    </script>
+
+    <script>
+      const menuBtn = document.getElementById("menuToggle");
+      const sidebar = document.querySelector(".sidebar");
+
+      menuBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+
+        // Switch between ☰ and ✖
+        if (sidebar.classList.contains("active")) {
+          menuBtn.textContent = "✖";
+        } else {
+          menuBtn.textContent = "☰";
+        }
+      });
+    </script>
+  </body>
 </html>
