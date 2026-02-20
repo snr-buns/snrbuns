@@ -585,15 +585,7 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
-   <div class="item-card" data-name="Big Buns Deal" data-price="1700" data-category="Combos" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="Big Buns Deal" />
-    <h3>Big Buns Deal</h3>
-    <p>$1700</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
+
   <div class="item-card" data-name="Patty Pounder Combo" data-price="1100" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
     <h3>Patty Pounder Combo</h3>
@@ -603,6 +595,7 @@
       <button class="add-btn">Add</button>
     </div>
   </div>
+
      <div class="item-card" data-name="The Bleeder Box" data-price="600" data-category="Combos" data-image="assets/images/bleederbox.png">
     <img src="assets/images/combo.png" alt="The Bleeder Box" />
     <h3>The Bleeder Box</h3>
@@ -621,7 +614,16 @@
     <input type="number" class="quantity-input" min="1" value="1" />
     <button class="add-btn">Add</button>
   </div>
-</div>
+  </div>
+  <div class="item-card" data-name="The Glorious" data-price="90" data-category="Burgers" data-image="assets/images/glorious.png">
+    <img src="assets/images/glorious.png" alt="Bleeder Burger" />
+    <h3>The Glorious</h3>
+    <p>$90</p>
+    <div class="add-controls">
+      <input type="number" class="quantity-input" min="1" value="1" />
+      <button class="add-btn">Add</button>
+    </div>
+  </div>
 
 <div class="item-card" data-name="The Prickley" data-price="85" data-category="Burgers" data-image="assets/images/the-prickley.png">
   <img src="assets/images/the-prickley.png" alt="The Prickley" />
@@ -725,6 +727,16 @@
   </div>
 </div>
 
+<div class="item-card" data-name="Chicken Nuggets" data-price="80" data-category="Sides" data-image="assets/images/chickennuggets.png">
+  <img src="assets/images/chickennuggets.png" alt="Chicken Nuggets" />
+  <h3>Chicken Nuggets</h3>
+  <p>$80</p>
+  <div class="add-controls">
+    <input type="number" class="quantity-input" min="1" value="1" />
+    <button class="add-btn">Add</button>
+  </div>
+</div>
+
 <!-- ===== DESSERTS ===== -->
 <div class="item-card" data-name="Cream Pie" data-price="55" data-category="Desserts" data-image="assets/images/cream-pie.png">
   <img src="assets/images/cream-pie.png" alt="Cream Pie" />
@@ -805,40 +817,36 @@
   <select id="employeeName" required style="display:none;">
     <option value="" disabled selected>Select employee</option>
     <option value="Savannah">Savannah</option>
+    <option value="Torch">Torch</option>
     <option value="Slade">Slade</option>
     <option value="Jack">Jack</option>
     <option value="Rico">Rico</option>
     <option value="Jesus">Jesus</option>
-    <option value="Torch">Torch</option>
     <option value="Bart">Bart</option>
     <option value="Audrey">Audrey</option>
-    <option value="Rufus">Rufus</option>
-    <option value="Andy">Andy</option>
     <option value="Bezzy">Bezzy</option>
-    <option value="Marko">Marko</option>
     <option value="Jaxon">Jaxon</option>
     <option value="Wyatt">Wyatt</option>
     <option value="Justin">Justin</option>
+    <option value="Evan">Evan</option>
   </select>
   <!-- styled fake select -->
   <div class="custom-select">
     <div class="select-selected">Select employee</div>
     <div class="select-items select-hide">
       <div data-value="Savannah">Savannah</div>
-      <div data-value="Jack">Jack</div>
+      <div data-value="Torch">Torch</div>
       <div data-value="Slade">Slade</div>
+      <div data-value="Jack">Jack</div>
       <div data-value="Rico">Rico</div>
       <div data-value="Jesus">Jesus</div>
-      <div data-value="Torch">Torch</div>
       <div data-value="Bart">Bart</div>
     <div data-value="Audrey">Audrey</div>
-    <div data-value="Rufus">Rufus</div>
-    <div data-value="Andy">Andy</div>
     <div data-value="Bezzy">Bezzy</div>
-    <div data-value="Marko">Marko</div>
     <div data-value="Jaxon">Jaxon</div>
     <div data-value="Wyatt">Wyatt</div>
     <div data-value="Justin">Justin</div>
+    <div data-value="Evan">Evan</div>
     </div>
   </div>
 </div>
@@ -992,6 +1000,7 @@ document.getElementById("customerName").addEventListener("blur", checkSpecialCus
 /* --------------------------- products, combos, inventory --------------------------- */
 const productIngredients = {
   "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+  "The Glorious": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
   "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
   "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
   "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
@@ -1004,6 +1013,7 @@ const productIngredients = {
   "Coffee": { coffee_beans: 1 },
   "Fries": { potato: 2 },
   "Onion Rings": { onion: 2 },
+  "Chicken Nuggets": { chicken: 2 },
   "Ice Cream": { ice_cream: 1, vanilla: 2 },
   "Rim Job": { sugar: 1, flour: 1 },
   "Cream Pie": { sugar: 1, flour: 1 }
