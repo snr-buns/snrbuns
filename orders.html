@@ -220,57 +220,57 @@
       }
 
       /* Wraps start (header col 7, body col 10) */
-      #ordersTable thead tr + tr th:nth-child(7),
-      #ordersTable tbody td:nth-child(10) {
+      #ordersTable thead tr + tr th:nth-child(8),
+      #ordersTable tbody td:nth-child(11) {
         border-left: 3px solid var(--divider) !important;
       }
 
       /* Sides start (header col 10, body col 13) */
-      #ordersTable thead tr + tr th:nth-child(10),
-      #ordersTable tbody td:nth-child(13) {
+      #ordersTable thead tr + tr th:nth-child(11),
+      #ordersTable tbody td:nth-child(14) {
         border-left: 3px solid var(--divider) !important;
       }
 
       /* Drinks start (header col 12, body col 15) */
-      #ordersTable thead tr + tr th:nth-child(12),
-      #ordersTable tbody td:nth-child(15) {
-        border-left: 3px solid var(--divider) !important;
-      }
-
-      /* Desserts start (header col 14, body col 17) */
       #ordersTable thead tr + tr th:nth-child(14),
       #ordersTable tbody td:nth-child(17) {
         border-left: 3px solid var(--divider) !important;
       }
 
+      /* Desserts start (header col 14, body col 17) */
+      #ordersTable thead tr + tr th:nth-child(16),
+      #ordersTable tbody td:nth-child(19) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
       /* --- RIGHT edges of groups --- */
       /* Burgers end (header col 6, body col 9) */
-      #ordersTable thead tr + tr th:nth-child(6),
-      #ordersTable tbody td:nth-child(9) {
+      #ordersTable thead tr + tr th:nth-child(7),
+      #ordersTable tbody td:nth-child(10) {
         border-right: 3px solid var(--divider) !important;
       }
 
       /* Wraps end (header col 9, body col 12) */
-      #ordersTable thead tr + tr th:nth-child(9),
-      #ordersTable tbody td:nth-child(12) {
+      #ordersTable thead tr + tr th:nth-child(10),
+      #ordersTable tbody td:nth-child(13) {
         border-right: 3px solid var(--divider) !important;
       }
 
       /* Sides end (header col 11, body col 14) */
-      #ordersTable thead tr + tr th:nth-child(11),
-      #ordersTable tbody td:nth-child(14) {
-        border-right: 3px solid var(--divider) !important;
-      }
-
-      /* Drinks end (header col 13, body col 16) */
       #ordersTable thead tr + tr th:nth-child(13),
       #ordersTable tbody td:nth-child(16) {
         border-right: 3px solid var(--divider) !important;
       }
 
+      /* Drinks end (header col 13, body col 16) */
+      #ordersTable thead tr + tr th:nth-child(15),
+      #ordersTable tbody td:nth-child(18) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
       /* Desserts end (header col 16, body col 19) */
-      #ordersTable thead tr + tr th:nth-child(16),
-      #ordersTable tbody td:nth-child(19) {
+      #ordersTable thead tr + tr th:nth-child(18),
+      #ordersTable tbody td:nth-child(21) {
         border-right: 3px solid var(--divider) !important;
       }
 
@@ -553,9 +553,9 @@
                 <th rowspan="2">Employee</th>
                 <th rowspan="2">Customer</th>
 
-                <th class="group" colspan="6">BURGERS</th>
+                <th class="group" colspan="7">BURGERS</th>
                 <th class="group" colspan="3">WRAPS</th>
-                <th class="group" colspan="2">SIDES</th>
+                <th class="group" colspan="3">SIDES</th>
                 <th class="group" colspan="2">DRINKS</th>
                 <th class="group" colspan="3">DESSERTS</th>
 
@@ -571,6 +571,7 @@
                 <th>Money Shot</th>
                 <th>The Simply</th>
                 <th>Double Shot</th>
+                <th>The Glorious</th>
                 <th>The Bleeder</th>
                 <th>The Prickley</th>
                 <th>Chicken Wrap</th>
@@ -580,6 +581,7 @@
                 <!-- SIDES -->
                 <th>Fries</th>
                 <th>Onion Rings</th>
+                <th>Chicken Nuggets</th>
 
                 <!-- DRINKS -->
                 <th>Soda</th>
@@ -693,29 +695,34 @@
 
       /* -------- Menu columns -------- */
       const PRODUCTS = [
-        // BURGERS
+        // BURGERS (7)
         "Heart Stopper",
         "Money Shot",
         "The Simply",
         "Double Shot",
+        "The Glorious",
         "The Bleeder",
         "The Prickley",
-        // WRAPS
+
+        // WRAPS (3)
         "Chicken Wrap",
         "Chicken Mexican",
         "Goat Wrap",
-        // SIDES
+
+        // SIDES (3)
         "Fries",
         "Onion Rings",
-        // DRINKS
+        "Chicken Nuggets",
+
+        // DRINKS (2)
         "Soda",
         "Coffee",
-        // DESSERTS
+
+        // DESSERTS (3)
         "Rim Job",
         "Cream Pie",
         "Ice Cream",
       ];
-
       /* -------- Query (no where() → no composite index needed) -------- */
       const q = query(
         collection(db, "orders"),
