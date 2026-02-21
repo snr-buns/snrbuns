@@ -1192,7 +1192,6 @@ async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
     items,
     total: 0,
     discountApplied: true,
-    freeDessert: false,
     membershipRedeem: true,
     timestamp: new Date(),
     done: false,
@@ -1533,7 +1532,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
       items: passPurchases.map(p => ({ name: `${p.passType} pass`, price: p.price, quantity: p.qty })),
       total: passSubtotal,
       discountApplied: null,
-      freeDessert: false,
       timestamp: Timestamp.now(),
       done: true,
       deleted: false,
@@ -1565,13 +1563,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
 
   const nowTs = Timestamp.now();
   const newVisits = await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
-  const freeDessert = newVisits % 5 === 0;
-
-  if (freeDessert) {
-    showNotification(`🎉 ${formattedCustomer} reached ${newVisits} visits! Free dessert!`);
-  } else {
-    showNotification("Order saved!");
-  }
 
   await addDoc(collection(db, "orders"), {
     employee: toTitleCase(employee),
@@ -1579,7 +1570,6 @@ async function processOrder(employee, customerRaw, inventory, totalNeeded) {
     items: order,
     total,
     discountApplied: activeDiscount, // will be { code:'uniform', percent:0.15, uniform:true } or null
-    freeDessert,
     timestamp: nowTs,
     done: false,
     deleted: false,
