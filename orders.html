@@ -359,8 +359,7 @@
 
       /* Right trio: Total(20), Free Dessert?(21), Done?(22) */
       #ordersTable tbody td:nth-child(20),
-      #ordersTable tbody td:nth-child(21),
-      #ordersTable tbody td:nth-child(22) {
+      #ordersTable tbody td:nth-child(21) {
         background: #fffdfa;
         border-left-color: rgba(0, 0, 0, 0.1);
       }
@@ -560,7 +559,6 @@
                 <th class="group" colspan="3">DESSERTS</th>
 
                 <th rowspan="2">Total</th>
-                <th rowspan="2">Free Dessert?</th>
                 <th rowspan="2">Done?</th>
               </tr>
 
@@ -828,10 +826,6 @@
           const totalTd = document.createElement("td");
           totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
           tr.appendChild(totalTd);
-
-          const freeTd = document.createElement("td");
-          freeTd.textContent = order.freeDessert ? "Yes 🍰" : "";
-          tr.appendChild(freeTd);
 
           const doneTd = document.createElement("td");
           doneTd.appendChild(checkbox);
