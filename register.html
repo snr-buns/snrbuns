@@ -887,893 +887,976 @@
       <button class="no-btn">No</button>
     </div>
   </div>
-<script type="module">
-import {
-  getFirestore, Timestamp,
-  collection, addDoc, doc, getDoc, setDoc, getDocs, updateDoc,
-  increment, serverTimestamp,
-  query, orderBy, startAt, endAt, limit, documentId
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
-import { where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-const db = getFirestore();
-
-/* --------------------------- helpers: names & loyalty --------------------------- */
-function loyaltyKey(name) {
-  return (name || "").trim().toLowerCase().replace(/\s+/g, " ");
-}
-function toTitleCase(str) {
-  return (str || "")
-    .toLowerCase()
-    .split(" ")
-    .filter(Boolean)
-    .map(w => w[0].toUpperCase() + w.slice(1))
-    .join(" ");
-}
-async function bumpLoyaltyForOrder(db, customerName, ts, amount = 0) {
-  const raw = customerName || "";
-  const key = loyaltyKey(raw);
-  if (!key) return 0;
-  const ref = doc(db, "loyalty", key);
-  await setDoc(ref, {
-    name: raw.trim(),
-    visits: increment(1),
-    spent: increment(Number(amount) || 0),
-    lastVisit: ts || serverTimestamp(),
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-  const snap = await getDoc(ref);
-  return (snap.exists() && Number(snap.data().visits)) || 0;
-}
-
-/* --------------------------- UI bits --------------------------- */
-function showNotification(message, duration = 4000) {
-  const n = document.getElementById("notification");
-  n.textContent = message;
-  n.style.display = "block";
-  setTimeout(() => (n.style.display = "none"), duration);
-}
-
-/* --------------------------- customer suggestions --------------------------- */
-function subscribeCustomerSuggestions() {
-  const input = document.getElementById("customerName");
-  const datalist = document.getElementById("customerSuggestions");
-  let t;
-  input.addEventListener("input", async () => {
-    clearTimeout(t);
-    const val = (input.value || "").trim().toLowerCase();
-    datalist.innerHTML = "";
-    if (!val) return;
-    t = setTimeout(async () => {
-      const qL = query(
-        collection(db, "loyalty"),
-        orderBy(documentId()),
-        startAt(val),
-        endAt(val + "\uf8ff"),
-        limit(8)
-      );
-      const snap = await getDocs(qL);
-      snap.docs.forEach(d => {
-        const opt = document.createElement("option");
-        opt.value = d.data()?.name || d.id;
-        datalist.appendChild(opt);
+  <script type="module">
+    import {
+      getFirestore, Timestamp,
+      collection, addDoc, doc, getDoc, setDoc, getDocs, updateDoc,
+      increment, serverTimestamp,
+      query, orderBy, startAt, endAt, limit, documentId,
+      runTransaction
+    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+    import { where } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    
+    const db = getFirestore();
+    
+    /* ✅ FIX: prevent SPECIAL_CUSTOMERS crash */
+    const SPECIAL_CUSTOMERS = {};
+    let lastSpecialAlertFor = "";
+    
+    /* --------------------------- helpers: names & loyalty --------------------------- */
+    function loyaltyKey(name) {
+      return (name || "").trim().toLowerCase().replace(/\s+/g, " ");
+    }
+    function toTitleCase(str) {
+      return (str || "")
+        .toLowerCase()
+        .split(" ")
+        .filter(Boolean)
+        .map(w => w[0].toUpperCase() + w.slice(1))
+        .join(" ");
+    }
+    async function bumpLoyaltyForOrder(db, customerName, ts, amount = 0) {
+      const raw = customerName || "";
+      const key = loyaltyKey(raw);
+      if (!key) return 0;
+      const ref = doc(db, "loyalty", key);
+      await setDoc(ref, {
+        name: raw.trim(),
+        visits: increment(1),
+        spent: increment(Number(amount) || 0),
+        lastVisit: ts || serverTimestamp(),
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      const snap = await getDoc(ref);
+      return (snap.exists() && Number(snap.data().visits)) || 0;
+    }
+    
+    /* --------------------------- UI bits --------------------------- */
+    function showNotification(message, duration = 4000) {
+      const n = document.getElementById("notification");
+      n.textContent = message;
+      n.style.display = "block";
+      setTimeout(() => (n.style.display = "none"), duration);
+    }
+    
+    /* --------------------------- customer suggestions --------------------------- */
+    function subscribeCustomerSuggestions() {
+      const input = document.getElementById("customerName");
+      const datalist = document.getElementById("customerSuggestions");
+      let t;
+      input.addEventListener("input", async () => {
+        clearTimeout(t);
+        const val = (input.value || "").trim().toLowerCase();
+        datalist.innerHTML = "";
+        if (!val) return;
+        t = setTimeout(async () => {
+          const qL = query(
+            collection(db, "loyalty"),
+            orderBy(documentId()),
+            startAt(val),
+            endAt(val + "\uf8ff"),
+            limit(8)
+          );
+          const snap = await getDocs(qL);
+          snap.docs.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.data()?.name || d.id;
+            datalist.appendChild(opt);
+          });
+        }, 150);
       });
-    }, 150);
-  });
-}
-subscribeCustomerSuggestions();
-
-/* --------------------------- special customer reminder --------------------------- */
-/* Pops a reminder when certain customers are entered in the Customer Name field. */
-
-/* small helper so we don't spam popups while typing */
-function debounce(fn, delay = 200) {
-  let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
-}
-
-function checkSpecialCustomerReminder() {
-  const input = document.getElementById("customerName");
-  const key = (input.value || "").trim().toLowerCase().replace(/\s+/g, " ");
-  if (!key) return;
-
-  if (SPECIAL_CUSTOMERS[key] && lastSpecialAlertFor !== key) {
-    showNotification(SPECIAL_CUSTOMERS[key].message, 6000);
-    lastSpecialAlertFor = key; // prevent repeat until the name changes
-  }
-}
-
-/* trigger on typing, datalist selection, or leaving the field */
-const debouncedCheck = debounce(checkSpecialCustomerReminder, 180);
-document.getElementById("customerName").addEventListener("input", debouncedCheck);
-document.getElementById("customerName").addEventListener("change", checkSpecialCustomerReminder);
-document.getElementById("customerName").addEventListener("blur", checkSpecialCustomerReminder);
-
-
-/* --------------------------- products, combos, inventory --------------------------- */
-const productIngredients = {
-  "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-  "The Glorious": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-  "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-  "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
-  "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
-  "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
-  "Money Shot": { burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
-  "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
-  "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
-  "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
-  "Soda": { corn_syrup: 1 },
-  "Coffee": { coffee_beans: 1 },
-  "Fries": { potato: 2 },
-  "Onion Rings": { onion: 2 },
-  "Chicken Nuggets": { chicken: 2 },
-  "Ice Cream": { ice_cream: 1, vanilla: 2 },
-  "Rim Job": { sugar: 1, flour: 1 },
-  "Cream Pie": { sugar: 1, flour: 1 }
-};
-
-const comboDetails = {
-  "The Heartstopper Meal": {
-    price: 1600,
-    components: [
-      { name: "Heart Stopper", quantity: 5 },
-      { name: "Onion Rings", quantity: 5 },
-      { name: "Soda", quantity: 15 },
-      { name: "Ice Cream", quantity: 5 }
-    ]
-  },
-  "Big Buns Deal": {
-    price: 1700,
-    components: [
-      { name: "The Simply", quantity: 10 },
-      { name: "Fries", quantity: 5 },
-      { name: "Soda", quantity: 15 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "The Bleeder Box": {
-    price: 600,
-    components: [
-      { name: "The Bleeder", quantity: 5 },
-      { name: "Soda", quantity: 5 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "Patty Pounder Combo": {
-    price: 1100,
-    components: [
-      { name: "The Prickley", quantity: 10 },
-      { name: "Soda", quantity: 10 },
-    ]
-  }
-};
-
-
-const ingredientLabels = {
-  burger_buns: "burger buns",
-  burger_patties: "burger patties",
-  ground_beef: "ground beef",
-  sugar: "sugar",
-  flour: "flour",
-  lettuce: "lettuce",
-  cheese_slices: "cheddar cheese slices",
-  corn_syrup: "corn syrup",
-  potato: "potatoes",
-  ice_cream: "ice cream",
-  chicken: "chicken",
-  bacon: "bacon",
-  coffee_beans: "coffee",
-  vanilla: "vanilla",
-  goat_cheese: "goat cheese",
-  onion: "onion",
-  tortilla: "tortilla",
-  tomato: "tomato"
-};
-
-/* --------------------------- DAISY: config --------------------------- */
-const DAISY_NAME = "Daisy Family Box";
-const DAISY_BURGERS_PER_BOX = 15;
-const DAISY_EXTRAS = [
-  { name: "Coffee", quantity: 20 },
-  { name: "Cream Pie", quantity: 5 }
-];
-const DAISY_BURGER_OPTIONS = [
-  "The Bleeder",
-  "The Prickley",
-  "The Simply",
-  "Heart Stopper",
-  "Money Shot",
-  "Double Shot"
-];
-
-function computeIngredientsNeeded(items) {
-  const totalNeeded = {};
-
-  items.forEach(item => {
-    const qty = Number(item.quantity || 1);
-
-    if (comboDetails[item.name]) {
-      comboDetails[item.name].components.forEach(comp => {
-        const needed = productIngredients[comp.name];
+    }
+    subscribeCustomerSuggestions();
+    
+    /* --------------------------- special customer reminder --------------------------- */
+    /* Pops a reminder when certain customers are entered in the Customer Name field. */
+    
+    /* small helper so we don't spam popups while typing */
+    function debounce(fn, delay = 200) {
+      let t;
+      return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+    }
+    
+    function checkSpecialCustomerReminder() {
+      const input = document.getElementById("customerName");
+      const key = (input.value || "").trim().toLowerCase().replace(/\s+/g, " ");
+      if (!key) return;
+    
+      if (SPECIAL_CUSTOMERS[key] && lastSpecialAlertFor !== key) {
+        showNotification(SPECIAL_CUSTOMERS[key].message, 6000);
+        lastSpecialAlertFor = key; // prevent repeat until the name changes
+      }
+    }
+    
+    /* trigger on typing, datalist selection, or leaving the field */
+    const debouncedCheck = debounce(checkSpecialCustomerReminder, 180);
+    document.getElementById("customerName").addEventListener("input", debouncedCheck);
+    document.getElementById("customerName").addEventListener("change", checkSpecialCustomerReminder);
+    document.getElementById("customerName").addEventListener("blur", checkSpecialCustomerReminder);
+    
+    
+    /* --------------------------- products, combos, inventory --------------------------- */
+    const productIngredients = {
+      "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+      "The Glorious": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+      "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+      "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
+      "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
+      "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
+      "Money Shot": { burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
+      "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
+      "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
+      "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
+      "Soda": { corn_syrup: 1 },
+      "Coffee": { coffee_beans: 1 },
+      "Fries": { potato: 2 },
+      "Onion Rings": { onion: 2 },
+      "Chicken Nuggets": { chicken: 2 },
+      "Ice Cream": { ice_cream: 1, vanilla: 2 },
+      "Rim Job": { sugar: 1, flour: 1 },
+      "Cream Pie": { sugar: 1, flour: 1 }
+    };
+    
+    const comboDetails = {
+      "The Heartstopper Meal": {
+        price: 1600,
+        components: [
+          { name: "Heart Stopper", quantity: 5 },
+          { name: "Onion Rings", quantity: 5 },
+          { name: "Soda", quantity: 15 },
+          { name: "Ice Cream", quantity: 5 }
+        ]
+      },
+      "Big Buns Deal": {
+        price: 1700,
+        components: [
+          { name: "The Simply", quantity: 10 },
+          { name: "Fries", quantity: 5 },
+          { name: "Soda", quantity: 15 },
+          { name: "Rim Job", quantity: 1 }
+        ]
+      },
+      "The Bleeder Box": {
+        price: 600,
+        components: [
+          { name: "The Bleeder", quantity: 5 },
+          { name: "Soda", quantity: 5 },
+          { name: "Rim Job", quantity: 1 }
+        ]
+      },
+      "Patty Pounder Combo": {
+        price: 1100,
+        components: [
+          { name: "The Prickley", quantity: 10 },
+          { name: "Soda", quantity: 10 },
+        ]
+      }
+    };
+    
+    
+    const ingredientLabels = {
+      burger_buns: "burger buns",
+      burger_patties: "burger patties",
+      ground_beef: "ground beef",
+      sugar: "sugar",
+      flour: "flour",
+      lettuce: "lettuce",
+      cheese_slices: "cheddar cheese slices",
+      corn_syrup: "corn syrup",
+      potato: "potatoes",
+      ice_cream: "ice cream",
+      chicken: "chicken",
+      bacon: "bacon",
+      coffee_beans: "coffee",
+      vanilla: "vanilla",
+      goat_cheese: "goat cheese",
+      onion: "onion",
+      tortilla: "tortilla",
+      tomato: "tomato"
+    };
+    
+    /* --------------------------- DAISY: config --------------------------- */
+    const DAISY_NAME = "Daisy Family Box";
+    const DAISY_BURGERS_PER_BOX = 15;
+    const DAISY_EXTRAS = [
+      { name: "Coffee", quantity: 20 },
+      { name: "Cream Pie", quantity: 5 }
+    ];
+    const DAISY_BURGER_OPTIONS = [
+      "The Bleeder",
+      "The Prickley",
+      "The Simply",
+      "Heart Stopper",
+      "Money Shot",
+      "Double Shot"
+    ];
+    
+    function computeIngredientsNeeded(items) {
+      const totalNeeded = {};
+    
+      items.forEach(item => {
+        const qty = Number(item.quantity || 1);
+    
+        if (comboDetails[item.name]) {
+          comboDetails[item.name].components.forEach(comp => {
+            const needed = productIngredients[comp.name];
+            if (!needed) return;
+    
+            for (const ing in needed) {
+              totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
+            }
+          });
+          return;
+        }
+    
+        const needed = productIngredients[item.name];
         if (!needed) return;
-
+    
         for (const ing in needed) {
-          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
+          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
         }
       });
-      return;
+    
+      return totalNeeded;
     }
-
-    const needed = productIngredients[item.name];
-    if (!needed) return;
-
-    for (const ing in needed) {
-      totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
-    }
-  });
-
-  return totalNeeded;
-}
-
-async function deductInventoryForItems(items) {
-  const inventory = await getInventory();
-  const totalNeeded = computeIngredientsNeeded(items);
-
-  // If you want to BLOCK redeem when not enough ingredients, use this:
-  const missing = [];
-  for (const ing in totalNeeded) {
-    const invVal = Number(inventory[ing] || 0);
-    if (invVal < totalNeeded[ing]) {
-      missing.push(`${ingredientLabels[ing] || ing} (need ${totalNeeded[ing]}, have ${invVal})`);
-    }
-  }
-  if (missing.length) {
-    // choose one behavior:
-    // A) Block redeem:
-    throw new Error("Not enough ingredients:\n" + missing.join("\n"));
-
-    // B) OR allow and clamp to 0 (comment A and uncomment below)
-    // showNotification(`⚠️ Not enough ingredients:\n${missing.join("\n")}\nInventory will be clamped to 0.`, 7000);
-  }
-
-  for (const ing in totalNeeded) {
-    inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
-    if (inventory[ing] < 0) inventory[ing] = 0;
-  }
-
-  await saveInventory(inventory);
-}
-
-/* --------------------------- inventory helpers --------------------------- */
-async function getInventory() {
-  const snap = await getDoc(doc(db, "inventory", "current"));
-  return snap.exists() ? snap.data() : {};
-}
-async function saveInventory(data) {
-  await setDoc(doc(db, "inventory", "current"), data, { merge: true });
-}
-
-/* --------------------------- date & pass helpers --------------------------- */
-function dateKeyFromTs(ts = new Date()) {
-  const d = new Date(ts);
-  const yyyy = d.getFullYear();
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const dd = String(d.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-}
-function passDocId(customerKey, passType) {
-  return `${customerKey}|${passType}`;
-}
-function addDays(date, n) {
-  const d = new Date(date);
-  d.setDate(d.getDate() + n);
-  return d;
-}
-
-/* --------------------------- passes: create/extend on payment --------------------------- */
-async function upsertPassOnPayment({ customerName, passType, price }) {
-  const key = loyaltyKey(customerName);
-  const id = passDocId(key, passType);
-  const ref = doc(db, "passes", id);
-  await getDoc(ref); // read (kept from your flow)
-  const now = new Date();
-
-  const start = now;
-  const endDate = addDays(start, 30);
-
-  await setDoc(ref, {
-    customer: toTitleCase(customerName),
-    key,
-    type: passType,
-    startDate: Timestamp.fromDate(start),
-    endDate: Timestamp.fromDate(endDate),
-    active: true,
-    lastUpdated: serverTimestamp(),
-    price: Number(price)
-  }, { merge: true });
-
-  return id;
-}
-
-/* --------------------------- passes: list (no daily limits) --------------------------- */
-async function listActivePasses(search = "") {
-  const snap = await getDocs(collection(db, "passes"));
-  const out = [];
-  snap.forEach(d => {
-    const x = d.data();
-    if (!x.active) return;
-    const end = x.endDate?.toDate?.() || new Date(0);
-    if (end < new Date()) return;
-    const name = x.customer || "";
-    if (search && !name.toLowerCase().includes(search.trim().toLowerCase())) return;
-    out.push({ id: d.id, name, type: x.type });
-  });
-  out.sort((a, b) => a.name.localeCompare(b.name));
-  return out;
-}
-
-function itemsForPassType(type, qty = 1) {
-  if (type === "bleeder") {
-    return [{ name: "The Bleeder Box", price: 0, quantity: qty, image: "assets/images/combo.png" }];
-  }
-  if (type === "bigbuns") {
-    return [{ name: "Big Buns Deal", price: 0, quantity: qty, image: "assets/images/combo.png" }];
-  }
-  if (type === "pounder") {
-    return [{ name: "Patty Pounder Combo", price: 0, quantity: qty, image: "assets/images/combo.png" }];
-  }
-  return [];
-}
-
-/* --------------------------- redeem ticket (no daily tracking) --------------------------- */
-async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
-  const items = [
-    {
-      name: "Patty Pounder Combo",
-      price: 0,
-      quantity: qty,
-      image: "assets/images/combo.png",
-      isMembershipRedeem: true
-    }
-  ];
-
-  // ✅ deduct ingredients
-  await deductInventoryForItems(items);
-
-  const orderData = {
-    employee,
-    customer,
-    items,
-    total: 0,
-    discountApplied: true,
-    membershipRedeem: true,
-    timestamp: new Date(),
-    done: false,
-    deleted: false
-  };
-
-  // ✅ write the order
-  await addDoc(collection(db, "orders"), orderData);
-
-  // ✅ update pass (non-blocking)
-  try {
-    await updateDoc(doc(db, "passes", passId), { lastRedeemedAt: new Date() });
-  } catch (err) {
-    console.warn("Pass updated failed, but order was sent:", err);
-  }
-}
-
-
-/* --------------------------- UI state --------------------------- */
-let order = [];
-let activeDiscount = null;
-const orderList = document.getElementById("orderList");
-const subtotalSpan = document.getElementById("subtotal");
-const totalSpan = document.getElementById("total");
-const categoryButtons = document.querySelectorAll(".category");
-const itemCards = document.querySelectorAll(".item-card");
-const searchBar = document.getElementById("searchBar");
-const discountModal = document.getElementById("discountModal");
-const yesBtn = discountModal.querySelector(".yes-btn");
-const uniformBtn = document.getElementById("uniformDiscountBtn");
-const noBtn = discountModal.querySelector(".no-btn");
-let discountToApply = null;
-const UNIFORM_DISCOUNT = 0.15;   // 15%
-let discountPercentToApply = 0;
-function calcTotal(subtotal) {
-  return (activeDiscount && activeDiscount.percent)
-    ? subtotal * (1 - activeDiscount.percent)
-    : subtotal;
-}
-
-
-/* --------------------------- DAISY: modal (auto-inject if missing) --------------------------- */
-function ensureDaisyModal() {
-  if (document.getElementById("daisyModal")) return;
-
-  const wrap = document.createElement("div");
-  wrap.innerHTML = `
-<div id="daisyModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1250;">
-  <div style="background:#fff; padding:20px; border-radius:12px; width:420px; max-height:80vh; overflow:auto; font-weight:700;">
-    <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-      <div style="font-size:1.2rem;">Daisy Family Box</div>
-      <button id="daisyClose" style="border:none; border-radius:8px; padding:6px 10px; background:#f44336; color:#fff; font-weight:800; cursor:pointer;">Close</button>
-    </div>
-
-    <div style="margin:14px 0; display:flex; flex-direction:column; gap:8px;">
-      <label for="daisyOneSelect" style="font-weight:800;">Choose burger (x${DAISY_BURGERS_PER_BOX} per box):</label>
-      <select id="daisyOneSelect" style="border:2px solid #c82333; border-radius:8px; padding:10px; font-weight:800;">
-        <option value="">— choose a burger —</option>
-      </select>
-      <div style="font-weight:600; color:#555;">
-        Each box also includes 20 coffees and 5 cream pies automatically.
-      </div>
-    </div>
-
-    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
-      <button id="daisyConfirm" style="border:none; border-radius:8px; padding:10px 16px; background:#4caf50; color:#fff; font-weight:900; cursor:pointer;">Add to Order</button>
-    </div>
-  </div>
-</div>`;
-  document.body.appendChild(wrap.firstElementChild);
-}
-ensureDaisyModal();
-
-const daisyModal = document.getElementById("daisyModal");
-const daisyClose = document.getElementById("daisyClose");
-const daisyConfirm = document.getElementById("daisyConfirm");
-const daisyOneSelect = document.getElementById("daisyOneSelect");
-
-function buildDaisySelect() {
-  daisyOneSelect.innerHTML = '<option value="">— choose a burger —</option>';
-  DAISY_BURGER_OPTIONS.forEach(n => {
-    const opt = document.createElement("option");
-    opt.value = n; opt.textContent = n;
-    daisyOneSelect.appendChild(opt);
-  });
-}
-
-function openDaisyModal() {
-  buildDaisySelect();
-  daisyModal.style.display = "flex";
-}
-function closeDaisyModal() {
-  daisyModal.style.display = "none";
-}
-daisyClose.addEventListener("click", closeDaisyModal);
-
-/* --------------------------- order list UI --------------------------- */
-function updateOrderList() {
-  orderList.innerHTML = "";
-  let subtotal = 0;
-  order.forEach((item, idx) => {
-    subtotal += item.price * item.quantity;
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <div class="item-details">
-        ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(item.price * item.quantity).toFixed(2)}
-      </div>
-      <div class="quantity-controls">
-        <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
-        <span class="qty-number">${item.quantity}</span>
-        <button class="qty-btn" data-action="plus" data-index="${idx}">+</button>
-      </div>
-      <div class="remove-btn" data-index="${idx}">Remove</div>
-    `;
-    orderList.appendChild(li);
-  });
-  subtotalSpan.textContent = subtotal.toFixed(2);
-  totalSpan.textContent = calcTotal(subtotal).toFixed(2);
-
-  document.querySelectorAll(".qty-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      const index = parseInt(e.target.dataset.index, 10);
-      const action = e.target.dataset.action;
-      if (action === "plus") {
-        order[index].quantity++;
-      } else if (action === "minus") {
-        order[index].quantity = Math.max(1, order[index].quantity - 1);
+    
+    async function deductInventoryForItems(items) {
+      const inventory = await getInventory();
+      const totalNeeded = computeIngredientsNeeded(items);
+    
+      // If you want to BLOCK redeem when not enough ingredients, use this:
+      const missing = [];
+      for (const ing in totalNeeded) {
+        const invVal = Number(inventory[ing] || 0);
+        if (invVal < totalNeeded[ing]) {
+          missing.push(`${ingredientLabels[ing] || ing} (need ${totalNeeded[ing]}, have ${invVal})`);
+        }
       }
-      updateOrderList();
-    });
-  });
-  document.querySelectorAll(".remove-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
-      const index = parseInt(e.target.dataset.index, 10);
-      order.splice(index, 1);
-      updateOrderList();
-    });
-  });
-}
-
-/* --------------------------- filtering --------------------------- */
-function filterItems() {
-  const selectedCategory = [...categoryButtons].find(btn => btn.classList.contains("active")).textContent.trim();
-  const searchText = searchBar.value.trim().toLowerCase();
-  itemCards.forEach(card => {
-    const itemCategory = card.getAttribute("data-category");
-    const itemName = card.getAttribute("data-name").toLowerCase();
-    const categoryMatch = (selectedCategory === "All" || selectedCategory === itemCategory);
-    const searchMatch = itemName.includes(searchText);
-    card.style.display = (categoryMatch && searchMatch) ? "block" : "none";
-  });
-}
-categoryButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    categoryButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    filterItems();
-  });
-});
-searchBar.addEventListener("input", filterItems);
-
-/* --------------------------- custom select for employee --------------------------- */
-const customSelect = document.querySelector(".custom-select");
-const selected = customSelect.querySelector(".select-selected");
-const optionsBox = customSelect.querySelector(".select-items");
-const options = optionsBox.querySelectorAll("div");
-const hiddenSelect = document.getElementById("employeeName");
-
-// --- INSERT PERSISTENCE HERE ---
-const employeeSelect = hiddenSelect;
-
-// Save selection whenever it changes
-employeeSelect.addEventListener("change", () => {
-    localStorage.setItem("currentEmployee", employeeSelect.value);
-
-    // Update the styled div
-    const selectedDiv = document.querySelector(".select-selected");
-    if (selectedDiv) selectedDiv.textContent = employeeSelect.value;
-});
-
-// Restore selection on page load
-window.addEventListener("DOMContentLoaded", () => {
-    const saved = localStorage.getItem("currentEmployee");
-    if (saved) employeeSelect.value = saved;
-
-    const selectedDiv = document.querySelector(".select-selected");
-    if (selectedDiv) selectedDiv.textContent = saved || "Select employee";
-});
-selected.addEventListener("click", () => {
-  optionsBox.classList.toggle("select-hide");
-});
-options.forEach(option => {
-  option.addEventListener("click", () => {
-    selected.textContent = option.textContent;
-    hiddenSelect.value = option.dataset.value;
-    optionsBox.classList.add("select-hide");
-  });
-});
-document.addEventListener("click", e => {
-  if (!customSelect.contains(e.target)) optionsBox.classList.add("select-hide");
-});
-
-/* --------------------------- add items (with Daisy intercept) --------------------------- */
-document.querySelectorAll(".add-btn").forEach(button => {
-  button.addEventListener("click", e => {
-    const card = e.target.closest(".item-card");
-    const name = card.dataset.name;
-    const price = parseFloat(card.dataset.price);
-    const quantity = parseInt(card.querySelector(".quantity-input").value) || 1;
-    const image = card.dataset.image;
-    const passType = card.dataset.passType || null;
-    const isPassPayment = (card.dataset.isPassPayment === "true");
-
-    // Special: Daisy Family Box → pick ONE burger, we add 15 of it per box
-    if (name === DAISY_NAME) {
-      openDaisyModal();
-      daisyConfirm.onclick = null;
-      daisyConfirm.onclick = () => {
-        const chosen = daisyOneSelect.value;
-        if (!chosen) { showNotification("Please choose a burger for the Daisy Family Box."); return; }
-
-        // store single choice; quantity remains number of boxes
-        const item = {
+      if (missing.length) {
+        // choose one behavior:
+        // A) Block redeem:
+        throw new Error("Not enough ingredients:\n" + missing.join("\n"));
+    
+        // B) OR allow and clamp to 0 (comment A and uncomment below)
+        // showNotification(`⚠️ Not enough ingredients:\n${missing.join("\n")}\nInventory will be clamped to 0.`, 7000);
+      }
+    
+      for (const ing in totalNeeded) {
+        inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+        if (inventory[ing] < 0) inventory[ing] = 0;
+      }
+    
+      await saveInventory(inventory);
+    }
+    
+    /* --------------------------- inventory helpers --------------------------- */
+    async function getInventory() {
+      const snap = await getDoc(doc(db, "inventory", "current"));
+      return snap.exists() ? snap.data() : {};
+    }
+    async function saveInventory(data) {
+      await setDoc(doc(db, "inventory", "current"), data, { merge: true });
+    }
+    
+    /* --------------------------- date & pass helpers --------------------------- */
+    function dateKeyFromTs(ts = new Date()) {
+      const d = new Date(ts);
+      const yyyy = d.getFullYear();
+      const mm = String(d.getMonth() + 1).padStart(2, "0");
+      const dd = String(d.getDate()).padStart(2, "0");
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    function passDocId(customerKey, passType) {
+      return `${customerKey}|${passType}`;
+    }
+    function addDays(date, n) {
+      const d = new Date(date);
+      d.setDate(d.getDate() + n);
+      return d;
+    }
+    
+    /* --------------------------- passes: create/extend on payment --------------------------- */
+    async function upsertPassOnPayment({ customerName, passType, price }) {
+      const key = loyaltyKey(customerName);
+      const id = passDocId(key, passType);
+      const ref = doc(db, "passes", id);
+    
+      const snap = await getDoc(ref);
+      const existing = snap.exists() ? snap.data() : {};
+    
+      const now = new Date();
+      const start = now;
+      const endDate = addDays(start, 30);
+    
+      await setDoc(ref, {
+        customer: toTitleCase(customerName),
+        key,
+        type: passType,
+        startDate: Timestamp.fromDate(start),
+        endDate: Timestamp.fromDate(endDate),
+        active: true,
+        lastUpdated: serverTimestamp(),
+        price: Number(price),
+    
+        // ✅ NEW: redemption tracking
+        maxClaims: 20,
+        claimsUsed: Number(existing.claimsUsed || 0)
+      }, { merge: true });
+    
+      return id;
+    }
+    
+    /* --------------------------- passes: list (no daily limits) --------------------------- */
+    async function listActivePasses(search = "") {
+      const snap = await getDocs(collection(db, "passes"));
+      const out = [];
+    
+      snap.forEach(d => {
+        const x = d.data();
+        if (!x.active) return;
+    
+        const end = x.endDate?.toDate?.() || new Date(0);
+        if (end < new Date()) return;
+    
+        const name = x.customer || "";
+        if (search && !name.toLowerCase().includes(search.trim().toLowerCase())) return;
+    
+        const maxClaims = Number(x.maxClaims || 20);
+        const claimsUsed = Number(x.claimsUsed || 0);
+        const left = Math.max(0, maxClaims - claimsUsed);
+    
+        out.push({
+          id: d.id,
           name,
-          price,
-          quantity,          // number of boxes
-          image,
-          isPassPayment: false,
-          passType: null,
-          daisyChoice: chosen  // single burger choice
-        };
-
-        // merge if same choice already in cart
-        const existing = order.find(i => i.name === name && i.daisyChoice === chosen);
-        if (existing) {
-          existing.quantity += quantity;
+          type: x.type,
+          claimsUsed,
+          maxClaims,
+          left
+        });
+      });
+    
+      out.sort((a, b) => a.name.localeCompare(b.name));
+      return out;
+    }
+    
+    function itemsForPassType(type, qty = 1) {
+      if (type === "bleeder") {
+        return [{ name: "The Bleeder Box", price: 0, quantity: qty, image: "assets/images/combo.png" }];
+      }
+      if (type === "bigbuns") {
+        return [{ name: "Big Buns Deal", price: 0, quantity: qty, image: "assets/images/combo.png" }];
+      }
+      if (type === "pounder") {
+        return [{ name: "Patty Pounder Combo", price: 0, quantity: qty, image: "assets/images/combo.png" }];
+      }
+      return [];
+    }
+    
+    /* --------------------------- redeem ticket (no daily tracking) --------------------------- */
+    async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
+      const items = [
+        {
+          name: "Patty Pounder Combo",
+          price: 0,
+          quantity: qty,
+          image: "assets/images/combo.png",
+          isMembershipRedeem: true
+        }
+      ];
+    
+      // inventory check first (so we don’t consume a claim if kitchen can’t make it)
+      await deductInventoryForItems(items);
+    
+      await runTransaction(db, async (tx) => {
+        const passRef = doc(db, "passes", passId);
+        const passSnap = await tx.get(passRef);
+    
+        if (!passSnap.exists()) throw new Error("Pass not found.");
+    
+        const pass = passSnap.data();
+        const maxClaims = Number(pass.maxClaims || 20);
+        const claimsUsed = Number(pass.claimsUsed || 0);
+    
+        if (claimsUsed >= maxClaims) {
+          throw new Error(`No claims left (${claimsUsed}/${maxClaims}).`);
+        }
+    
+        // create order doc ref inside transaction
+        const orderRef = doc(collection(db, "orders"));
+    
+        tx.set(orderRef, {
+          employee: toTitleCase(employee),
+          customer: toTitleCase(customer),
+          items,
+          total: 0,
+          discountApplied: true,
+          membershipRedeem: true,
+          timestamp: Timestamp.now(),
+          done: false,
+          deleted: false
+        });
+    
+        tx.update(passRef, {
+          claimsUsed: claimsUsed + 1,
+          lastRedeemedAt: serverTimestamp(),
+          lastUpdated: serverTimestamp()
+        });
+      });
+    }
+    
+    
+    /* --------------------------- UI state --------------------------- */
+    let order = [];
+    let activeDiscount = null;
+    const orderList = document.getElementById("orderList");
+    const subtotalSpan = document.getElementById("subtotal");
+    const totalSpan = document.getElementById("total");
+    const categoryButtons = document.querySelectorAll(".category");
+    const itemCards = document.querySelectorAll(".item-card");
+    const searchBar = document.getElementById("searchBar");
+    const discountModal = document.getElementById("discountModal");
+    const yesBtn = discountModal.querySelector(".yes-btn");
+    const uniformBtn = document.getElementById("uniformDiscountBtn");
+    const noBtn = discountModal.querySelector(".no-btn");
+    let discountToApply = null;
+    const UNIFORM_DISCOUNT = 0.15;   // 15%
+    let discountPercentToApply = 0;
+    function calcTotal(subtotal) {
+      return (activeDiscount && activeDiscount.percent)
+        ? subtotal * (1 - activeDiscount.percent)
+        : subtotal;
+    }
+    
+    
+    /* --------------------------- DAISY: modal (auto-inject if missing) --------------------------- */
+    function ensureDaisyModal() {
+      if (document.getElementById("daisyModal")) return;
+    
+      const wrap = document.createElement("div");
+      wrap.innerHTML = `
+    <div id="daisyModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1250;">
+      <div style="background:#fff; padding:20px; border-radius:12px; width:420px; max-height:80vh; overflow:auto; font-weight:700;">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+          <div style="font-size:1.2rem;">Daisy Family Box</div>
+          <button id="daisyClose" style="border:none; border-radius:8px; padding:6px 10px; background:#f44336; color:#fff; font-weight:800; cursor:pointer;">Close</button>
+        </div>
+    
+        <div style="margin:14px 0; display:flex; flex-direction:column; gap:8px;">
+          <label for="daisyOneSelect" style="font-weight:800;">Choose burger (x${DAISY_BURGERS_PER_BOX} per box):</label>
+          <select id="daisyOneSelect" style="border:2px solid #c82333; border-radius:8px; padding:10px; font-weight:800;">
+            <option value="">— choose a burger —</option>
+          </select>
+          <div style="font-weight:600; color:#555;">
+            Each box also includes 20 coffees and 5 cream pies automatically.
+          </div>
+        </div>
+    
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
+          <button id="daisyConfirm" style="border:none; border-radius:8px; padding:10px 16px; background:#4caf50; color:#fff; font-weight:900; cursor:pointer;">Add to Order</button>
+        </div>
+      </div>
+    </div>`;
+      document.body.appendChild(wrap.firstElementChild);
+    }
+    ensureDaisyModal();
+    
+    const daisyModal = document.getElementById("daisyModal");
+    const daisyClose = document.getElementById("daisyClose");
+    const daisyConfirm = document.getElementById("daisyConfirm");
+    const daisyOneSelect = document.getElementById("daisyOneSelect");
+    
+    function buildDaisySelect() {
+      daisyOneSelect.innerHTML = '<option value="">— choose a burger —</option>';
+      DAISY_BURGER_OPTIONS.forEach(n => {
+        const opt = document.createElement("option");
+        opt.value = n; opt.textContent = n;
+        daisyOneSelect.appendChild(opt);
+      });
+    }
+    
+    function openDaisyModal() {
+      buildDaisySelect();
+      daisyModal.style.display = "flex";
+    }
+    function closeDaisyModal() {
+      daisyModal.style.display = "none";
+    }
+    daisyClose.addEventListener("click", closeDaisyModal);
+    
+    /* --------------------------- order list UI --------------------------- */
+    function updateOrderList() {
+      orderList.innerHTML = "";
+      let subtotal = 0;
+      order.forEach((item, idx) => {
+        subtotal += item.price * item.quantity;
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="item-details">
+            ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(item.price * item.quantity).toFixed(2)}
+          </div>
+          <div class="quantity-controls">
+            <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
+            <span class="qty-number">${item.quantity}</span>
+            <button class="qty-btn" data-action="plus" data-index="${idx}">+</button>
+          </div>
+          <div class="remove-btn" data-index="${idx}">Remove</div>
+        `;
+        orderList.appendChild(li);
+      });
+      subtotalSpan.textContent = subtotal.toFixed(2);
+      totalSpan.textContent = calcTotal(subtotal).toFixed(2);
+    
+      document.querySelectorAll(".qty-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const index = parseInt(e.target.dataset.index, 10);
+          const action = e.target.dataset.action;
+          if (action === "plus") {
+            order[index].quantity++;
+          } else if (action === "minus") {
+            order[index].quantity = Math.max(1, order[index].quantity - 1);
+          }
+          updateOrderList();
+        });
+      });
+      document.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", e => {
+          const index = parseInt(e.target.dataset.index, 10);
+          order.splice(index, 1);
+          updateOrderList();
+        });
+      });
+    }
+    
+    /* --------------------------- filtering --------------------------- */
+    function filterItems() {
+      const selectedCategory = [...categoryButtons].find(btn => btn.classList.contains("active")).textContent.trim();
+      const searchText = searchBar.value.trim().toLowerCase();
+      itemCards.forEach(card => {
+        const itemCategory = card.getAttribute("data-category");
+        const itemName = card.getAttribute("data-name").toLowerCase();
+        const categoryMatch = (selectedCategory === "All" || selectedCategory === itemCategory);
+        const searchMatch = itemName.includes(searchText);
+        card.style.display = (categoryMatch && searchMatch) ? "block" : "none";
+      });
+    }
+    categoryButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        categoryButtons.forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        filterItems();
+      });
+    });
+    searchBar.addEventListener("input", filterItems);
+    
+    /* --------------------------- custom select for employee --------------------------- */
+    const customSelect = document.querySelector(".custom-select");
+    const selected = customSelect.querySelector(".select-selected");
+    const optionsBox = customSelect.querySelector(".select-items");
+    const options = optionsBox.querySelectorAll("div");
+    const hiddenSelect = document.getElementById("employeeName");
+    
+    // --- INSERT PERSISTENCE HERE ---
+    const employeeSelect = hiddenSelect;
+    
+    // Save selection whenever it changes
+    employeeSelect.addEventListener("change", () => {
+        localStorage.setItem("currentEmployee", employeeSelect.value);
+    
+        // Update the styled div
+        const selectedDiv = document.querySelector(".select-selected");
+        if (selectedDiv) selectedDiv.textContent = employeeSelect.value;
+    });
+    
+    // Restore selection on page load
+    window.addEventListener("DOMContentLoaded", () => {
+        const saved = localStorage.getItem("currentEmployee");
+        if (saved) employeeSelect.value = saved;
+    
+        const selectedDiv = document.querySelector(".select-selected");
+        if (selectedDiv) selectedDiv.textContent = saved || "Select employee";
+    });
+    selected.addEventListener("click", () => {
+      optionsBox.classList.toggle("select-hide");
+    });
+    options.forEach(option => {
+      option.addEventListener("click", () => {
+        selected.textContent = option.textContent;
+        hiddenSelect.value = option.dataset.value;
+        optionsBox.classList.add("select-hide");
+      });
+    });
+    document.addEventListener("click", e => {
+      if (!customSelect.contains(e.target)) optionsBox.classList.add("select-hide");
+    });
+    
+    /* --------------------------- add items (with Daisy intercept) --------------------------- */
+    document.querySelectorAll(".add-btn").forEach(button => {
+      button.addEventListener("click", e => {
+        const card = e.target.closest(".item-card");
+        const name = card.dataset.name;
+        const price = parseFloat(card.dataset.price);
+        const quantity = parseInt(card.querySelector(".quantity-input").value) || 1;
+        const image = card.dataset.image;
+        const passType = card.dataset.passType || null;
+        const isPassPayment = (card.dataset.isPassPayment === "true");
+    
+        // Special: Daisy Family Box → pick ONE burger, we add 15 of it per box
+        if (name === DAISY_NAME) {
+          openDaisyModal();
+          daisyConfirm.onclick = null;
+          daisyConfirm.onclick = () => {
+            const chosen = daisyOneSelect.value;
+            if (!chosen) { showNotification("Please choose a burger for the Daisy Family Box."); return; }
+    
+            // store single choice; quantity remains number of boxes
+            const item = {
+              name,
+              price,
+              quantity,          // number of boxes
+              image,
+              isPassPayment: false,
+              passType: null,
+              daisyChoice: chosen  // single burger choice
+            };
+    
+            // merge if same choice already in cart
+            const existing = order.find(i => i.name === name && i.daisyChoice === chosen);
+            if (existing) {
+              existing.quantity += quantity;
+            } else {
+              order.push(item);
+            }
+            updateOrderList();
+            closeDaisyModal();
+          };
+          return;
+        }
+    
+        // Normal add flow
+        const existingItem = order.find(item => item.name === name && item.isPassPayment === isPassPayment);
+        if (existingItem) {
+          existingItem.quantity += quantity;
         } else {
-          order.push(item);
+          order.push({ name, price, quantity, image, isPassPayment, passType });
         }
         updateOrderList();
-        closeDaisyModal();
-      };
-      return;
-    }
-
-    // Normal add flow
-    const existingItem = order.find(item => item.name === name && item.isPassPayment === isPassPayment);
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      order.push({ name, price, quantity, image, isPassPayment, passType });
-    }
-    updateOrderList();
-  });
-});
-
-/* --------------------------- discount modal --------------------------- */
-function resetDiscountButtons() {
-  const btn = document.getElementById("uniformDiscountBtn");
-  if (!btn) return;
-  if (activeDiscount?.code === "uniform") {
-    btn.classList.add("active");
-    btn.textContent = "Discount Applied (15%)";
-  } else {
-    btn.classList.remove("active");
-    btn.textContent = "Apply Discount (15%)";
-  }
-}
-function applyDiscount(type) {
-  activeDiscount = type;
-  resetDiscountButtons();
-  updateOrderList();
-}
-yesBtn.addEventListener("click", () => {
-  if (!discountPercentToApply) {
-    discountModal.style.display = "none";
-    showNotification("No discount selected.");
-    return;
-  }
-  // store a structured discount so it’s clear in Firestore
-  activeDiscount = { code: discountToApply || "uniform", percent: discountPercentToApply, uniform: true };
-  resetDiscountButtons();
-  updateOrderList();
-  discountModal.style.display = "none";
-  showNotification(`✅ ${Math.round(activeDiscount.percent * 100)}% uniform discount applied!`);
-  discountToApply = null;
-  discountPercentToApply = 0;
-});
-
-noBtn.addEventListener("click", () => {
-  discountModal.style.display = "none";
-  showNotification("No discount applied.");
-  discountToApply = null;
-  discountPercentToApply = 0;
-});
-
-uniformBtn.addEventListener("click", () => {
-  // set what we’re about to apply, then ask the question
-  discountToApply = "uniform";
-  discountPercentToApply = UNIFORM_DISCOUNT;
-  discountModal.style.display = "flex";
-});
-
-
-/* --------------------------- pass extraction --------------------------- */
-function extractPassesFromOrder(items) {
-  return items
-    .filter(i => i?.isPassPayment)
-    .map(i => ({
-      passType: "golden",
-      price: i.price,
-      qty: i.quantity || 1
-    }));
-}
-
-
-/* --------------------------- process order (split logic) --------------------------- */
-async function processOrder(employee, customerRaw, inventory, totalNeeded) {
-  const formattedCustomer = toTitleCase(customerRaw);
-
-  const passPurchases = extractPassesFromOrder(order);
-  const normalItems = order.filter(i => !i.isPassPayment && !((i?.name || '').toLowerCase().includes('pass')));
-
-  if (passPurchases.length) {
-    for (const p of passPurchases) {
-      for (let n = 0; n < p.qty; n++) {
-        await upsertPassOnPayment({ customerName: formattedCustomer, passType: p.passType, price: p.price });
+      });
+    });
+    
+    /* --------------------------- discount modal --------------------------- */
+    function resetDiscountButtons() {
+      const btn = document.getElementById("uniformDiscountBtn");
+      if (!btn) return;
+      if (activeDiscount?.code === "uniform") {
+        btn.classList.add("active");
+        btn.textContent = "Discount Applied (15%)";
+      } else {
+        btn.classList.remove("active");
+        btn.textContent = "Apply Discount (15%)";
       }
     }
-
-    const passSubtotal = passPurchases.reduce((s, p) => s + (p.price * p.qty), 0);
-    await addDoc(collection(db, "orders"), {
-      employee: toTitleCase(employee),
-      customer: formattedCustomer,
-      items: passPurchases.map(p => ({ name: `${p.passType} pass`, price: p.price, quantity: p.qty })),
-      total: passSubtotal,
-      discountApplied: null,
-      timestamp: Timestamp.now(),
-      done: true,
-      deleted: false,
-      kitchen: false,
-      isPassPayment: true
+    function applyDiscount(type) {
+      activeDiscount = type;
+      resetDiscountButtons();
+      updateOrderList();
+    }
+    yesBtn.addEventListener("click", () => {
+      if (!discountPercentToApply) {
+        discountModal.style.display = "none";
+        showNotification("No discount selected.");
+        return;
+      }
+      // store a structured discount so it’s clear in Firestore
+      activeDiscount = { code: discountToApply || "uniform", percent: discountPercentToApply, uniform: true };
+      resetDiscountButtons();
+      updateOrderList();
+      discountModal.style.display = "none";
+      showNotification(`✅ ${Math.round(activeDiscount.percent * 100)}% uniform discount applied!`);
+      discountToApply = null;
+      discountPercentToApply = 0;
     });
-  }
-
-  if (passPurchases.length && normalItems.length === 0) {
-    order = [];
-    updateOrderList();
-    document.getElementById("customerName").value = "";
-    document.getElementById("employeeName").value = "";
-    activeDiscount = null;
-    showNotification("✅ Membership activated");
-    return;
-  }
-
-  order = normalItems;
-
-  for (const ing in totalNeeded) {
-    inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
-    if (inventory[ing] < 0) inventory[ing] = 0;
-  }
-  await saveInventory(inventory);
-
-  const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
-  const total = calcTotal(subtotal);
-
-  const nowTs = Timestamp.now();
-  const newVisits = await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
-
-  await addDoc(collection(db, "orders"), {
-    employee: toTitleCase(employee),
-    customer: formattedCustomer,
-    items: order,
-    total,
-    discountApplied: activeDiscount, // will be { code:'uniform', percent:0.15, uniform:true } or null
-    timestamp: nowTs,
-    done: false,
-    deleted: false,
-    kitchen: true,
-    isPassPayment: false
-  });
-
-  order = [];
-  updateOrderList();
-  document.getElementById("customerName").value = "";
-  document.getElementById("employeeName").value = "";
-  activeDiscount = null;
-}
-
-/* --------------------------- submit click --------------------------- */
-document.getElementById("submitOrder").addEventListener("click", async () => {
-  const employee = document.getElementById("employeeName").value;
-  const customerRaw = document.getElementById("customerName").value.trim();
-  if (!employee || !customerRaw || order.length === 0) {
-    showNotification("Please fill all fields and add items.");
-    return;
-  }
-
-  const inventory = await getInventory();
-  const totalNeeded = {};
-  order.forEach(item => {
-    if (item.isPassPayment) return;
-
-    // DAISY: for each box, deduct 15 of the chosen burger + extras
-    if (item.name === DAISY_NAME && item.daisyChoice) {
-      const neededBurger = productIngredients[item.daisyChoice] || {};
-      for (let q = 0; q < item.quantity; q++) {
-        // 15 burgers per box
-        for (let i = 0; i < DAISY_BURGERS_PER_BOX; i++) {
-          for (const ing in neededBurger) {
-            totalNeeded[ing] = (totalNeeded[ing] || 0) + neededBurger[ing];
+    
+    noBtn.addEventListener("click", () => {
+      discountModal.style.display = "none";
+      showNotification("No discount applied.");
+      discountToApply = null;
+      discountPercentToApply = 0;
+    });
+    
+    uniformBtn.addEventListener("click", () => {
+      // set what we’re about to apply, then ask the question
+      discountToApply = "uniform";
+      discountPercentToApply = UNIFORM_DISCOUNT;
+      discountModal.style.display = "flex";
+    });
+    
+    
+    /* --------------------------- pass extraction --------------------------- */
+    function extractPassesFromOrder(items) {
+      return items
+        .filter(i => i?.isPassPayment)
+        .map(i => ({
+          passType: "golden",
+          price: i.price,
+          qty: i.quantity || 1
+        }));
+    }
+    
+    
+    /* --------------------------- process order (split logic) --------------------------- */
+    async function processOrder(employee, customerRaw, inventory, totalNeeded) {
+      const formattedCustomer = toTitleCase(customerRaw);
+    
+      const passPurchases = extractPassesFromOrder(order);
+      const normalItems = order.filter(i => !i.isPassPayment && !((i?.name || '').toLowerCase().includes('pass')));
+    
+      if (passPurchases.length) {
+        for (const p of passPurchases) {
+          for (let n = 0; n < p.qty; n++) {
+            await upsertPassOnPayment({ customerName: formattedCustomer, passType: p.passType, price: p.price });
           }
         }
-        // extras per box
-        DAISY_EXTRAS.forEach(ex => {
-          const n = productIngredients[ex.name] || {};
-          for (const ing in n) {
-            totalNeeded[ing] = (totalNeeded[ing] || 0) + n[ing] * ex.quantity;
-          }
+    
+        const passSubtotal = passPurchases.reduce((s, p) => s + (p.price * p.qty), 0);
+        await addDoc(collection(db, "orders"), {
+          employee: toTitleCase(employee),
+          customer: formattedCustomer,
+          items: passPurchases.map(p => ({ name: `${p.passType} pass`, price: p.price, quantity: p.qty })),
+          total: passSubtotal,
+          discountApplied: null,
+          timestamp: Timestamp.now(),
+          done: true,
+          deleted: false,
+          kitchen: false,
+          isPassPayment: true
         });
       }
-      return;
+    
+      if (passPurchases.length && normalItems.length === 0) {
+        order = [];
+        updateOrderList();
+        document.getElementById("customerName").value = "";
+        document.getElementById("employeeName").value = "";
+        activeDiscount = null;
+        showNotification("✅ Membership activated");
+        return;
+      }
+    
+      order = normalItems;
+    
+      for (const ing in totalNeeded) {
+        inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+        if (inventory[ing] < 0) inventory[ing] = 0;
+      }
+      await saveInventory(inventory);
+    
+      const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
+      const total = calcTotal(subtotal);
+    
+      const nowTs = Timestamp.now();
+      const newVisits = await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
+    
+      await addDoc(collection(db, "orders"), {
+        employee: toTitleCase(employee),
+        customer: formattedCustomer,
+        items: order,
+        total,
+        discountApplied: activeDiscount, // will be { code:'uniform', percent:0.15, uniform:true } or null
+        timestamp: nowTs,
+        done: false,
+        deleted: false,
+        kitchen: true,
+        isPassPayment: false
+      });
+    
+      order = [];
+      updateOrderList();
+      document.getElementById("customerName").value = "";
+      document.getElementById("employeeName").value = "";
+      activeDiscount = null;
     }
-
-    if (comboDetails[item.name]) {
-      comboDetails[item.name].components.forEach(comp => {
-        const needed = productIngredients[comp.name];
-        if (!needed) return;
-        for (const ing in needed) {
-          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
+    
+    /* --------------------------- submit click --------------------------- */
+    document.getElementById("submitOrder").addEventListener("click", async () => {
+      const employee = document.getElementById("employeeName").value;
+      const customerRaw = document.getElementById("customerName").value.trim();
+      if (!employee || !customerRaw || order.length === 0) {
+        showNotification("Please fill all fields and add items.");
+        return;
+      }
+    
+      const inventory = await getInventory();
+      const totalNeeded = {};
+      order.forEach(item => {
+        if (item.isPassPayment) return;
+    
+        // DAISY: for each box, deduct 15 of the chosen burger + extras
+        if (item.name === DAISY_NAME && item.daisyChoice) {
+          const neededBurger = productIngredients[item.daisyChoice] || {};
+          for (let q = 0; q < item.quantity; q++) {
+            // 15 burgers per box
+            for (let i = 0; i < DAISY_BURGERS_PER_BOX; i++) {
+              for (const ing in neededBurger) {
+                totalNeeded[ing] = (totalNeeded[ing] || 0) + neededBurger[ing];
+              }
+            }
+            // extras per box
+            DAISY_EXTRAS.forEach(ex => {
+              const n = productIngredients[ex.name] || {};
+              for (const ing in n) {
+                totalNeeded[ing] = (totalNeeded[ing] || 0) + n[ing] * ex.quantity;
+              }
+            });
+          }
+          return;
+        }
+    
+        if (comboDetails[item.name]) {
+          comboDetails[item.name].components.forEach(comp => {
+            const needed = productIngredients[comp.name];
+            if (!needed) return;
+            for (const ing in needed) {
+              totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * item.quantity;
+            }
+          });
+        } else {
+          const needed = productIngredients[item.name];
+          if (!needed) return;
+          for (const ing in needed) {
+            totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+          }
         }
       });
-    } else {
-      const needed = productIngredients[item.name];
-      if (!needed) return;
-      for (const ing in needed) {
-        totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * item.quantity;
+    
+      const missing = [];
+      for (const ing in totalNeeded) {
+        const invVal = Number(inventory[ing] || 0);
+        if (invVal < totalNeeded[ing]) {
+          const label = ingredientLabels[ing] || ing;
+          missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
+        }
       }
-    }
-  });
-
-  const missing = [];
-  for (const ing in totalNeeded) {
-    const invVal = Number(inventory[ing] || 0);
-    if (invVal < totalNeeded[ing]) {
-      const label = ingredientLabels[ing] || ing;
-      missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
-    }
-  }
-  if (missing.length > 0) {
-    showNotification(`⚠️ Not enough ingredients:\n${missing.join("\n")}\n\nClick again to force submit.`, 6000);
-    if (!document.getElementById("submitOrder").dataset.confirmed) {
-      document.getElementById("submitOrder").dataset.confirmed = "true";
-      setTimeout(() => {
-        document.getElementById("submitOrder").removeAttribute("data-confirmed");
-      }, 6000);
-      return;
-    }
-    delete document.getElementById("submitOrder").dataset.confirmed;
-  }
-
-  await processOrder(employee, customerRaw, inventory, totalNeeded);
-});
-
-/* --------------------------- redeem modal wiring (no limits) --------------------------- */
-const redeemBtn = document.getElementById("redeemPassBtn");
-const redeemModal = document.getElementById("redeemPassModal");
-const redeemList = document.getElementById("redeemList");
-const redeemSearch = document.getElementById("redeemSearch");
-const closeRedeem = document.getElementById("closeRedeem");
-
-function showRedeemModal() { redeemModal.style.display = "flex"; }
-function hideRedeemModal() { redeemModal.style.display = "none"; }
-
-async function refreshRedeemList() {
-  const q = (redeemSearch.value || "").trim();
-  const passes = await listActivePasses(q);
-  redeemList.innerHTML = "";
-
-  passes.forEach(p => {
-    const row = document.createElement("div");
-    row.style.cssText = "display:flex; align-items:center; justify-content:space-between; gap:8px; border:2px solid #c82333; border-radius:8px; padding:10px;";
-
-    const label = document.createElement("div");
-    label.style.cssText = "font-weight:800;";
-    const typeLabel =
-    p.type === "golden"
-    ? "Golden Buns Membership"
-    : "Membership";
-    label.textContent = `${p.name} — ${typeLabel}`;
-
-    const redeem = document.createElement("button");
-    redeem.textContent = "Redeem";
-    redeem.style.cssText = "padding:6px 12px; border-radius:8px; border:none; background:#ffc107; font-weight:800; cursor:pointer;";
-
-    redeem.addEventListener("click", async () => {
-      const employee = document.getElementById("employeeName").value;
-      if (!employee) { showNotification("Select employee first."); return; }
-      redeem.disabled = true;
-      try {
-        await redeemPassTicket({ passId: p.id, passType: p.type, employee, customer: p.name, qty: 1 });
-        showNotification(`✅ Confirmed — Patty Pounder Combo sent to kitchen for ${p.name}`);
-        row.style.outline = "3px solid #4caf50";
-        setTimeout(() => { row.style.outline = "none"; }, 600);
-      } catch (e) {
-        console.error(e);
-        showNotification("❌ Could not redeem. Not enough ingredients.");
-      } finally {
-        redeem.disabled = false;
+      if (missing.length > 0) {
+        showNotification(`⚠️ Not enough ingredients:\n${missing.join("\n")}\n\nClick again to force submit.`, 6000);
+        if (!document.getElementById("submitOrder").dataset.confirmed) {
+          document.getElementById("submitOrder").dataset.confirmed = "true";
+          setTimeout(() => {
+            document.getElementById("submitOrder").removeAttribute("data-confirmed");
+          }, 6000);
+          return;
+        }
+        delete document.getElementById("submitOrder").dataset.confirmed;
       }
+    
+      await processOrder(employee, customerRaw, inventory, totalNeeded);
     });
-
-    row.appendChild(label);
-    row.appendChild(redeem);
-    redeemList.appendChild(row);
-  });
-}
-
-redeemBtn.addEventListener("click", async () => {
-  await refreshRedeemList();
-  showRedeemModal();
-});
-redeemSearch.addEventListener("input", refreshRedeemList);
-closeRedeem.addEventListener("click", hideRedeemModal);
-
-/* --------------------------- end --------------------------- */
-</script>
+    
+    /* --------------------------- redeem modal wiring (no limits) --------------------------- */
+    const redeemBtn = document.getElementById("redeemPassBtn");
+    const redeemModal = document.getElementById("redeemPassModal");
+    const redeemList = document.getElementById("redeemList");
+    const redeemSearch = document.getElementById("redeemSearch");
+    const closeRedeem = document.getElementById("closeRedeem");
+    
+    function showRedeemModal() { redeemModal.style.display = "flex"; }
+    function hideRedeemModal() { redeemModal.style.display = "none"; }
+    
+    async function refreshRedeemList() {
+      const q = (redeemSearch.value || "").trim();
+      const passes = await listActivePasses(q);
+      redeemList.innerHTML = "";
+    
+      passes.forEach(p => {
+        const row = document.createElement("div");
+        row.style.cssText = "display:flex; align-items:center; justify-content:space-between; gap:8px; border:2px solid #c82333; border-radius:8px; padding:10px;";
+    
+        const label = document.createElement("div");
+        label.style.cssText = "font-weight:800;";
+        const typeLabel = p.type === "golden" ? "Golden Buns Membership" : "Membership";
+    
+        // ✅ show claimed/left
+        label.textContent = `${p.name} — ${typeLabel} | Claimed: ${p.claimsUsed}/${p.maxClaims} | Left: ${p.left}`;
+    
+        const redeem = document.createElement("button");
+        redeem.textContent = "Redeem";
+        redeem.style.cssText = "padding:6px 12px; border-radius:8px; border:none; background:#ffc107; font-weight:800; cursor:pointer;";
+    
+        // ✅ FIX: only disable after button exists
+        if (p.left <= 0) {
+          redeem.disabled = true;
+          redeem.textContent = "No claims left";
+          redeem.style.opacity = "0.6";
+          redeem.style.cursor = "not-allowed";
+        }
+    
+        redeem.addEventListener("click", async () => {
+          const employee = document.getElementById("employeeName").value;
+          if (!employee) { showNotification("Select employee first."); return; }
+          redeem.disabled = true;
+          try {
+            await redeemPassTicket({ passId: p.id, passType: p.type, employee, customer: p.name, qty: 1 });
+            showNotification(`✅ Confirmed — Patty Pounder Combo sent to kitchen for ${p.name}`);
+            row.style.outline = "3px solid #4caf50";
+            setTimeout(() => { row.style.outline = "none"; }, 600);
+          } catch (e) {
+            console.error(e);
+            showNotification("❌ Could not redeem. Not enough ingredients.");
+          } finally {
+            if (p.left > 0) redeem.disabled = false;
+          }
+        });
+    
+        row.appendChild(label);
+        row.appendChild(redeem);
+        redeemList.appendChild(row);
+      });
+    }
+    
+    redeemBtn.addEventListener("click", async () => {
+      await refreshRedeemList();
+      showRedeemModal();
+    });
+    redeemSearch.addEventListener("input", refreshRedeemList);
+    closeRedeem.addEventListener("click", hideRedeemModal);
+    
+    /* --------------------------- end --------------------------- */
+    async function backfillGoldenClaims() {
+      // pulls all passes, counts membership redeems per customer name, sets claimsUsed/maxClaims
+      const passesSnap = await getDocs(collection(db, "passes"));
+      let updated = 0;
+    
+      for (const passDoc of passesSnap.docs) {
+        const pass = passDoc.data();
+        if (pass.type !== "golden") continue;
+    
+        const customerName = pass.customer; // stored Title Case
+        if (!customerName) continue;
+    
+        const qRedeems = query(
+          collection(db, "orders"),
+          where("membershipRedeem", "==", true),
+          where("customer", "==", customerName)
+        );
+    
+        const redeemsSnap = await getDocs(qRedeems);
+        const claimedCount = redeemsSnap.size;
+    
+        await setDoc(doc(db, "passes", passDoc.id), {
+          maxClaims: 20,
+          claimsUsed: claimedCount
+        }, { merge: true });
+    
+        updated++;
+        console.log(`✅ ${customerName}: claimsUsed = ${claimedCount}`);
+      }
+    
+      console.log(`DONE. Updated ${updated} golden passes.`);
+    }
+    
+    // ✅ FIX: make callable from console in module context
+    window.backfillGoldenClaims = backfillGoldenClaims;
+    </script>
 
 
 </body>
