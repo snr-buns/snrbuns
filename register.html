@@ -890,7 +890,7 @@
 <script type="module">
 import {
   getFirestore, Timestamp,
-  collection, addDoc, doc, getDoc, setDoc, getDocs,
+  collection, addDoc, doc, getDoc, setDoc, getDocs, updateDoc,
   increment, serverTimestamp,
   query, orderBy, startAt, endAt, limit, documentId
 } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
@@ -1087,6 +1087,64 @@ const DAISY_BURGER_OPTIONS = [
   "Double Shot"
 ];
 
+function computeIngredientsNeeded(items) {
+  const totalNeeded = {};
+
+  items.forEach(item => {
+    const qty = Number(item.quantity || 1);
+
+    if (comboDetails[item.name]) {
+      comboDetails[item.name].components.forEach(comp => {
+        const needed = productIngredients[comp.name];
+        if (!needed) return;
+
+        for (const ing in needed) {
+          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
+        }
+      });
+      return;
+    }
+
+    const needed = productIngredients[item.name];
+    if (!needed) return;
+
+    for (const ing in needed) {
+      totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
+    }
+  });
+
+  return totalNeeded;
+}
+
+async function deductInventoryForItems(items) {
+  const inventory = await getInventory();
+  const totalNeeded = computeIngredientsNeeded(items);
+
+  // If you want to BLOCK redeem when not enough ingredients, use this:
+  const missing = [];
+  for (const ing in totalNeeded) {
+    const invVal = Number(inventory[ing] || 0);
+    if (invVal < totalNeeded[ing]) {
+      missing.push(`${ingredientLabels[ing] || ing} (need ${totalNeeded[ing]}, have ${invVal})`);
+    }
+  }
+  if (missing.length) {
+    // choose one behavior:
+    // A) Block redeem:
+    throw new Error("Not enough ingredients:\n" + missing.join("\n"));
+
+    // B) OR allow and clamp to 0 (comment A and uncomment below)
+    // showNotification(`⚠️ Not enough ingredients:\n${missing.join("\n")}\nInventory will be clamped to 0.`, 7000);
+  }
+
+  for (const ing in totalNeeded) {
+    inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+    if (inventory[ing] < 0) inventory[ing] = 0;
+  }
+
+  await saveInventory(inventory);
+}
+
 /* --------------------------- inventory helpers --------------------------- */
 async function getInventory() {
   const snap = await getDoc(doc(db, "inventory", "current"));
@@ -1180,6 +1238,9 @@ async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
     }
   ];
 
+  // ✅ deduct ingredients
+  await deductInventoryForItems(items);
+
   const orderData = {
     employee,
     customer,
@@ -1192,19 +1253,16 @@ async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
     deleted: false
   };
 
-  // ✅ THIS is the critical success step
+  // ✅ write the order
   await addDoc(collection(db, "orders"), orderData);
 
-  // ⚠️ This should NEVER block redemption UI
+  // ✅ update pass (non-blocking)
   try {
-    await updateDoc(doc(db, "passes", passId), {
-      lastRedeemedAt: new Date()
-    });
+    await updateDoc(doc(db, "passes", passId), { lastRedeemedAt: new Date() });
   } catch (err) {
     console.warn("Pass updated failed, but order was sent:", err);
   }
 }
-
 
 
 /* --------------------------- UI state --------------------------- */
@@ -1695,7 +1753,7 @@ async function refreshRedeemList() {
         setTimeout(() => { row.style.outline = "none"; }, 600);
       } catch (e) {
         console.error(e);
-        showNotification("❌ Could not redeem. Check console/logs.");
+        showNotification("❌ Could not redeem. Not enough ingredients.");
       } finally {
         redeem.disabled = false;
       }
