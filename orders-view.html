@@ -1,281 +1,542 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>Snr. Buns - Orders View</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 20px;
-      background: #fff4d6;
-      color: #333;
-    }
-    h1 {
-      color: #c82333;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      max-width: 1200px;
-      margin: 0 auto 20px auto;
-      background: white;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      border-radius: 8px;
-      overflow: hidden;
-      font-size: 0.9rem;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px 8px;
-      text-align: center;
-      word-break: break-word;
-      white-space: nowrap;
-    }
-    th {
-      background-color: #ffc107;
-      color: #333;
-    }
-    #downloadCSV {
-      display: block;
-      margin: 0 auto 15px auto;
-      padding: 10px 20px;
-      background: #c82333;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 16px;
-      max-width: 260px;
-      text-align: center;
-    }
-    #downloadCSV:hover {
-      background: #a71d2a;
-    }
-    @media (max-width: 900px) {
-      table { font-size: 0.8rem; }
-      th, td { padding: 8px 6px; }
-    }
-  </style>
-</head>
-<body>
-  <h1>🍔 Snr. Buns - All Orders</h1>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Snr. Buns - Orders View</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-  <button id="downloadCSV">⬇️ Download Orders CSV</button>
+    <!-- Google Fonts (match orders.html) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <table id="ordersTable" aria-label="All Orders">
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Employee</th>
-        <th>Customer</th>
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: #fff4d6;
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
 
-        <!-- BURGERS -->
-        <th>Heart Stopper</th>
-        <th>Money Shot</th>
-        <th>The Simply</th>
-        <th>Double Shot</th>
-        <th>The Bleeder</th>
-        <th>The Prickley</th>
+      h1 {
+        color: #c82333;
+        font-weight: 700;
+        font-size: 2rem;
+        margin: 0 0 1rem 0;
+        user-select: none;
+        text-align: center;
+      }
 
-        <!-- WRAPS -->
-        <th>Chicken Wrap</th>
-        <th>Chicken Mexican</th>
-        <th>Goat Wrap</th>
+      #downloadCSV {
+        display: block;
+        margin: 0 auto 15px auto;
+        padding: 10px 20px;
+        background: #c82333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 16px;
+        max-width: 320px;
+        text-align: center;
+        user-select: none;
+      }
+      #downloadCSV:hover {
+        background: #a71d2a;
+      }
 
-        <!-- SIDES -->
-        <th>Fries</th>
-        <th>Onion Rings</th>
+      /* Match orders.html table framing */
+      .table-container {
+        overflow-x: auto;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 3px solid #b07d00 !important;
+        outline: 2px solid #b07d00;
+        outline-offset: -1px;
+      }
 
-        <!-- DRINKS -->
-        <th>Soda</th>
-        <th>Coffee</th>
+      table#ordersTable {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+        font-weight: 600;
+        user-select: none;
+        font-size: 0.85rem;
+      }
 
-        <!-- DESSERTS -->
-        <th>Rim Job</th>
-        <th>Cream Pie</th>
-        <th>Ice Cream</th>
+      table#ordersTable th,
+      table#ordersTable td {
+        border: 1px solid #ddd;
+        padding: 8px 8px;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        word-break: break-word;
+      }
 
-        <th>Total</th>
-        <th>Free Dessert?</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
+      table#ordersTable th {
+        background-color: #ffc107;
+        font-weight: 700;
+      }
 
-  <script type="module">
-    import { app } from "./auth.js";
-    import {
-      getFirestore,
-      collection,
-      onSnapshot,
-      query,
-      orderBy,
-      where
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+      /* Section band styling (same vibe as orders.html) */
+      #ordersTable thead .group-row th.group,
+      #ordersTable thead th[rowspan="2"] {
+        background: #ffc107;
+        color: #1a1a1a;
+      }
 
-    const db = getFirestore(app);
+      /* Row 2 (individual menu items) lighter gold */
+      #ordersTable thead tr + tr th {
+        background: #ffefb5;
+        color: #2b2b2b;
+        border-color: #e2c86a;
+        font-weight: 700;
+        white-space: normal;
+        word-break: keep-all;
+        overflow-wrap: normal;
+        line-height: 1.15;
+      }
 
-    // ✅ Master product list/order (matches orders.html)
-    const PRODUCTS = [
-      // BURGERS
-      "Heart Stopper",
-      "Money Shot",
-      "The Simply",
-      "Double Shot",
-      "The Bleeder",
-      "The Prickley",
-      // WRAPS
-      "Chicken Wrap",
-      "Chicken Mexican",
-      "Goat Wrap",
-      // SIDES
-      "Fries",
-      "Onion Rings",
-      // DRINKS
-      "Soda",
-      "Coffee",
-      // DESSERTS
-      "Rim Job",
-      "Cream Pie",
-      "Ice Cream"
-    ];
+      /* Done row styling (same as orders.html) */
+      #ordersTable tbody tr.done td {
+        color: #666;
+        text-decoration: line-through;
+        text-decoration-thickness: 4px;
+        text-decoration-color: #393737;
+      }
+      #ordersTable tbody tr.done {
+        opacity: 0.8;
+      }
 
-    // ✅ Combo breakdowns (synced with orders.html)
-    const comboDetails = {
-      "Big Buns Deal": [
-        { name: "The Simply", quantity: 10 },
-        { name: "Fries", quantity: 5 },
-        { name: "Coffee", quantity: 15 },
-        { name: "Rim Job", quantity: 1 }
-      ],
-      "The Bleeder Box": [
-        { name: "The Bleeder", quantity: 5 },
-        { name: "Fries", quantity: 5 },
-        { name: "Coffee", quantity: 10 },
-        { name: "Rim Job", quantity: 1 }
-      ]
-    };
+      /* Zebra striping */
+      #ordersTable tbody tr:nth-child(even) td {
+        background: #fff9e8;
+      }
+      #ordersTable tbody tr:hover td {
+        background: #fff4d1;
+      }
 
-    function formatEST(ts) {
-      if (!ts) return "";
-      const d = ts.toDate ? ts.toDate() : new Date(ts);
-      return d.toLocaleString("en-US", {
-        timeZone: "America/New_York",
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false
-      }).replace(",", "");
-    }
+      /* ===== Column group dividers (matching your orders.html setup) ===== */
+      :root {
+        --divider: #b07d00;
+      }
 
-    // Expand combos and total per-product counts
-    function parseItems(items = []) {
-      const counts = {};
-      PRODUCTS.forEach(p => counts[p] = 0);
+      /* LEFT edges of groups (header row 2 + body) */
+      /* Burgers start (header col 1, body col 4) */
+      #ordersTable thead tr + tr th:nth-child(1),
+      #ordersTable tbody td:nth-child(4) {
+        border-left: 3px solid var(--divider) !important;
+      }
 
-      items.forEach(item => {
-        const qty = Number(item.quantity || 0);
-        const name = item.name;
-        if (!qty) return;
+      /* Wraps start (header col 8, body col 11) */
+      #ordersTable thead tr + tr th:nth-child(8),
+      #ordersTable tbody td:nth-child(11) {
+        border-left: 3px solid var(--divider) !important;
+      }
 
-        if (comboDetails[name]) {
-          comboDetails[name].forEach(comp => {
-            if (counts[comp.name] !== undefined) {
-              counts[comp.name] += qty * Number(comp.quantity || 0);
-            }
-          });
-        } else if (counts[name] !== undefined) {
-          counts[name] += qty;
+      /* Sides start (header col 11, body col 14) */
+      #ordersTable thead tr + tr th:nth-child(11),
+      #ordersTable tbody td:nth-child(14) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* Drinks start (header col 14, body col 17) */
+      #ordersTable thead tr + tr th:nth-child(14),
+      #ordersTable tbody td:nth-child(17) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* Desserts start (header col 16, body col 19) */
+      #ordersTable thead tr + tr th:nth-child(16),
+      #ordersTable tbody td:nth-child(19) {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      /* RIGHT edges of groups (header row 2 + body) */
+      /* Burgers end (header col 7, body col 10) */
+      #ordersTable thead tr + tr th:nth-child(7),
+      #ordersTable tbody td:nth-child(10) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Wraps end (header col 10, body col 13) */
+      #ordersTable thead tr + tr th:nth-child(10),
+      #ordersTable tbody td:nth-child(13) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Sides end (header col 13, body col 16) */
+      #ordersTable thead tr + tr th:nth-child(13),
+      #ordersTable tbody td:nth-child(16) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Drinks end (header col 15, body col 18) */
+      #ordersTable thead tr + tr th:nth-child(15),
+      #ordersTable tbody td:nth-child(18) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Desserts end (header col 18, body col 21) */
+      #ordersTable thead tr + tr th:nth-child(18),
+      #ordersTable tbody td:nth-child(21) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Thick divider after Customer */
+      #ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3),
+      #ordersTable tbody td:nth-child(3) {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      /* Mobile tweaks */
+      @media (max-width: 900px) {
+        table#ordersTable {
+          font-size: 0.78rem;
+          min-width: 780px;
         }
-      });
+        table#ordersTable th,
+        table#ordersTable td {
+          padding: 6px 6px;
+        }
+      }
+    </style>
+  </head>
 
-      return counts;
-    }
+  <body>
+    <h1>🍔 Snr. Buns - Orders View</h1>
+    <button id="downloadCSV">⬇️ Download Orders CSV</button>
 
-    const tbody = document.querySelector("#ordersTable tbody");
-    let ordersData = [];
+    <div class="table-container">
+      <table id="ordersTable" aria-label="All Orders">
+        <thead>
+          <!-- Row 1: section bands -->
+          <tr class="group-row">
+            <th rowspan="2">Date</th>
+            <th rowspan="2">Employee</th>
+            <th rowspan="2">Customer</th>
 
-    function renderOrders(orders) {
-      tbody.innerHTML = "";
-      if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${3 + PRODUCTS.length + 2}">No orders found.</td></tr>`;
-        return;
+            <th class="group" colspan="7">BURGERS</th>
+            <th class="group" colspan="3">WRAPS</th>
+            <th class="group" colspan="3">SIDES</th>
+            <th class="group" colspan="2">DRINKS</th>
+            <th class="group" colspan="3">DESSERTS</th>
+
+            <th rowspan="2">Total</th>
+            <th rowspan="2">Done?</th>
+          </tr>
+
+          <!-- Row 2: individual items (order matches orders.html) -->
+          <tr>
+            <!-- BURGERS -->
+            <th>Heart Stopper</th>
+            <th>Money Shot</th>
+            <th>The Simply</th>
+            <th>Double Shot</th>
+            <th>The Glorious</th>
+            <th>The Bleeder</th>
+            <th>The Prickley</th>
+
+            <!-- WRAPS -->
+            <th>Chicken Wrap</th>
+            <th>Chicken Mexican</th>
+            <th>Goat Wrap</th>
+
+            <!-- SIDES -->
+            <th>Fries</th>
+            <th>Onion Rings</th>
+            <th>Chicken Nuggets</th>
+
+            <!-- DRINKS -->
+            <th>Soda</th>
+            <th>Coffee</th>
+
+            <!-- DESSERTS -->
+            <th>Rim Job</th>
+            <th>Cream Pie</th>
+            <th>Ice Cream</th>
+          </tr>
+        </thead>
+
+        <tbody id="ordersBody"></tbody>
+      </table>
+    </div>
+
+    <script type="module">
+      import { app } from "./auth.js";
+      import {
+        getFirestore,
+        collection,
+        onSnapshot,
+        query,
+        orderBy,
+        where,
+        limit,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+      const db = getFirestore(app);
+
+      const tbody = document.getElementById("ordersBody");
+      const downloadBtn = document.getElementById("downloadCSV");
+
+      // ✅ EXACT PRODUCTS list from orders.html (same order)
+      const PRODUCTS = [
+        // BURGERS (7)
+        "Heart Stopper",
+        "Money Shot",
+        "The Simply",
+        "Double Shot",
+        "The Glorious",
+        "The Bleeder",
+        "The Prickley",
+
+        // WRAPS (3)
+        "Chicken Wrap",
+        "Chicken Mexican",
+        "Goat Wrap",
+
+        // SIDES (3)
+        "Fries",
+        "Onion Rings",
+        "Chicken Nuggets",
+
+        // DRINKS (2)
+        "Soda",
+        "Coffee",
+
+        // DESSERTS (3)
+        "Rim Job",
+        "Cream Pie",
+        "Ice Cream",
+      ];
+
+      /* -------- Combos (copied from orders.html) -------- */
+      const comboDetails = {
+        "The Heartstopper Meal": {
+          price: 1800,
+          components: [
+            { name: "Heart Stopper", quantity: 5 },
+            { name: "Onion Rings", quantity: 5 },
+            { name: "Soda", quantity: 15 },
+            { name: "Ice Cream", quantity: 5 },
+          ],
+        },
+        "Big Buns Deal": {
+          price: 1700,
+          components: [
+            { name: "The Simply", quantity: 10 },
+            { name: "Fries", quantity: 5 },
+            { name: "Soda", quantity: 15 },
+            { name: "Rim Job", quantity: 1 },
+          ],
+        },
+        "The Bleeder Box": {
+          price: 600,
+          components: [
+            { name: "The Bleeder", quantity: 5 },
+            { name: "Soda", quantity: 5 },
+            { name: "Rim Job", quantity: 1 },
+          ],
+        },
+        "Filthy Rich Combo": {
+          price: 800,
+          components: [
+            { name: "Money Shot", quantity: 5 },
+            { name: "Soda", quantity: 5 },
+          ],
+        },
+        "Patty Pounder Combo": {
+          price: 1100,
+          components: [
+            { name: "The Prickley", quantity: 10 },
+            { name: "Soda", quantity: 10 },
+          ],
+        },
+      };
+
+      /* -------- Daisy config (copied from orders.html) -------- */
+      const DAISY_NAME = "Daisy Family Box";
+      const DAISY_BURGERS_PER_BOX = 15;
+      const DAISY_EXTRAS = [
+        { name: "Coffee", quantity: 20 },
+        { name: "Cream Pie", quantity: 5 },
+      ];
+
+      function formatEST(ts) {
+        if (!ts) return "-";
+        const d = ts.toDate ? ts.toDate() : new Date(ts);
+        return d.toLocaleString("en-US", {
+          timeZone: "America/New_York",
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
       }
 
-      orders.forEach(order => {
-        const counts = parseItems(order.items || []);
-        const tr = document.createElement("tr");
+      // ✅ Same expansion logic as orders.html (combos + Daisy + singles)
+      function parseItems(items = []) {
+        const counts = {};
+        PRODUCTS.forEach((p) => (counts[p] = 0));
 
-        // Build cells
-        const cells = [
-          formatEST(order.timestamp),
-          order.employee || "-",
-          order.customer || "-",
-          ...PRODUCTS.map(p => (Number(counts[p] || 0))),
-          (typeof order.total === "number" ? `$${order.total.toFixed(2)}` : "$0.00"),
-          (order.freeDessert ? "Yes 🍰" : "")
+        items.forEach((item) => {
+          const qty = Number(item.quantity || 0);
+          const name = item?.name || "";
+          if (!qty) return;
+
+          // Daisy Family Box → 15 of chosen burger per box + extras
+          if (name === DAISY_NAME && item.daisyChoice) {
+            const burger = item.daisyChoice;
+            if (counts[burger] !== undefined) {
+              counts[burger] += qty * DAISY_BURGERS_PER_BOX;
+            }
+            DAISY_EXTRAS.forEach((ex) => {
+              if (counts[ex.name] !== undefined) {
+                counts[ex.name] += qty * ex.quantity;
+              }
+            });
+            return;
+          }
+
+          // Regular combos
+          if (comboDetails[name]) {
+            comboDetails[name].components.forEach((c) => {
+              if (counts[c.name] !== undefined) {
+                counts[c.name] += qty * c.quantity;
+              }
+            });
+            return;
+          }
+
+          // Single items
+          if (counts[name] !== undefined) {
+            counts[name] += qty;
+          }
+        });
+
+        return counts;
+      }
+
+      let ordersData = [];
+
+      function renderOrders(orders) {
+        tbody.innerHTML = "";
+
+        if (!orders.length) {
+          tbody.innerHTML = `<tr><td colspan="${
+            3 + PRODUCTS.length + 2
+          }">No orders found.</td></tr>`;
+          return;
+        }
+
+        orders.forEach((order) => {
+          const tr = document.createElement("tr");
+          if (order.done) tr.classList.add("done");
+
+          const counts = parseItems(order.items || []);
+
+          const cells = [
+            formatEST(order.timestamp),
+            order.employee || "-",
+            order.customer || "-",
+            ...PRODUCTS.map((p) => {
+              const n = Number(counts[p] || 0);
+              return n > 0 ? n : "";
+            }),
+            typeof order.total === "number"
+              ? `$${order.total.toFixed(2)}`
+              : `$${Number(order.total ?? 0).toFixed(2)}`,
+            order.done ? "Yes ✅" : "",
+          ];
+
+          tr.innerHTML = cells.map((v) => `<td>${v}</td>`).join("");
+          tbody.appendChild(tr);
+        });
+      }
+
+      // ✅ Match orders.html: show newest first, non-deleted, limit 50
+      const qRef = query(
+        collection(db, "orders"),
+        where("deleted", "==", false),
+        orderBy("timestamp", "desc"),
+        limit(50)
+      );
+
+      onSnapshot(
+        qRef,
+        (snapshot) => {
+          ordersData = snapshot.docs.map((d) => d.data());
+          renderOrders(ordersData);
+        },
+        (err) =>
+          console.error("[orders-view] Firestore error:", err?.message || err)
+      );
+
+      // CSV export (matches orders.html columns)
+      downloadBtn.addEventListener("click", () => {
+        if (!ordersData.length) {
+          alert("No orders to export!");
+          return;
+        }
+
+        const csv = convertOrdersToCSV(ordersData);
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `SnrBuns_Orders_${new Date()
+          .toISOString()
+          .slice(0, 10)}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        URL.revokeObjectURL(url);
+      });
+
+      function convertOrdersToCSV(orders) {
+        const header = [
+          "Date",
+          "Employee",
+          "Customer",
+          ...PRODUCTS,
+          "Total",
+          "Done?",
         ];
 
-        tr.innerHTML = cells.map(v => `<td>${v}</td>`).join("");
-        tbody.appendChild(tr);
-      });
-    }
+        const rows = orders.map((order) => {
+          const counts = parseItems(order.items || []);
+          const totalValue =
+            typeof order.total === "number"
+              ? order.total.toFixed(2)
+              : Number(order.total ?? 0).toFixed(2);
 
-    // 🔎 Show only non-deleted orders, newest first
-    const qRef = query(
-      collection(db, "orders"),
-      where("deleted", "==", false),
-      orderBy("timestamp", "desc")
-    );
+          return [
+            formatEST(order.timestamp),
+            order.employee || "",
+            order.customer || "",
+            ...PRODUCTS.map((p) => Number(counts[p] || 0)),
+            totalValue,
+            order.done ? "Yes" : "No",
+          ];
+        });
 
-    onSnapshot(qRef, (snapshot) => {
-      ordersData = snapshot.docs.map(d => d.data());
-      renderOrders(ordersData);
-    });
-
-    // CSV download
-    document.getElementById("downloadCSV").addEventListener("click", () => {
-      if (ordersData.length === 0) {
-        alert("No orders to export!");
-        return;
-      }
-      const csv = convertOrdersToCSV(ordersData);
-      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `BurgerShot_Orders_${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    });
-
-    function convertOrdersToCSV(orders) {
-      const header = ["Date", "Employee", "Customer", ...PRODUCTS, "Total", "Free Dessert?"];
-      const rows = orders.map(order => {
-        const counts = parseItems(order.items || []);
+        // Quote each field (safe for commas)
         return [
-          formatEST(order.timestamp),
-          order.employee || "",
-          order.customer || "",
-          ...PRODUCTS.map(p => Number(counts[p] || 0)),
-          (typeof order.total === "number" ? order.total.toFixed(2) : "0.00"),
-          order.freeDessert ? "Yes" : "No"
-        ];
-      });
-
-      // Quote each field to be safe for commas
-      return [
-        header.join(","),
-        ...rows.map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(","))
-      ].join("\n");
-    }
-  </script>
-</body>
+          header.join(","),
+          ...rows.map((r) =>
+            r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
+          ),
+        ].join("\n");
+      }
+    </script>
+  </body>
 </html>
