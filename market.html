@@ -557,9 +557,10 @@ document.getElementById('confirmPurchase').addEventListener('click', async () =>
 
   try {
     await addDoc(collection(db, "market_runs"), marketRun);
-    await updateInventoryInFirestore(inventory);
-    updateCosts();
-    showNotification("Market run saved successfully!");
+await updateInventoryInFirestore(inventory);
+updateCosts();
+await setSuggestedPacks();
+showNotification("Market run saved successfully!");
   } catch (error) {
     console.error("Error adding market run:", error);
     showNotification("Failed to save market run.");
