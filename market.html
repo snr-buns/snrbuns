@@ -577,24 +577,24 @@ updateCosts();
 /* ===== Dynamic Suggested Packs based on Inventory ===== */
 async function setSuggestedPacks() {
   // Packs required for 15 Bleeders + 10 Pounders
- const required = {
-  burger_buns: 40,
-  ground_beef: 40,
-  cheese_slices: 20,
-  lettuce: 20,
-  chicken: 25,
+  const required = {
+  burger_buns: 60,
+  ground_beef: 60,
+  cheese_slices: 30,
+  lettuce: 30,
+  chicken: 50,
   bacon: 0,
   tomato: 0,
   tortilla: 0,
   goat_cheese: 0,
-  potato: 0,
-  onion: 20,
-  sugar: 2,
-  flour: 2,
-  ice_cream: 10,
-  vanilla: 20,
+  potato: 10,
+  onion: 40,
+  sugar: 10,
+  flour: 10,
+  ice_cream: 5,
+  vanilla: 10,
   coffee_beans: 0,
-  corn_syrup: 60,
+  corn_syrup: 90,
 };
 
   const inventory = await getLiveInventory();
