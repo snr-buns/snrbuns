@@ -642,35 +642,17 @@
       /* -------- Combos (non-configurable) -------- */
       const comboDetails = {
         "The Heartstopper Meal": {
-          price: 1800,
+          price: 1400,
           components: [
             { name: "Heart Stopper", quantity: 5 },
             { name: "Onion Rings", quantity: 5 },
             { name: "Soda", quantity: 15 },
-            { name: "Ice Cream", quantity: 5 },
-          ],
-        },
-        "Big Buns Deal": {
-          price: 1700,
-          components: [
-            { name: "The Simply", quantity: 10 },
-            { name: "Fries", quantity: 5 },
-            { name: "Soda", quantity: 15 },
-            { name: "Rim Job", quantity: 1 },
           ],
         },
         "The Bleeder Box": {
           price: 600,
           components: [
             { name: "The Bleeder", quantity: 5 },
-            { name: "Soda", quantity: 5 },
-            { name: "Rim Job", quantity: 1 },
-          ],
-        },
-        "Filthy Rich Combo": {
-          price: 800,
-          components: [
-            { name: "Money Shot", quantity: 5 },
             { name: "Soda", quantity: 5 },
           ],
         },
@@ -680,6 +662,33 @@
             { name: "The Prickley", quantity: 10 },
             { name: "Soda", quantity: 10 },
           ],
+        },
+      };
+
+      const bundleDetails = {
+        "Fries Bundle": {
+          price: 250,
+          components: [{ name: "Fries", quantity: 5 }],
+        },
+        "Onion Bundle": {
+          price: 250,
+          components: [{ name: "Onion Rings", quantity: 5 }],
+        },
+        "Nuggies Bundle": {
+          price: 400,
+          components: [{ name: "Chicken Nuggets", quantity: 5 }],
+        },
+        "Cream Pie Bundle": {
+          price: 250,
+          components: [{ name: "Cream Pie", quantity: 5 }],
+        },
+        "Rim Job Bundle": {
+          price: 250,
+          components: [{ name: "Rim Job", quantity: 5 }],
+        },
+        "Ice Cream Bundle": {
+          price: 250,
+          components: [{ name: "Ice Cream", quantity: 5 }],
         },
       };
 
@@ -740,15 +749,11 @@
           const name = item?.name || "";
           if (!qty) return;
 
-          // Daisy Family Box → 15 of chosen burger per box + extras
-          if (name === DAISY_NAME && item.daisyChoice) {
-            const burger = item.daisyChoice;
-            if (counts[burger] !== undefined) {
-              counts[burger] += qty * DAISY_BURGERS_PER_BOX;
-            }
-            DAISY_EXTRAS.forEach((ex) => {
-              if (counts[ex.name] !== undefined) {
-                counts[ex.name] += qty * ex.quantity;
+          // Bundles
+          if (bundleDetails[name]) {
+            bundleDetails[name].components.forEach((c) => {
+              if (counts[c.name] !== undefined) {
+                counts[c.name] += qty * c.quantity;
               }
             });
             return;
