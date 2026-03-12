@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Snr. Buns - Order Sheet</title>
 
-    <!-- Bootstrap CSS CDN -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
 
-    <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
       rel="stylesheet"
@@ -20,29 +18,81 @@
     <script type="module" src="auth.js"></script>
 
     <style>
+      :root {
+        --bg: #fff4d6;
+        --text: #333;
+        --sidebar: #c82333;
+        --sidebar-hover: #a71d2a;
+        --card: #ffffff;
+        --accent: #ffc107;
+        --accent-hover: #ff8800;
+        --border: #ddd;
+        --input-bg: #fff;
+        --summary-bg: #fff;
+        --divider: #b07d00;
+
+        --row-even: #fff9e8;
+        --row-hover: #fff4d1;
+        --fixed-col: #fffdfa;
+        --group-subhead: #ffefb5;
+        --group-head-text: #1a1a1a;
+        --subhead-text: #2b2b2b;
+        --done-text: #666;
+        --done-strike: #393737;
+        --modal-overlay: rgba(0, 0, 0, 0.5);
+      }
+
+      body.dark-mode {
+        --bg: #121212;
+        --text: #f5f5f5;
+        --sidebar: #8b1e28;
+        --sidebar-hover: #a71d2a;
+        --card: #1e1e1e;
+        --accent: #d39b00;
+        --accent-hover: #ffb300;
+        --border: #555;
+        --input-bg: #2a2a2a;
+        --summary-bg: #1e1e1e;
+        --divider: #d39b00;
+
+        --row-even: #252525;
+        --row-hover: #313131;
+        --fixed-col: #2b2b2b;
+        --group-subhead: #3a3320;
+        --group-head-text: #fff4cf;
+        --subhead-text: #f3e7b0;
+        --done-text: #bcbcbc;
+        --done-strike: #e0a800;
+        --modal-overlay: rgba(0, 0, 0, 0.65);
+      }
+
       body {
         font-family: "Montserrat", sans-serif;
-        background-color: #fff4d6;
+        background-color: var(--bg);
         margin: 0;
         display: flex;
         min-height: 100vh;
-        color: #333;
+        color: var(--text);
       }
 
-      /* Sidebar */
       .sidebar {
-        background-color: #c82333;
+        background-color: var(--sidebar);
         width: 220px;
+        min-width: 220px;
         color: white;
         padding: 2rem 1.5rem;
         display: flex;
         flex-direction: column;
         flex-shrink: 0;
+        transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease,
+          transform 0.3s ease;
+        overflow: hidden;
       }
+
       .sidebar h2 {
         font-weight: 700;
         font-size: 1.8rem;
-        margin-bottom: 2rem;
+        margin-bottom: 0.75rem;
         user-select: none;
         display: flex;
         align-items: center;
@@ -50,6 +100,7 @@
         gap: 0.4rem;
         white-space: nowrap;
       }
+
       .sidebar a {
         color: white;
         text-decoration: none;
@@ -62,17 +113,64 @@
         transition: background-color 0.3s;
         user-select: none;
       }
+
       .sidebar a:hover,
       .sidebar a.active {
-        background-color: #a71d2a;
+        background-color: var(--sidebar-hover);
         text-decoration: none;
       }
 
-      /* Main content */
+      .sidebar-toggle-btn {
+        background: #ffc107;
+        border: none;
+        color: #000;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        margin-top: 0;
+        cursor: pointer;
+        align-self: flex-end;
+      }
+
+      .sidebar-toggle-btn:hover {
+        background: #ffb300;
+      }
+
+      body.sidebar-collapsed .sidebar {
+        width: 78px;
+        min-width: 78px;
+        padding: 2rem 0.75rem;
+      }
+
+      body.sidebar-collapsed .sidebar h2 {
+        font-size: 0;
+        gap: 0;
+      }
+
+      body.sidebar-collapsed .sidebar h2::before {
+        content: "🍔";
+        font-size: 1.8rem;
+      }
+
+      body.sidebar-collapsed .sidebar a {
+        justify-content: center;
+        font-size: 0;
+        padding: 0.75rem 0;
+      }
+
+      body.sidebar-collapsed .sidebar a::first-letter {
+        font-size: 1.2rem;
+      }
+
+      body.sidebar-collapsed .sidebar-toggle-btn {
+        align-self: center;
+      }
+
       .main {
         flex-grow: 1;
         padding: 2rem 2.5rem;
-        background-color: #fff4d6;
+        background-color: var(--bg);
         display: flex;
         flex-direction: column;
         gap: 1rem;
@@ -89,7 +187,7 @@
 
       #clearDone {
         align-self: center;
-        background-color: #ffc107;
+        background-color: var(--accent);
         border: none;
         border-radius: 8px;
         padding: 0.5rem 1rem;
@@ -97,308 +195,247 @@
         font-weight: 600;
         transition: background-color 0.3s;
         user-select: none;
+        color: #000;
       }
+
       #clearDone:hover {
         background-color: #e0a800;
       }
 
-      /* Smaller table font + tighter padding on desktop too */
       table#ordersTable {
         width: 100%;
         border-collapse: collapse;
         min-width: 900px;
         font-weight: 600;
         user-select: none;
-        font-size: 0.85rem; /* << smaller table text */
+        font-size: 0.85rem;
+        color: var(--text);
+        background: var(--card);
       }
+
       table#ordersTable th,
       table#ordersTable td {
-        border: 1px solid #ddd;
-        padding: 8px 8px; /* << tighter padding */
+        border: 1px solid var(--border);
+        padding: 8px 8px;
         text-align: center;
         vertical-align: middle;
         white-space: nowrap;
         word-break: break-word;
       }
 
-      /* Only menu item headers can wrap, but don't break inside words */
       #ordersTable thead th.menu-wrap {
-        white-space: normal !important; /* allow lines to wrap */
-        word-break: keep-all !important; /* <-- prevent mid-word breaks */
-        overflow-wrap: normal !important; /* no extra splitting */
+        white-space: normal !important;
+        word-break: keep-all !important;
+        overflow-wrap: normal !important;
         hyphens: none;
         line-height: 1.1;
         padding: 6px 6px;
-        font-size: 0.82rem; /* optional: tighter */
+        font-size: 0.82rem;
       }
 
       table#ordersTable th {
-        background-color: #ffc107;
+        background-color: var(--accent);
         font-weight: 700;
         user-select: none;
+        color: #000;
       }
 
-      /* Make completed orders clearly "done" */
       #ordersTable tbody tr.done td {
-        /* stronger visual change */
-        color: #666; /* dim text a bit */
-        text-decoration: line-through; /* keep strike */
-        text-decoration-thickness: 4px; /* thicker line */
-        text-decoration-color: #393737; /* darker strike color */
+        color: var(--done-text);
+        text-decoration: line-through;
+        text-decoration-thickness: 3px;
+        text-decoration-color: var(--done-strike);
       }
 
-      /* If you want the whole row slightly faded too (optional) */
       #ordersTable tbody tr.done {
-        opacity: 0.8;
+        opacity: 0.9;
       }
 
-      /* allow wrapping only for menu headers we tag in JS */
       #ordersTable thead th.menu-wrap {
-        white-space: normal; /* override your nowrap */
+        white-space: normal;
         line-height: 1.1;
-        padding: 6px 6px; /* a bit tighter */
+        padding: 6px 6px;
       }
+
       #ordersTable thead th.menu-wrap br {
         content: "";
       }
 
-      /* Section band styling */
       #ordersTable thead .group-row th.group {
-        background: #f8d877; /* light peach band */
-        color: #333;
+        background: var(--accent);
+        color: var(--group-head-text);
         text-transform: uppercase;
         letter-spacing: 0.5px;
         font-size: 0.78rem;
-        border: 1px solid #ddd;
+        border: 1px solid var(--border);
       }
 
-      /* Keep the normal header look on the other cells */
       #ordersTable thead th[rowspan="2"] {
-        background: #ffc107;
+        background: var(--accent);
         vertical-align: middle;
+        color: var(--group-head-text);
       }
 
-      /* Make second header row slightly tighter */
       #ordersTable thead tr + tr th {
         padding-top: 6px;
         padding-bottom: 6px;
-      }
-
-      /* Optional: allow two-word wraps nicely for menu headers */
-      #ordersTable thead tr + tr th {
         white-space: normal;
         word-break: keep-all;
         overflow-wrap: normal;
         line-height: 1.15;
+        background: var(--group-subhead);
+        color: var(--subhead-text);
+        border-color: var(--border);
+        font-weight: 700;
       }
 
-      /* Row 1 (bands + Date/Employee/Customer/Total/etc.) */
-      #ordersTable thead .group-row th.group,
-      #ordersTable thead th[rowspan="2"] {
-        background: #ffc107; /* same gold as other headers */
-        color: #1a1a1a;
-      }
-
-      /* Row 2 (individual menu items): lighter gold */
-      #ordersTable thead tr + tr th {
-        background: #ffefb5; /* lighter gold for contrast */
-        color: #2b2b2b;
-        border-color: #e2c86a; /* slightly warmer border looks cleaner */
-        font-weight: 700; /* keep them bold but slightly softer is ok */
-      }
-
-      /* ===== Column group dividers (header row 2 + body) ===== */
-      :root {
-        --divider: #b07d00;
-      }
-
-      /* --- LEFT edges of groups --- */
-      /* Burgers start (header col 1, body col 4) */
       #ordersTable thead tr + tr th:nth-child(1),
       #ordersTable tbody td:nth-child(4) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Wraps start (header col 7, body col 10) */
       #ordersTable thead tr + tr th:nth-child(8),
       #ordersTable tbody td:nth-child(11) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Sides start (header col 10, body col 13) */
       #ordersTable thead tr + tr th:nth-child(11),
       #ordersTable tbody td:nth-child(14) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Drinks start (header col 12, body col 15) */
       #ordersTable thead tr + tr th:nth-child(14),
       #ordersTable tbody td:nth-child(17) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Desserts start (header col 14, body col 17) */
       #ordersTable thead tr + tr th:nth-child(16),
       #ordersTable tbody td:nth-child(19) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* --- RIGHT edges of groups --- */
-      /* Burgers end (header col 6, body col 9) */
       #ordersTable thead tr + tr th:nth-child(7),
       #ordersTable tbody td:nth-child(10) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Wraps end (header col 9, body col 12) */
       #ordersTable thead tr + tr th:nth-child(10),
       #ordersTable tbody td:nth-child(13) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Sides end (header col 11, body col 14) */
       #ordersTable thead tr + tr th:nth-child(13),
       #ordersTable tbody td:nth-child(16) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Drinks end (header col 13, body col 16) */
       #ordersTable thead tr + tr th:nth-child(15),
       #ordersTable tbody td:nth-child(18) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Desserts end (header col 16, body col 19) */
       #ordersTable thead tr + tr th:nth-child(18),
       #ordersTable tbody td:nth-child(21) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* keep normal grid light so the dividers pop */
       #ordersTable th,
       #ordersTable td {
-        border-color: #ddd;
+        border-color: var(--border);
       }
 
       #ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3) {
-        /* thick line after Customer → before Burgers */
         border-right: 3px solid var(--divider) !important;
       }
 
       #ordersTable thead .group-row th.group {
-        /* right edge of every band */
         border-right: 3px solid var(--divider) !important;
       }
 
       #ordersTable thead .group-row th.group:first-of-type {
-        /* left edge of the first band (BURGERS) */
         border-left: 3px solid var(--divider) !important;
       }
-      /* subtle inner grid so groups still dominate */
+
       #ordersTable tbody td {
-        border-left: 1px solid rgba(0, 0, 0, 0.06);
-        border-right: 1px solid rgba(0, 0, 0, 0.06);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        background: var(--card);
+        color: var(--text);
       }
+
       #ordersTable thead tr + tr th {
-        border-left: 1px solid rgba(0, 0, 0, 0.08);
-        border-right: 1px solid rgba(0, 0, 0, 0.08);
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
       }
 
-      /* light zebra striping for readability */
       #ordersTable tbody tr:nth-child(even) td {
-        background: #fff9e8; /* very pale gold */
+        background: var(--row-even);
       }
 
-      /* row hover for quick scanning (optional) */
       #ordersTable tbody tr:hover td {
-        background: #fff4d1;
+        background: var(--row-hover);
       }
 
-      /* keep your thick group dividers on top of the subtle grid */
       #ordersTable thead tr + tr th,
       #ordersTable tbody td {
         position: relative;
-        z-index: 0; /* group divider rules with !important still win */
+        z-index: 0;
       }
 
-      /* slightly stronger bottom border below headers */
-      #ordersTable thead {
-        box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.12);
-      }
-
-      /* ========== Outer frame around the table (very subtle) ========== */
-      /* Outer frame around the table */
-      .table-container {
-        overflow-x: auto;
-        background: #fff;
-        border-radius: 12px;
-        /* keep the soft shadow */
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        /* make the frame visible */
-        border: 3px solid #b07d00 !important; /* was 1px .10 */
-        /* (optional) inner hairline to crisp up the edge */
-        outline: 2px solid #b07d00;
-        outline-offset: -1px;
-      }
-
-      /* Stronger bottom border under header area */
       #ordersTable thead {
         box-shadow: inset 0 -1.5px 0 rgba(0, 0, 0, 0.18);
       }
 
-      /* ========== Slight emphasis on static columns ========== */
-      /* Left trio: Date, Employee, Customer (cols 1–3 in tbody) */
+      .table-container {
+        overflow-x: auto;
+        background: var(--card);
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border: 3px solid var(--divider) !important;
+        outline: 2px solid var(--divider);
+        outline-offset: -1px;
+      }
+
       #ordersTable tbody td:nth-child(1),
       #ordersTable tbody td:nth-child(2),
-      #ordersTable tbody td:nth-child(3) {
-        background: #fffdfa; /* barely warmer */
-        border-right-color: rgba(0, 0, 0, 0.1); /* a hair stronger */
-      }
-
-      /* Right trio: Total(20), Free Dessert?(21), Done?(22) */
+      #ordersTable tbody td:nth-child(3),
       #ordersTable tbody td:nth-child(20),
       #ordersTable tbody td:nth-child(21) {
-        background: #fffdfa;
-        border-left-color: rgba(0, 0, 0, 0.1);
+        background: var(--fixed-col);
       }
 
-      /* Match their headers too */
       #ordersTable thead th[rowspan="2"] {
-        border-left-color: rgba(0, 0, 0, 0.14);
-        border-right-color: rgba(0, 0, 0, 0.14);
+        border-left-color: var(--border);
+        border-right-color: var(--border);
       }
 
-      /* Optional: a slightly stronger right edge after Customer to balance */
       #ordersTable thead .group-row th[rowspan="2"]:nth-of-type(3),
       #ordersTable tbody td:nth-child(3) {
-        border-right: 3px solid var(--divider) !important; /* same divider tone */
-      }
-      /* Bigger checkbox just in the last column ("Done?") */
-      #ordersTable td:last-child input[type="checkbox"] {
-        transform: scale(1.5); /* size up */
-        transform-origin: center; /* keep it centered */
-        width: 18px; /* helps some browsers */
-        height: 18px;
-        cursor: pointer;
-        accent-color: #28a745; /* optional: green check color */
+        border-right: 3px solid var(--divider) !important;
       }
 
-      /* Tweak cell padding so the scaled box isn’t clipped */
+      #ordersTable td:last-child input[type="checkbox"] {
+        transform: scale(1.5);
+        transform-origin: center;
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #28a745;
+      }
+
       #ordersTable td:last-child {
         padding-top: 10px;
         padding-bottom: 10px;
       }
 
-      /* Optional: nicer focus ring for keyboard users */
       #ordersTable td:last-child input[type="checkbox"]:focus-visible {
         outline: none;
         box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.35);
         border-radius: 4px;
       }
 
-      /* Notification */
       #notification {
         position: fixed;
         top: 20px;
@@ -417,25 +454,26 @@
         white-space: pre-line;
       }
 
-      /* Modal */
       #clearConfirmModal {
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.5);
+        background: var(--modal-overlay);
         display: none;
         align-items: center;
         justify-content: center;
         z-index: 1100;
       }
+
       #clearConfirmModal .modal-content {
-        background: white;
+        background: var(--card);
         padding: 20px 30px;
         border-radius: 12px;
         max-width: 320px;
         text-align: center;
         font-weight: 600;
-        color: #333;
+        color: var(--text);
       }
+
       #clearConfirmModal button {
         margin: 15px 10px 0 10px;
         padding: 0.5rem 1.5rem;
@@ -445,13 +483,52 @@
         cursor: pointer;
         font-size: 1rem;
       }
+
       #clearConfirmModal .yes-btn {
         background-color: #4caf50;
         color: white;
       }
+
       #clearConfirmModal .no-btn {
         background-color: #f44336;
         color: white;
+      }
+
+      /* DOJ / EMS tab order styling */
+      #ordersTable tbody tr.tab-ems td {
+        background: rgba(13, 110, 253, 0.1) !important;
+      }
+
+      #ordersTable tbody tr.tab-doj td {
+        background: rgba(111, 66, 193, 0.1) !important;
+      }
+
+      #ordersTable tbody tr.tab-ems td:first-child {
+        border-left: 5px solid #0d6efd !important;
+      }
+
+      #ordersTable tbody tr.tab-doj td:first-child {
+        border-left: 5px solid #6f42c1 !important;
+      }
+
+      .tab-badge {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1.2;
+        vertical-align: middle;
+        color: white;
+      }
+
+      .tab-badge.ems {
+        background: #0d6efd;
+      }
+
+      .tab-badge.doj {
+        background: #6f42c1;
       }
 
       .hamburger {
@@ -470,36 +547,68 @@
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
         transition: background 0.2s;
       }
+
       .hamburger:hover {
         background: #a71d2a;
       }
 
-      /* Mobile */
       @media (max-width: 768px) {
         .hamburger {
           display: block !important;
         }
+
+        .sidebar-toggle-btn {
+          display: none;
+        }
+
+        body.sidebar-collapsed .sidebar {
+          width: 220px;
+          min-width: 220px;
+          padding: 2rem 1.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2 {
+          font-size: 1.8rem;
+          gap: 0.4rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2::before {
+          content: none;
+        }
+
+        body.sidebar-collapsed .sidebar a {
+          justify-content: flex-start;
+          font-size: 1rem;
+          padding: 0.75rem 0.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar a::first-letter {
+          font-size: 1rem;
+        }
+
         .sidebar {
           position: fixed;
           top: 0;
           left: 0;
           height: 100vh;
           width: 220px;
-          background-color: #c82333;
+          background-color: var(--sidebar);
           transform: translateX(-100%);
-          transition: transform 0.3s ease;
           z-index: 2500;
         }
+
         .sidebar.active {
           transform: translateX(0);
         }
+
         .main-container {
           display: flex;
           flex-direction: column;
         }
+
         main {
           margin-left: 0;
-          padding: 1rem;
+          padding: 100px 1rem 1rem;
         }
 
         .table-container {
@@ -507,10 +616,12 @@
           -webkit-overflow-scrolling: touch;
           margin: 0 -0.5rem;
         }
+
         table#ordersTable {
           font-size: 0.78rem;
           min-width: 780px;
         }
+
         table#ordersTable th,
         table#ordersTable td {
           padding: 6px 6px;
@@ -524,9 +635,9 @@
       class="main-container"
       style="display: flex; width: 100%; min-height: 100vh"
     >
-      <!-- Sidebar -->
       <aside class="sidebar">
         <h2>🍔 Snr. Buns</h2>
+        <button id="sidebarCollapseBtn" class="sidebar-toggle-btn">⬅</button>
         <nav>
           <ul class="list-unstyled">
             <li><a href="home.html">🏠 Home</a></li>
@@ -540,13 +651,13 @@
         </nav>
       </aside>
 
-      <!-- Main Content -->
       <main class="main">
         <h1>🔪 Order Sheet</h1>
+        <button id="clearDone">Clear Completed Orders</button>
+
         <div class="table-container">
           <table id="ordersTable" aria-label="Order Sheet">
             <thead>
-              <!-- Row 1: section bands -->
               <tr class="group-row">
                 <th rowspan="2">Date</th>
                 <th rowspan="2">Employee</th>
@@ -562,9 +673,7 @@
                 <th rowspan="2">Done?</th>
               </tr>
 
-              <!-- Row 2: individual items (order matters) -->
               <tr>
-                <!-- BURGERS -->
                 <th>Heart Stopper</th>
                 <th>Money Shot</th>
                 <th>The Simply</th>
@@ -572,20 +681,18 @@
                 <th>The Glorious</th>
                 <th>The Bleeder</th>
                 <th>The Prickley</th>
+
                 <th>Chicken Wrap</th>
                 <th>Chicken Mexican</th>
                 <th>Goat Wrap</th>
 
-                <!-- SIDES -->
                 <th>Fries</th>
                 <th>Onion Rings</th>
                 <th>Chicken Nuggets</th>
 
-                <!-- DRINKS -->
                 <th>Soda</th>
                 <th>Coffee</th>
 
-                <!-- DESSERTS -->
                 <th>Rim Job</th>
                 <th>Cream Pie</th>
                 <th>Ice Cream</th>
@@ -598,10 +705,8 @@
       </main>
     </div>
 
-    <!-- Notification -->
     <div id="notification"></div>
 
-    <!-- Clear Confirmation Modal -->
     <div
       id="clearConfirmModal"
       role="dialog"
@@ -639,7 +744,6 @@
       const yesBtn = modal.querySelector(".yes-btn");
       const noBtn = modal.querySelector(".no-btn");
 
-      /* -------- Combos (non-configurable) -------- */
       const comboDetails = {
         "The Heartstopper Meal": {
           price: 1400,
@@ -696,17 +800,7 @@
         },
       };
 
-      /* -------- Daisy config (expandable) -------- */
-      const DAISY_NAME = "Daisy Family Box";
-      const DAISY_BURGERS_PER_BOX = 15;
-      const DAISY_EXTRAS = [
-        { name: "Coffee", quantity: 20 },
-        { name: "Cream Pie", quantity: 5 },
-      ];
-
-      /* -------- Menu columns -------- */
       const PRODUCTS = [
-        // BURGERS (7)
         "Heart Stopper",
         "Money Shot",
         "The Simply",
@@ -714,27 +808,19 @@
         "The Glorious",
         "The Bleeder",
         "The Prickley",
-
-        // WRAPS (3)
         "Chicken Wrap",
         "Chicken Mexican",
         "Goat Wrap",
-
-        // SIDES (3)
         "Fries",
         "Onion Rings",
         "Chicken Nuggets",
-
-        // DRINKS (2)
         "Soda",
         "Coffee",
-
-        // DESSERTS (3)
         "Rim Job",
         "Cream Pie",
         "Ice Cream",
       ];
-      /* -------- Query (no where() → no composite index needed) -------- */
+
       const q = query(
         collection(db, "orders"),
         orderBy("timestamp", "desc"),
@@ -743,7 +829,6 @@
 
       let currentOrders = [];
 
-      /* Expand items (combos + Daisy) to per-product counts */
       function parseItems(items = []) {
         const counts = {};
         PRODUCTS.forEach((p) => (counts[p] = 0));
@@ -753,7 +838,6 @@
           const name = item?.name || "";
           if (!qty) return;
 
-          // Bundles
           if (bundleDetails[name]) {
             bundleDetails[name].components.forEach((c) => {
               if (counts[c.name] !== undefined) {
@@ -763,7 +847,6 @@
             return;
           }
 
-          // Regular combos
           if (comboDetails[name]) {
             comboDetails[name].components.forEach((c) => {
               if (counts[c.name] !== undefined) {
@@ -773,7 +856,6 @@
             return;
           }
 
-          // Single items
           if (counts[name] !== undefined) {
             counts[name] += qty;
           }
@@ -782,15 +864,18 @@
         return counts;
       }
 
-      /* Render */
       function renderOrders(orders) {
         tbody.innerHTML = "";
+
         orders.forEach(({ id, data: order }) => {
-          // client-side filter for deleted
           if (order.deleted) return;
 
           const tr = document.createElement("tr");
           if (order.done) tr.classList.add("done");
+
+          const tabType = (order.tabType || "").toUpperCase();
+          if (tabType === "EMS") tr.classList.add("tab-ems");
+          if (tabType === "DOJ") tr.classList.add("tab-doj");
 
           const counts = parseItems(order.items || []);
 
@@ -814,16 +899,26 @@
             await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
           });
 
-          // Date / Employee / Customer
-          [formattedDate, order.employee || "-", order.customer || "-"].forEach(
-            (v) => {
-              const td = document.createElement("td");
-              td.textContent = v;
-              tr.appendChild(td);
-            }
-          );
+          const dateTd = document.createElement("td");
+          dateTd.textContent = formattedDate;
+          tr.appendChild(dateTd);
 
-          // Menu counts
+          const employeeTd = document.createElement("td");
+          employeeTd.textContent = order.employee || "-";
+          tr.appendChild(employeeTd);
+
+          const customerTd = document.createElement("td");
+          customerTd.textContent = order.customer || "-";
+
+          if (tabType === "EMS" || tabType === "DOJ") {
+            const badge = document.createElement("span");
+            badge.className = `tab-badge ${tabType.toLowerCase()}`;
+            badge.textContent = `${tabType} TAB`;
+            customerTd.appendChild(badge);
+          }
+
+          tr.appendChild(customerTd);
+
           PRODUCTS.forEach((p) => {
             const td = document.createElement("td");
             const n = Number(counts[p] || 0);
@@ -831,7 +926,6 @@
             tr.appendChild(td);
           });
 
-          // Total / Free Dessert / Done
           const totalTd = document.createElement("td");
           totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
           tr.appendChild(totalTd);
@@ -844,7 +938,6 @@
         });
       }
 
-      /* Listen + basic error handler */
       onSnapshot(
         q,
         (snapshot) => {
@@ -862,8 +955,10 @@
         }
       );
 
-      /* Clear completed orders (soft delete) */
-      clearBtn.addEventListener("click", () => (modal.style.display = "flex"));
+      clearBtn.addEventListener("click", () => {
+        modal.style.display = "flex";
+      });
+
       yesBtn.addEventListener("click", async () => {
         const doneOrders = currentOrders.filter(
           (o) => o.data.done && !o.data.deleted
@@ -874,7 +969,57 @@
         await Promise.all(updates);
         modal.style.display = "none";
       });
-      noBtn.addEventListener("click", () => (modal.style.display = "none"));
+
+      noBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+    </script>
+
+    <script>
+      const body = document.body;
+      const menuBtn = document.getElementById("menuToggle");
+      const sidebar = document.querySelector(".sidebar");
+      const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
+
+      function applySidebarSetting() {
+        const collapsed = localStorage.getItem("sidebarCollapsed") === "true";
+
+        if (window.innerWidth > 768) {
+          body.classList.toggle("sidebar-collapsed", collapsed);
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+          }
+        } else {
+          body.classList.remove("sidebar-collapsed");
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = "⬅";
+          }
+        }
+      }
+
+      applySidebarSetting();
+
+      menuBtn?.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
+      });
+
+      sidebarCollapseBtn?.addEventListener("click", () => {
+        if (window.innerWidth <= 768) return;
+
+        body.classList.toggle("sidebar-collapsed");
+        const collapsed = body.classList.contains("sidebar-collapsed");
+        localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+        sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+      });
+
+      window.addEventListener("resize", applySidebarSetting);
+    </script>
+
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
     </script>
   </body>
 </html>

@@ -1,639 +1,1094 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snr. Buns - Market Run</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snr. Buns - Market Run</title>
 
-  <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <script type="module" src="auth.js"></script>
 
-  <script type="module" src="auth.js"></script>
-
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #fff4d6;
-      margin: 0;
-      display: flex;
-      min-height: 100vh;
-      color: #333;
-    }
-    .sidebar {
-      background-color: #c82333;
-      width: 220px;
-      color: white;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-    }
-    .sidebar h2 {
-  font-weight: 700;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  white-space: nowrap;   /* ✅ prevents wrapping */
-}
-
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.75rem 0.5rem;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .sidebar a:hover,
-    .sidebar a.active {
-      background-color: #a71d2a;
-      text-decoration: none;
-    }
-    main {
-      flex-grow: 1;
-      padding: 2rem 3rem;
-      background-color: #fff4d6;
-      overflow-y: auto;
-    }
-    h1 {
-      color: #c82333;
-      font-weight: 700;
-      margin-bottom: 2rem;
-      user-select: none;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-    }
-    th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #ddd;
-      text-align: left;
-      font-weight: 600;
-      user-select: none;
-    }
-    th {
-      background: #ffc107;
-      color: #000;
-    }
-    input[type=number] {
-      width: 80px;
-      padding: 6px 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      font-weight: 600;
-    }
-    input[type=number]:focus {
-      outline: 2px solid #c82333;
-    }
-    .price-input {
-      width: 100px;
-    }
-    #totalCost {
-      font-weight: 700;
-      font-size: 1.25rem;
-      margin-top: 1rem;
-      user-select: none;
-    }
-    button#confirmPurchase {
-      margin-top: 1.5rem;
-      background-color: #c82333;
-      color: white;
-      font-weight: 700;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      user-select: none;
-      transition: background-color 0.3s;
-    }
-    button#confirmPurchase:hover {
-      background-color: #a71d2a;
-    }
-    .notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #c82333;
-      color: white;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-family: 'Montserrat', sans-serif;
-      display: none;
-      z-index: 1000;
-      max-width: 90vw;
-      text-align: center;
-      user-select: none;
-    }
-    .divider-row td {
-      font-weight: 700;
-      background-color: #dfd5bb;
-      text-align: left;
-      padding: 4px 10px;
-      line-height: 1.2;
-      font-size: 0.9rem;
-    }
-
-    /* Hamburger button */
-.hamburger {
-  display: none;
-  font-size: 2rem;
-  background: #c82333;
-  color: white;
-  border: none;
-  border-radius: 8px;     /* matches other buttons */
-  padding: 6px 12px;
-  cursor: pointer;
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 3000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* permanent shadow */
-  transition: background 0.2s;
-}
-.hamburger:hover {
-  background: #a71d2a;
-}
-
-
-/* Sidebar adjustments for mobile */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block; /* show hamburger on small screens */
-  }
-
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 220px;
-    background-color: #c82333;
-    transform: translateX(-100%); /* hidden */
-    transition: transform 0.3s ease;
-    z-index: 1500;
-  }
-
-  .sidebar.active {
-    transform: translateX(0); /* slide in */
-  }
-
-  /* Make sure main content isn’t squeezed */
-  .main-container {
-    flex-direction: column;
-  }
-  main {
-    padding: 100px 1rem 1rem; /* top 60px so content sits below hamburger */
-    margin-left: 0;
-  }
-}
-  </style>
-</head>
-<body>
-  <button id="menuToggle" class="hamburger">☰</button>
-  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
-  <aside class="sidebar">
-    <h2>🍔 Snr. Buns</h2>
-    <nav>
-      <ul class="list-unstyled">
-        <li><a href="home.html">🏠 Home</a></li>
-        <li><a href="register.html">🖋️ Register</a></li>
-        <li><a href="orders.html">📋 Orders</a></li>
-        <li><a href="inventory.html">📦 Inventory</a></li>
-        <li><a href="market.html" class="active">🏪 Market Run</a></li>
-        <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
-        <li><a href="loyalty.html">🎁 Customers</a></li>
-      </ul>
-    </nav>
-  </aside>
-
-  <main>
-    <h1>🏪 Market Run</h1>
-
- <p style="font-weight:600; color:#c82333; margin-top:-1rem; margin-bottom:1.5rem;">
-  Please remember to submit this form, it is ESSENTIAL for our logs. Post in 'market logs' in emails to confirm how much you spent.
-</p>
-
-<div class="mb-3">
-  <label for="runnerName" class="form-label" style="font-weight:600; color:#c82333;">
-    Staff Member Name:
-  </label>
-  <input type="text" id="runnerName" class="form-control" placeholder="Enter your name" />
-</div>
-
-    <table>
-      <thead>
-  <tr>
-    <th>Ingredient</th>
-    <th>Pack Quantity</th>
-    <th>Price Per Pack ($)</th>
-    <th>Subtotal ($)</th>
-    <th>Suggested Packs</th>
-  </tr>
-</thead>
-      <tbody>
-        <tr class="divider-row">
-          <td colspan="6">Food Stand</td>
-        </tr>
-        <tr>
-          <td>Bottled Corn Syrup</td>
-          <td><input type="number" min="0" value="0" data-ingredient="corn_syrup" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Flour Sack</td>
-          <td><input type="number" min="0" value="0" data-ingredient="flour" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Package of Buns</td>
-          <td><input type="number" min="0" value="0" data-ingredient="burger_buns" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-         <tr>
-          <td>Sugar Sack</td>
-          <td><input type="number" min="0" value="0" data-ingredient="sugar" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Tortilla Package</td>
-          <td><input type="number" min="0" value="0" data-ingredient="tortilla" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr class="divider-row">
-          <td colspan="6">Fruit Stand</td>
-        </tr>
-        <tr>
-          <td>Bag of Coffee</td>
-          <td><input type="number" min="0" value="0" data-ingredient="coffee_beans" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Lettuce Head</td>
-          <td><input type="number" min="0" value="0" data-ingredient="lettuce" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Onion Bundle</td>
-          <td><input type="number" min="0" value="0" data-ingredient="onion" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-         <tr>
-          <td>Tomato Bundle</td>
-          <td><input type="number" min="0" value="0" data-ingredient="tomato" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Vanilla Bean Bundle</td>
-          <td><input type="number" min="0" value="0" data-ingredient="vanilla" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Potato Sack</td>
-          <td><input type="number" min="0" value="0" data-ingredient="potato" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr class="divider-row">
-          <td colspan="6">Dairy Stand</td>
-        </tr>
-        <tr>
-          <td>Packaged Cheese</td>
-          <td><input type="number" min="0" value="0" data-ingredient="cheese_slices" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Goat Cheese</td>
-          <td><input type="number" min="0" value="0" data-ingredient="goat_cheese" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-        <tr>
-          <td>Ice Cream Tub</td>
-          <td><input type="number" min="0" value="0" data-ingredient="ice_cream" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>
-         <tr class="divider-row">
-          <td colspan="6">Meat Stand</td>
-        </tr>
-        <tr>
-        <tr>
-          <td>Bacon Package</td>
-          <td><input type="number" min="0" value="0" data-ingredient="bacon" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr> 
-        <tr>
-          <td>Chicken Package</td>
-          <td><input type="number" min="0" value="0" data-ingredient="chicken" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>   
-        <tr>    
-          <td>Packaged Ground Beef</td>
-          <td><input type="number" min="0" value="0" data-ingredient="ground_beef" class="pack-qty" /></td>
-          <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-          <td class="subtotal">$0.00</td>
-          <td class="suggested"></td>
-        </tr>      
-        
-      </tbody>
-    </table>
-
-    <div id="totalCost">Total Cost: $0.00</div>
-    <div id="totalWeight">Total Weight: 0.0</div>
-
-    <button id="confirmPurchase">Confirm Purchase</button>
-
-    <div class="notification" id="notification"></div>
-  </main>
-
-<script type="module">
-import {
-  getFirestore, collection, query, where, orderBy, updateDoc, doc, onSnapshot, getDoc, addDoc, setDoc
-} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-
-import { app } from "./auth.js"; // reuses the initialized app
-const db = getFirestore(app);
-
-const inventoryDocRef = doc(db, "inventory", "current");
-const UNIT_PER_PACK = 5;
-const notification = document.getElementById('notification');
-
-const ingredientNames = {
-  flour: "Flour Sack",
-  burger_buns: "Package of Buns",
-  sugar: "Sugar Sack",
-  lettuce: "Lettuce Head",
-  potato: "Potato Sack",
-  cheese_slices: "Packaged Cheese",
-  ground_beef: "Packaged Ground Beef",
-  chicken: "Chicken Package",
-  bacon: "Bacon Package",
-  coffee_beans: "Bag of Coffee",
-  corn_syrup: "Bottled Corn Syrup",
-  vanilla: "Vanilla Bean Bundle",
-  ice_cream: "Ice Cream Tub",
-  onion: "Onion Bundle",
-  tomato: "Tomato Bundle",
-  tortilla: "Tortilla Package",
-  goat_cheese: "Goat Cheese"
-};
-
-
-/* ===== Notifications ===== */
-function showNotification(message, duration=3000) {
-  notification.textContent = message;
-  notification.style.display = 'block';
-  notification.style.opacity = '1';
-  if (showNotification.timeoutId) clearTimeout(showNotification.timeoutId);
-  showNotification.timeoutId = setTimeout(() => {
-    notification.style.transition = 'opacity 0.5s ease';
-    notification.style.opacity = '0';
-    notification.addEventListener('transitionend', () => {
-      notification.style.display = 'none';
-      notification.style.transition = '';
-    }, { once: true });
-  }, duration);
-}
-
-/* ===== Firestore Inventory ===== */
-async function getLiveInventory() {
-  const docSnap = await getDoc(inventoryDocRef);
-  return docSnap.exists() ? docSnap.data() : {};
-}
-
-async function updateInventoryInFirestore(inventory) {
-  try {
-    await setDoc(inventoryDocRef, inventory, { merge: true });
-    showNotification("Inventory updated.");
-  } catch (error) {
-    console.error("Firestore update failed:", error);
-    showNotification("Failed to update inventory.");
-  }
-}
-
-/* ===== Market Costs + Weight ===== */
-function updateCosts() {
-  const rows = document.querySelectorAll('tbody tr');
-  let total = 0;
-  let weight = 0;
-
-  rows.forEach(row => {
-    if (row.classList.contains("divider-row")) return;
-
-    const qtyInput = row.querySelector('.pack-qty');
-    const priceInput = row.querySelector('.price-per-pack');
-    const subtotalCell = row.querySelector('.subtotal');
-
-    if (!qtyInput || !priceInput || !subtotalCell) return;
-
-    const qty = parseInt(qtyInput.value) || 0;
-    const price = parseFloat(priceInput.value) || 0;
-    const subtotal = qty * price;
-
-    subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
-    total += subtotal;
-
-    // ✅ Weight: default 5 per pack, lettuce = 2.5
-    const ingredient = qtyInput.getAttribute('data-ingredient');
-    if (ingredient) {
-      if (ingredient === "lettuce") {
-        weight += qty * 2.5;
-      } else if (ingredient === "goat cheese") {
-        weight += qty * 1;
-      } else {
-        weight += qty * 5;
+    <style>
+      :root {
+        --bg: #fff4d6;
+        --text: #333;
+        --sidebar: #c82333;
+        --sidebar-hover: #a71d2a;
+        --card: #ffffff;
+        --accent: #ffc107;
+        --accent-hover: #ff8800;
+        --border: #ccc;
+        --input-bg: #fff;
+        --summary-bg: #fff;
       }
-    }
-  });
 
-  document.getElementById('totalCost').textContent = `Total Cost: $${total.toFixed(2)}`;
-  document.getElementById('totalWeight').textContent = `Total Weight: ${weight.toFixed(1)}`;
-}
+      body.dark-mode {
+        --bg: #121212;
+        --text: #f5f5f5;
+        --sidebar: #8b1e28;
+        --sidebar-hover: #a71d2a;
+        --card: #1e1e1e;
+        --accent: #d39b00;
+        --accent-hover: #ffb300;
+        --border: #555;
+        --input-bg: #2a2a2a;
+        --summary-bg: #1e1e1e;
+      }
 
-document.getElementById('confirmPurchase').addEventListener('click', async () => {
-  const runnerName = document.getElementById('runnerName').value.trim();
-  if (!runnerName) {
-    showNotification("Please enter your name before confirming.");
-    return;
-  }
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: var(--bg);
+        margin: 0;
+        display: flex;
+        min-height: 100vh;
+        color: var(--text);
+      }
 
-  const rows = document.querySelectorAll('tbody tr');
-  let inventory = await getLiveInventory();
-  let anyPurchase = false;
-  let purchasedItems = []; // ✅ store all items in one array
+      .sidebar {
+        background-color: var(--sidebar);
+        width: 220px;
+        min-width: 220px;
+        color: white;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease,
+          transform 0.3s ease;
+        overflow: hidden;
+      }
 
-  for (const row of rows) {
-    if (row.classList.contains("divider-row")) continue;
+      .sidebar h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        white-space: nowrap;
+      }
 
-    const qtyInput = row.querySelector('.pack-qty');
-    const priceInput = row.querySelector('.price-per-pack');
-    const subtotalCell = row.querySelector('.subtotal');
-    if (!qtyInput) continue;
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
 
-    const ingredient = qtyInput.getAttribute('data-ingredient');
-    const qty = parseInt(qtyInput.value) || 0;
-    const price = parseFloat(priceInput.value) || 0;
+      .sidebar a:hover,
+      .sidebar a.active {
+        background-color: var(--sidebar-hover);
+        text-decoration: none;
+      }
 
-    if (qty > 0) {
-      anyPurchase = true;
+      .sidebar-toggle-btn {
+        background: #ffc107;
+        border: none;
+        color: #000;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        margin-top: 0;
+        cursor: pointer;
+        align-self: flex-end;
+      }
 
-      // ✅ update inventory
-      inventory[ingredient] = (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
+      .sidebar-toggle-btn:hover {
+        background: #ffb300;
+      }
 
-      // ✅ add to items array
-      purchasedItems.push({
-        ingredient,
-        packsBought: qty,
-        pricePerPack: price,
-        subtotal: qty * price
+      body.sidebar-collapsed .sidebar {
+        width: 78px;
+        min-width: 78px;
+        padding: 2rem 0.75rem;
+      }
+
+      body.sidebar-collapsed .sidebar h2 {
+        font-size: 0;
+        gap: 0;
+      }
+
+      body.sidebar-collapsed .sidebar h2::before {
+        content: "🍔";
+        font-size: 1.8rem;
+      }
+
+      body.sidebar-collapsed .sidebar a {
+        justify-content: center;
+        font-size: 0;
+        padding: 0.75rem 0;
+      }
+
+      body.sidebar-collapsed .sidebar a::first-letter {
+        font-size: 1.2rem;
+      }
+
+      body.sidebar-collapsed .sidebar-toggle-btn {
+        align-self: center;
+      }
+
+      main {
+        flex-grow: 1;
+        padding: 2rem 3rem;
+        background-color: var(--bg);
+        overflow-y: auto;
+      }
+
+      h1 {
+        color: #c82333;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        user-select: none;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: var(--card);
+        color: var(--text);
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        font-weight: 600;
+        user-select: none;
+      }
+
+      th {
+        background: var(--accent);
+        color: #000;
+      }
+
+      input[type="number"] {
+        width: 80px;
+        padding: 6px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background-color: var(--input-bg);
+        color: var(--text);
+        font-weight: 600;
+      }
+
+      input[type="number"]:focus,
+      .form-control:focus {
+        outline: 2px solid #c82333;
+        box-shadow: none;
+        border-color: #c82333;
+      }
+
+      .form-control {
+        background-color: var(--input-bg);
+        color: var(--text);
+        border: 1px solid var(--border);
+      }
+
+      .form-control::placeholder {
+        color: #888;
+      }
+
+      .price-input {
+        width: 100px;
+      }
+
+      #totalCost {
+        font-weight: 700;
+        font-size: 1.25rem;
+        margin-top: 1rem;
+        user-select: none;
+      }
+
+      #totalWeight {
+        font-weight: 700;
+        font-size: 1.05rem;
+        margin-top: 0.5rem;
+        user-select: none;
+      }
+
+      button#confirmPurchase {
+        margin-top: 1.5rem;
+        background-color: #c82333;
+        color: white;
+        font-weight: 700;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        user-select: none;
+        transition: background-color 0.3s;
+      }
+
+      button#confirmPurchase:hover {
+        background-color: #a71d2a;
+      }
+
+      .notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #c82333;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-family: "Montserrat", sans-serif;
+        display: none;
+        z-index: 1000;
+        max-width: 90vw;
+        text-align: center;
+        user-select: none;
+      }
+
+      .divider-row td {
+        font-weight: 700;
+        background-color: #dfd5bb;
+        color: #000;
+        text-align: left;
+        padding: 4px 10px;
+        line-height: 1.2;
+        font-size: 0.9rem;
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 2rem;
+        background: #c82333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 3000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        transition: background 0.2s;
+      }
+
+      .hamburger:hover {
+        background: #a71d2a;
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        .sidebar-toggle-btn {
+          display: none;
+        }
+
+        body.sidebar-collapsed .sidebar {
+          width: 220px;
+          min-width: 220px;
+          padding: 2rem 1.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2 {
+          font-size: 1.8rem;
+          gap: 0.4rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2::before {
+          content: none;
+        }
+
+        body.sidebar-collapsed .sidebar a {
+          justify-content: flex-start;
+          font-size: 1rem;
+          padding: 0.75rem 0.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar a::first-letter {
+          font-size: 1rem;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          transform: translateX(-100%);
+          z-index: 1500;
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main-container {
+          flex-direction: column;
+        }
+
+        main {
+          padding: 100px 1rem 1rem;
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="menuToggle" class="hamburger">☰</button>
+
+    <div
+      class="main-container"
+      style="display: flex; width: 100%; min-height: 100vh"
+    >
+      <aside class="sidebar">
+        <h2>🍔 Snr. Buns</h2>
+        <button id="sidebarCollapseBtn" class="sidebar-toggle-btn">⬅</button>
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html">🏠 Home</a></li>
+            <li><a href="register.html">🖋️ Register</a></li>
+            <li><a href="orders.html">📋 Orders</a></li>
+            <li><a href="inventory.html">📦 Inventory</a></li>
+            <li><a href="market.html" class="active">🏪 Market Run</a></li>
+            <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+            <li><a href="loyalty.html">🎁 Customers</a></li>
+          </ul>
+        </nav>
+      </aside>
+
+      <main>
+        <h1>🏪 Market Run</h1>
+
+        <p
+          style="
+            font-weight: 600;
+            color: #c82333;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+          "
+        >
+          Please remember to submit this form, it is ESSENTIAL for our logs.
+          Post in 'market logs' in emails to confirm how much you spent.
+        </p>
+
+        <div class="mb-3">
+          <label
+            for="runnerName"
+            class="form-label"
+            style="font-weight: 600; color: #c82333"
+          >
+            Staff Member Name:
+          </label>
+          <input
+            type="text"
+            id="runnerName"
+            class="form-control"
+            placeholder="Enter your name"
+          />
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Pack Quantity</th>
+              <th>Price Per Pack ($)</th>
+              <th>Subtotal ($)</th>
+              <th>Suggested Packs</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="divider-row">
+              <td colspan="5">Food Stand</td>
+            </tr>
+            <tr>
+              <td>Bottled Corn Syrup</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="corn_syrup"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Flour Sack</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="flour"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Package of Buns</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="burger_buns"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Sugar Sack</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="sugar"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Tortilla Package</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="tortilla"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+
+            <tr class="divider-row">
+              <td colspan="5">Fruit Stand</td>
+            </tr>
+            <tr>
+              <td>Bag of Coffee</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="coffee_beans"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Lettuce Head</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="lettuce"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Onion Bundle</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="onion"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Tomato Bundle</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="tomato"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Vanilla Bean Bundle</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="vanilla"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Potato Sack</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="potato"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+
+            <tr class="divider-row">
+              <td colspan="5">Dairy Stand</td>
+            </tr>
+            <tr>
+              <td>Packaged Cheese</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="cheese_slices"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Goat Cheese</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="goat_cheese"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Ice Cream Tub</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="ice_cream"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+
+            <tr class="divider-row">
+              <td colspan="5">Meat Stand</td>
+            </tr>
+            <tr>
+              <td>Bacon Package</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="bacon"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Chicken Package</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="chicken"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+            <tr>
+              <td>Packaged Ground Beef</td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  value="0"
+                  data-ingredient="ground_beef"
+                  class="pack-qty"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  step="0.01"
+                  value="0"
+                  class="price-per-pack"
+                />
+              </td>
+              <td class="subtotal">$0.00</td>
+              <td class="suggested"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div id="totalCost">Total Cost: $0.00</div>
+        <div id="totalWeight">Total Weight: 0.0</div>
+
+        <button id="confirmPurchase">Confirm Purchase</button>
+
+        <div class="notification" id="notification"></div>
+      </main>
+    </div>
+
+    <script type="module">
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        setDoc,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+      import { app } from "./auth.js";
+      const db = getFirestore(app);
+
+      const inventoryDocRef = doc(db, "inventory", "current");
+      const UNIT_PER_PACK = 5;
+      const notification = document.getElementById("notification");
+
+      function showNotification(message, duration = 3000) {
+        notification.textContent = message;
+        notification.style.display = "block";
+        notification.style.opacity = "1";
+        if (showNotification.timeoutId)
+          clearTimeout(showNotification.timeoutId);
+        showNotification.timeoutId = setTimeout(() => {
+          notification.style.transition = "opacity 0.5s ease";
+          notification.style.opacity = "0";
+          notification.addEventListener(
+            "transitionend",
+            () => {
+              notification.style.display = "none";
+              notification.style.transition = "";
+            },
+            { once: true }
+          );
+        }, duration);
+      }
+
+      async function getLiveInventory() {
+        const docSnap = await getDoc(inventoryDocRef);
+        return docSnap.exists() ? docSnap.data() : {};
+      }
+
+      async function updateInventoryInFirestore(inventory) {
+        try {
+          await setDoc(inventoryDocRef, inventory, { merge: true });
+          showNotification("Inventory updated.");
+        } catch (error) {
+          console.error("Firestore update failed:", error);
+          showNotification("Failed to update inventory.");
+        }
+      }
+
+      function updateCosts() {
+        const rows = document.querySelectorAll("tbody tr");
+        let total = 0;
+        let weight = 0;
+
+        rows.forEach((row) => {
+          if (row.classList.contains("divider-row")) return;
+
+          const qtyInput = row.querySelector(".pack-qty");
+          const priceInput = row.querySelector(".price-per-pack");
+          const subtotalCell = row.querySelector(".subtotal");
+
+          if (!qtyInput || !priceInput || !subtotalCell) return;
+
+          const qty = parseInt(qtyInput.value) || 0;
+          const price = parseFloat(priceInput.value) || 0;
+          const subtotal = qty * price;
+
+          subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+          total += subtotal;
+
+          const ingredient = qtyInput.getAttribute("data-ingredient");
+          if (ingredient) {
+            if (ingredient === "lettuce") {
+              weight += qty * 2.5;
+            } else if (ingredient === "goat_cheese") {
+              weight += qty * 1;
+            } else {
+              weight += qty * 5;
+            }
+          }
+        });
+
+        document.getElementById(
+          "totalCost"
+        ).textContent = `Total Cost: $${total.toFixed(2)}`;
+        document.getElementById(
+          "totalWeight"
+        ).textContent = `Total Weight: ${weight.toFixed(1)}`;
+      }
+
+      document
+        .getElementById("confirmPurchase")
+        .addEventListener("click", async () => {
+          const runnerName = document.getElementById("runnerName").value.trim();
+          if (!runnerName) {
+            showNotification("Please enter your name before confirming.");
+            return;
+          }
+
+          const rows = document.querySelectorAll("tbody tr");
+          let inventory = await getLiveInventory();
+          let anyPurchase = false;
+          let purchasedItems = [];
+
+          for (const row of rows) {
+            if (row.classList.contains("divider-row")) continue;
+
+            const qtyInput = row.querySelector(".pack-qty");
+            const priceInput = row.querySelector(".price-per-pack");
+            const subtotalCell = row.querySelector(".subtotal");
+            if (!qtyInput) continue;
+
+            const ingredient = qtyInput.getAttribute("data-ingredient");
+            const qty = parseInt(qtyInput.value) || 0;
+            const price = parseFloat(priceInput.value) || 0;
+
+            if (qty > 0) {
+              anyPurchase = true;
+              inventory[ingredient] =
+                (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
+
+              purchasedItems.push({
+                ingredient,
+                packsBought: qty,
+                pricePerPack: price,
+                subtotal: qty * price,
+              });
+
+              qtyInput.value = 0;
+              priceInput.value = 0;
+              subtotalCell.textContent = "$0.00";
+            }
+          }
+
+          if (!anyPurchase) {
+            showNotification(
+              "Please enter quantity for at least one ingredient."
+            );
+            return;
+          }
+
+          const marketRun = {
+            timestamp: new Date().toISOString(),
+            runner: runnerName,
+            items: purchasedItems,
+            totalCost: purchasedItems.reduce((sum, i) => sum + i.subtotal, 0),
+          };
+
+          try {
+            await addDoc(collection(db, "market_runs"), marketRun);
+            await updateInventoryInFirestore(inventory);
+            updateCosts();
+            await setSuggestedPacks();
+            showNotification("Market run saved successfully!");
+          } catch (error) {
+            console.error("Error adding market run:", error);
+            showNotification("Failed to save market run.");
+          }
+        });
+
+      document
+        .querySelectorAll(".pack-qty, .price-per-pack")
+        .forEach((input) => {
+          input.addEventListener("input", updateCosts);
+        });
+
+      async function setSuggestedPacks() {
+        const required = {
+          burger_buns: 60,
+          ground_beef: 60,
+          cheese_slices: 30,
+          lettuce: 40,
+          chicken: 60,
+          bacon: 0,
+          tomato: 0,
+          tortilla: 0,
+          goat_cheese: 0,
+          potato: 5,
+          onion: 40,
+          sugar: 5,
+          flour: 5,
+          ice_cream: 5,
+          vanilla: 10,
+          coffee_beans: 0,
+          corn_syrup: 90,
+        };
+
+        const inventory = await getLiveInventory();
+
+        document.querySelectorAll("tbody tr").forEach((row) => {
+          const qtyInput = row.querySelector(".pack-qty");
+          const suggestedCell = row.querySelector(".suggested");
+          if (!qtyInput || !suggestedCell) return;
+
+          const ingredient = qtyInput.getAttribute("data-ingredient");
+          if (ingredient && required[ingredient] !== undefined) {
+            const currentUnits = inventory[ingredient] || 0;
+            const currentPacks = Math.floor(currentUnits / UNIT_PER_PACK);
+            const needed = Math.max(required[ingredient] - currentPacks, 0);
+            suggestedCell.textContent = needed;
+          }
+        });
+      }
+
+      updateCosts();
+      setSuggestedPacks();
+    </script>
+
+    <script>
+      const body = document.body;
+      const menuBtn = document.getElementById("menuToggle");
+      const sidebar = document.querySelector(".sidebar");
+      const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
+
+      function applySidebarSetting() {
+        const collapsed = localStorage.getItem("sidebarCollapsed") === "true";
+
+        if (window.innerWidth > 768) {
+          body.classList.toggle("sidebar-collapsed", collapsed);
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+          }
+        } else {
+          body.classList.remove("sidebar-collapsed");
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = "⬅";
+          }
+        }
+      }
+
+      applySidebarSetting();
+
+      menuBtn?.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
       });
 
-      // reset UI row
-      qtyInput.value = 0;
-      priceInput.value = 0;
-      subtotalCell.textContent = "$0.00";
-    }
-  }
+      sidebarCollapseBtn?.addEventListener("click", () => {
+        if (window.innerWidth <= 768) return;
 
-  if (!anyPurchase) {
-    showNotification("Please enter quantity for at least one ingredient.");
-    return;
-  }
+        body.classList.toggle("sidebar-collapsed");
+        const collapsed = body.classList.contains("sidebar-collapsed");
+        localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+        sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+      });
 
-  // ✅ Save ONE doc with all items
-  const marketRun = {
-    timestamp: new Date().toISOString(),
-    runner: runnerName,
-    items: purchasedItems,    // all items in one array
-    totalCost: purchasedItems.reduce((sum, i) => sum + i.subtotal, 0)
-  };
-
-  try {
-    await addDoc(collection(db, "market_runs"), marketRun);
-await updateInventoryInFirestore(inventory);
-updateCosts();
-await setSuggestedPacks();
-showNotification("Market run saved successfully!");
-  } catch (error) {
-    console.error("Error adding market run:", error);
-    showNotification("Failed to save market run.");
-  }
-});
-
-
-
-document.querySelectorAll('.pack-qty, .price-per-pack').forEach(input => {
-  input.addEventListener('input', updateCosts);
-});
-
-updateCosts();
-
-/* ===== Dynamic Suggested Packs based on Inventory ===== */
-async function setSuggestedPacks() {
-  // Packs required for 15 Bleeders + 10 Pounders
-  const required = {
-  burger_buns: 60,
-  ground_beef: 60,
-  cheese_slices: 30,
-  lettuce: 40,
-  chicken: 60,
-  bacon: 0,
-  tomato: 0,
-  tortilla: 0,
-  goat_cheese: 0,
-  potato: 5,
-  onion: 40,
-  sugar: 5,
-  flour: 5,
-  ice_cream: 5,
-  vanilla: 10,
-  coffee_beans: 0,
-  corn_syrup: 90,
-};
-
-  const inventory = await getLiveInventory();
-
-  document.querySelectorAll('tbody tr').forEach(row => {
-    const qtyInput = row.querySelector('.pack-qty');
-    const suggestedCell = row.querySelector('.suggested');
-    if (!qtyInput || !suggestedCell) return;
-
-    const ingredient = qtyInput.getAttribute('data-ingredient');
-    if (ingredient && required[ingredient] !== undefined) {
-      const currentUnits = inventory[ingredient] || 0;
-      const currentPacks = Math.floor(currentUnits / UNIT_PER_PACK);
-      const needed = Math.max(required[ingredient] - currentPacks, 0);
-      suggestedCell.textContent = needed;
-    }
-  });
-}
-
-updateCosts();
-setSuggestedPacks();
-</script>
-<script>
-  const menuBtn = document.getElementById("menuToggle");
-  const sidebar = document.querySelector(".sidebar");
-
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("active");
-
-    // Switch between ☰ and ✖
-    if (sidebar.classList.contains("active")) {
-      menuBtn.textContent = "✖";
-    } else {
-      menuBtn.textContent = "☰";
-    }
-  });
-  
-</script>
-
-</body>
+      window.addEventListener("resize", applySidebarSetting);
+    </script>
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+  </body>
 </html>
