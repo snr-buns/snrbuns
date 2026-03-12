@@ -464,9 +464,8 @@
       // ✅ Match orders.html: show newest first, non-deleted, limit 50
       const qRef = query(
         collection(db, "orders"),
-        where("deleted", "==", false),
         orderBy("timestamp", "desc"),
-        limit(50)
+        limit(200)
       );
 
       onSnapshot(
