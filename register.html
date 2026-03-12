@@ -1,1350 +1,1966 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snr. Buns - Register</title>
-  <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
- 
-  <script type="module" src="auth.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snr. Buns - Register</title>
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #fff4d6;
-      min-height: 100vh;
-      margin: 0;
-      display: flex;
-      color: #333;
-    }
-    .sidebar {
-      background-color: #c82333;
-      width: 220px;
-      color: white;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-    }
-    .sidebar h2 {
-  font-weight: 700;
-  font-size: 1.8rem;
-  margin-bottom: 2rem;
-  user-select: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  white-space: nowrap;   /* ✅ prevents wrapping */
-}
+    <script type="module" src="auth.js"></script>
 
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.75rem 0.5rem;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .sidebar a:hover, .sidebar a.active {
-      background-color: #a71d2a;
-      text-decoration: none;
-    }
-    main.register-content {
-      flex-grow: 1;
-      padding: 2rem 2.5rem;
-      background-color: #fff4d6;
-      display: flex;
-      gap: 2rem;
-      flex-wrap: wrap;
-      flex-direction: column;
-    }
-    .category-filter {
-      width: 100%;
-      display: flex;
-      gap: 10px;
-      margin-bottom: 1rem;
-      align-items: center;
-    }
-    .category {
-      all: unset;
-      background-color: #ffc107;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: 700;
-      color: #333;
-      padding: 0.25rem 1rem;
-      height: 32px;
-      min-height: 32px;
-      line-height: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      user-select: none;
-      font-size: 1rem;
-      transition: background-color 0.3s, color 0.3s;
-    }
-    .category.active,
-    .category:hover {
-      background-color: #ff8800;
-      color: #fff;
-    }
-    #searchBar {
-      flex-grow: 1;
-      font-size: 1rem;
-      padding: 0.3rem 0.6rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      user-select: text;
-    }
-    .item-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      width: 100%;
-    }
-    .item-card {
-      background: white;
-      border-radius: 12px;
-      padding: 1rem;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      height: 320px;
-      text-align: center;
-      user-select: none;
-    }
-    .item-card img {
-      max-height: 110px;
-      object-fit: contain;
-      margin-bottom: 1rem;
-      pointer-events: none;
-    }
-    .item-card h3 {
-      font-weight: 700;
-      margin-bottom: 0.25rem;
-      font-size: 1.25rem;
-    }
-    .item-card p {
-      font-weight: 600;
-      font-size: 1.1rem;
-      margin-bottom: 1.2rem;
-    }
-    .add-controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
-    }
-    .quantity-input {
-      width: 60px;
-      text-align: center;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0.25rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      user-select: none;
-    }
-    .add-btn {
-      background-color: #c82333;
-      border: none;
-      color: white;
-      font-weight: 600;
-      padding: 0.5rem 1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      user-select: none;
-      flex-shrink: 0;
-    }
-    .add-btn:hover {
-      background-color: #a71d2a;
-    }
-    aside.order-summary {
-      width: 300px;
-      height: 800px;
-      background: white;
-      border-radius: 12px;
-      padding: 2rem;
-      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
-      font-weight: 600;
-      user-select: none;
-      flex-shrink: 0;
-      display: flex;
-      flex-direction: column;
-    }
-    aside.order-summary h2 {
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      font-size: 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      user-select: none;
-    }
-    .order-info label {
-      font-weight: 700;
-      margin-top: 1rem;
-      display: block;
-    }
-    .order-info input {
-      width: 100%;
-      padding: 0.5rem;
-      margin-top: 0.4rem;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-weight: 600;
-      font-size: 1rem;
-      user-select: text;
-    }
-    .order-info select {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-top: 0.4rem;
-  border-radius: 10px;
-  border: 2px solid #c82333;
-  background-color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #333;
-  appearance: none; /* hide default arrow */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='%23c82333' d='M5.5 7l4.5 5 4.5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1rem;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-}
-.order-info select:hover {
-  border-color: #a71d2a;
-}
-.order-info select:focus {
-  outline: none;
-  border-color: #ff8800;
-  box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
-}
-.order-info option {
-  font-weight: 600;
-  padding: 8px;
-}
-.custom-select {
-  position: relative;
-  font-weight: 700;
-  font-size: 1rem;
-  user-select: none;
-}
-.select-selected {
-  background-color: #fff;
-  border: 2px solid #c82333;
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  cursor: pointer;
-  color: #333;
-  transition: all 0.2s ease;
-}
-.select-selected:hover {
-  background-color: #fff0e6;
-}
-.select-selected:after {
-  content: "▼";
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.8rem;
-  color: #c82333;
-}
-.select-items {
-  position: absolute;
-  background-color: #fff;
-  border: 2px solid #c82333;
-  border-radius: 10px;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 99;
-  display: flex;
-  flex-direction: column;
-  margin-top: 5px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-}
-.select-items div {
-  padding: 10px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-.select-items div:hover {
-  background-color: #ffc107;
-  color: #000;
-}
-.select-hide {
-  display: none;
-}
-    #orderList {
-      list-style-type: none;
-      padding-left: 0;
-      margin-bottom: 1.2rem;
-      margin-top: 12px;
-      max-height: 200px;
-      overflow-y: auto;
-      font-weight: 600;
-      flex-grow: 1;
-    }
-    #orderList li {
-      margin-bottom: 0.35rem;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 0.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      user-select: none;
-      gap: 10px;
-      font-size: 14px;
-    }
-    .item-details {
-      flex: 1;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .quantity-controls {
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      background: #ffc107;
-      border-radius: 999px;
-      padding: 2px 6px;
-      height: 28px;
-      min-width: 85px;
-      user-select: none;
-    }
-    .qty-btn {
-      background: none;
-      border: none;
-      color: #000;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      width: 22px;
-      height: 22px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0;
-      user-select: none;
-      line-height: 1;
-    }
-    .qty-number {
-      font-size: 14px;
-      font-weight: bold;
-      color: #000;
-      text-align: center;
-      width: 20px;
-      user-select: none;
-    }
-    .remove-btn {
-      color: #d32f2f;
-      font-size: 12px;
-      cursor: pointer;
-      text-decoration: underline;
-      user-select: none;
-      white-space: nowrap;
-    }
-    p {
-      font-weight: 700;
-      font-size: 1.1rem;
-      margin: 0.25rem 0;
-      user-select: none;
-    }
-    #submitOrder {
-      width: 100%;
-      font-weight: 700;
-      padding: 0.6rem;
-      background-color: #c82333;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      user-select: none;
-      margin-bottom: 10px;
-    }
-    #submitOrder:hover {
-      background-color: #a71d2a;
-    }
-    .discount-btn {
-      width: 100%;
-      font-weight: 700;
-      padding: 0.5rem;
-      background-color: #ffc107;
-      border: none;
-      border-radius: 8px;
-      color: #333;
-      cursor: pointer;
-      transition: background-color 0.3s;
-      user-select: none;
-      margin-bottom: 8px;
-    }
-    .discount-btn:hover {
-      background-color: #ffb300;
-    }
-    .discount-btn.active {
-      background-color: #ff9800;
-      color: white;
-    }
-    #notification {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #c82333;
-      color: white;
-      padding: 15px 25px;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      font-weight: 700;
-      font-family: 'Montserrat', sans-serif;
-      display: none;
-      z-index: 1000;
-      max-width: 90vw;
-      text-align: center;
-      white-space: pre-line;
-    }
-    #discountModal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1100;
-    }
-    #discountModal .modal-content {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 12px;
-      max-width: 320px;
-      text-align: center;
-      font-weight: 600;
-      color: #333;
-      user-select: none;
-    }
-    #discountModal button {
-      margin: 15px 10px 0 10px;
-      padding: 0.5rem 1.5rem;
-      border: none;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      user-select: none;
-      font-size: 1rem;
-    }
-    #discountModal .yes-btn {
-      background-color: #4caf50;
-      color: white;
-    }
-    #discountModal .no-btn {
-      background-color: #f44336;
-      color: white;
-    }
-/* Customer name input styled like custom select with search icon */
-.order-info input#customerName {
-  width: 100%;
-  padding: 0.75rem 3rem 0.75rem 1rem; /* space on the right for the icon */
-  margin-top: 0.4rem;
-  border-radius: 10px;
-  border: 2px solid #c82333;
-  background-color: #fff;
-  font-weight: 700;
-  font-size: 1rem;
-  color: #333;
-  transition: all 0.2s ease-in-out;
-  box-sizing: border-box; /* ✅ ensures padding works properly */
-  /* 🔍 magnifying glass */
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23c82333' viewBox='0 0 24 24'><circle cx='11' cy='11' r='7' stroke='%23c82333' stroke-width='2' fill='none'/><line x1='16.5' y1='16.5' x2='22' y2='22' stroke='%23c82333' stroke-width='2'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 0.8rem center; /* snug inside the padding */
-  background-size: 1.1rem; /* slightly bigger so it’s clearer */
-}
-.order-info input#customerName::placeholder {
-  color: #888;
-  font-weight: 600;
-  font-size: 0.9rem; /* 👈 smaller placeholder */
-}
-.order-info input#customerName:hover {
-  border-color: #a71d2a;
-}
-.order-info input#customerName:focus {
-  outline: none;
-  border-color: #ff8800;
-  box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
-}
-/* Hamburger button */
-.hamburger {
-  display: none;
-  font-size: 2rem;
-  background: #c82333;
-  color: white;
-  border: none;
-  border-radius: 8px;     /* matches other buttons */
-  padding: 6px 12px;
-  cursor: pointer;
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 3000;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.25); /* permanent shadow */
-  transition: background 0.2s;
-}
-.hamburger:hover {
-  background: #a71d2a;
-}
-/* Mobile behavior */
-@media (max-width: 768px) {
-  .hamburger {
-    display: block !important; /* show only on small screens */
-  }
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 220px;
-    background-color: #c82333;
-    transform: translateX(-100%); /* start hidden */
-    transition: transform 0.3s ease;
-    z-index: 2500;
-  }
-  .sidebar.active {
-    transform: translateX(0); /* slide in */
-  }
-  /* prevent main content from squashing */
-  .main-container {
-    flex-direction: column;
-  }
-  main {
-    margin-left: 0;
-    padding: 1rem;
-  }
-}
-  </style>
-  
-</head>
-<body>
-  
-  <button id="menuToggle" class="hamburger">☰</button>
-  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
-    <aside class="sidebar">
-      <h2>🍔 Snr. Buns</h2>
-      <nav>
-        <ul class="list-unstyled">
-          <li><a href="home.html">🏠 Home</a></li>
-          <li><a href="register.html" class="active">🖋️ Register</a></li>
-          <li><a href="orders.html">📋 Orders</a></li>
-          <li><a href="inventory.html">📦 Inventory</a></li>
-          <li><a href="market.html">🏪 Market Run</a></li>
-          <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
-          <li><a href="loyalty.html">🎁 Customers</a></li>
-        </ul>
-      </nav>
-    </aside>
-    <main class="register-content">
-      <div class="category-filter">
-        <button class="category active">All</button>
-        <button class="category">Combos</button>
-        <button class="category">Bundles</button>
-        <button class="category">Burgers</button>
-        <button class="category">Wraps</button>
-         <button class="category">Sides</button>
-        <button class="category">Drinks</button>
-        <button class="category">Desserts</button>
-        <button class="category">Membership</button>
-        <input type="search" id="searchBar" placeholder="Search menu items..." aria-label="Search menu items" />
+    <style>
+      :root {
+        --bg: #fff4d6;
+        --text: #333;
+        --sidebar: #c82333;
+        --sidebar-hover: #a71d2a;
+        --card: #ffffff;
+        --accent: #ffc107;
+        --accent-hover: #ff8800;
+        --border: #ccc;
+        --input-bg: #fff;
+        --summary-bg: #fff;
+      }
+
+      body.dark-mode {
+        --bg: #121212;
+        --text: #f5f5f5;
+        --sidebar: #8b1e28;
+        --sidebar-hover: #a71d2a;
+        --card: #1e1e1e;
+        --accent: #d39b00;
+        --accent-hover: #ffb300;
+        --border: #555;
+        --input-bg: #2a2a2a;
+        --summary-bg: #1e1e1e;
+      }
+
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: var(--bg);
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        color: var(--text);
+      }
+
+      .sidebar {
+        background-color: var(--sidebar);
+        width: 220px;
+        min-width: 220px;
+        color: white;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease,
+          transform 0.3s ease;
+        overflow: hidden;
+      }
+
+      .sidebar h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 0.75rem;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        white-space: nowrap;
+      }
+
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
+
+      .sidebar a:hover,
+      .sidebar a.active {
+        background-color: var(--sidebar-hover);
+        text-decoration: none;
+      }
+
+      .sidebar-toggle-btn {
+        background: #ffc107;
+        border: none;
+        color: #000;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        margin-top: 0;
+        cursor: pointer;
+        align-self: flex-end;
+      }
+
+      .sidebar-toggle-btn:hover {
+        background: #ffb300;
+      }
+
+      .dark-mode-btn {
+        margin-top: 1rem;
+        width: 100%;
+        background-color: #ffc107;
+        border: none;
+        color: #333;
+        font-weight: 700;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
+
+      .dark-mode-btn:hover {
+        background-color: #ffb300;
+      }
+
+      body.sidebar-collapsed .sidebar {
+        width: 78px;
+        min-width: 78px;
+        padding: 2rem 0.75rem;
+      }
+
+      body.sidebar-collapsed .sidebar h2 {
+        font-size: 0;
+        gap: 0;
+      }
+
+      body.sidebar-collapsed .sidebar h2::before {
+        content: "🍔";
+        font-size: 1.8rem;
+      }
+
+      body.sidebar-collapsed .sidebar a {
+        justify-content: center;
+        font-size: 0;
+        padding: 0.75rem 0;
+      }
+
+      body.sidebar-collapsed .sidebar a::first-letter {
+        font-size: 1.2rem;
+      }
+
+      body.sidebar-collapsed .sidebar-toggle-btn {
+        align-self: center;
+      }
+
+      main.register-content {
+        flex-grow: 1;
+        padding: 2rem 2.5rem;
+        background-color: var(--bg);
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+        flex-direction: column;
+      }
+
+      .category-filter {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+        margin-bottom: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .category {
+        all: unset;
+        background-color: var(--accent);
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 700;
+        color: var(--text);
+        padding: 0.25rem 1rem;
+        height: 32px;
+        min-height: 32px;
+        line-height: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        user-select: none;
+        font-size: 1rem;
+        transition: background-color 0.3s, color 0.3s;
+      }
+
+      .category.active,
+      .category:hover {
+        background-color: var(--accent-hover);
+        color: #fff;
+      }
+
+      #searchBar {
+        flex-grow: 1;
+        font-size: 1rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background-color: var(--input-bg);
+        color: var(--text);
+        user-select: text;
+        min-width: 220px;
+      }
+
+      .item-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        width: 100%;
+      }
+
+      .item-card {
+        background: var(--card);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 1rem;
+        box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        height: 320px;
+        text-align: center;
+        user-select: none;
+      }
+
+      .item-card img {
+        max-height: 110px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+        pointer-events: none;
+      }
+
+      .item-card h3 {
+        font-weight: 700;
+        margin-bottom: 0.25rem;
+        font-size: 1.25rem;
+      }
+
+      .item-card p {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .add-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: center;
+        width: 100%;
+      }
+
+      .quantity-input {
+        width: 60px;
+        text-align: center;
+        font-weight: 600;
+        font-size: 1rem;
+        padding: 0.25rem;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        background-color: var(--input-bg);
+        color: var(--text);
+        user-select: none;
+      }
+
+      .add-btn {
+        background-color: #c82333;
+        border: none;
+        color: white;
+        font-weight: 600;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        user-select: none;
+        flex-shrink: 0;
+      }
+
+      .add-btn:hover {
+        background-color: #a71d2a;
+      }
+
+      aside.order-summary {
+        width: 300px;
+        height: 800px;
+        background: var(--summary-bg);
+        color: var(--text);
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+        font-weight: 600;
+        user-select: none;
+        flex-shrink: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      aside.order-summary h2 {
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        user-select: none;
+      }
+
+      .order-info label {
+        font-weight: 700;
+        margin-top: 1rem;
+        display: block;
+      }
+
+      .order-info input {
+        width: 100%;
+        padding: 0.5rem;
+        margin-top: 0.4rem;
+        border-radius: 8px;
+        border: 1px solid var(--border);
+        background-color: var(--input-bg);
+        color: var(--text);
+        font-weight: 600;
+        font-size: 1rem;
+        user-select: text;
+      }
+
+      .order-info select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        margin-top: 0.4rem;
+        border-radius: 10px;
+        border: 2px solid #c82333;
+        background-color: var(--input-bg);
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text);
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'><path fill='%23c82333' d='M5.5 7l4.5 5 4.5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .order-info select:hover {
+        border-color: #a71d2a;
+      }
+
+      .order-info select:focus {
+        outline: none;
+        border-color: #ff8800;
+        box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
+      }
+
+      .order-info option {
+        font-weight: 600;
+        padding: 8px;
+      }
+
+      .custom-select {
+        position: relative;
+        font-weight: 700;
+        font-size: 1rem;
+        user-select: none;
+      }
+
+      .select-selected {
+        background-color: var(--input-bg);
+        border: 2px solid #c82333;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        cursor: pointer;
+        color: var(--text);
+        transition: all 0.2s ease;
+      }
+
+      .select-selected:hover {
+        background-color: #fff0e6;
+      }
+
+      .select-selected:after {
+        content: "▼";
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8rem;
+        color: #c82333;
+      }
+
+      .select-items {
+        position: absolute;
+        background-color: var(--card);
+        color: var(--text);
+        border: 2px solid #c82333;
+        border-radius: 10px;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 99;
+        display: flex;
+        flex-direction: column;
+        margin-top: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .select-items div {
+        padding: 10px;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .select-items div:hover {
+        background-color: #ffc107;
+        color: #000;
+      }
+
+      .select-hide {
+        display: none;
+      }
+
+      #orderList {
+        list-style-type: none;
+        padding-left: 0;
+        margin-bottom: 1.2rem;
+        margin-top: 12px;
+        max-height: 200px;
+        overflow-y: auto;
+        font-weight: 600;
+        flex-grow: 1;
+      }
+
+      #orderList li {
+        margin-bottom: 0.35rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        user-select: none;
+        gap: 10px;
+        font-size: 14px;
+      }
+
+      .item-details {
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .quantity-controls {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: #ffc107;
+        border-radius: 999px;
+        padding: 2px 6px;
+        height: 28px;
+        min-width: 85px;
+        user-select: none;
+      }
+
+      .qty-btn {
+        background: none;
+        border: none;
+        color: #000;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        width: 22px;
+        height: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        user-select: none;
+        line-height: 1;
+      }
+
+      .qty-number {
+        font-size: 14px;
+        font-weight: bold;
+        color: #000;
+        text-align: center;
+        width: 20px;
+        user-select: none;
+      }
+
+      .remove-btn {
+        color: #d32f2f;
+        font-size: 12px;
+        cursor: pointer;
+        text-decoration: underline;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      p {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin: 0.25rem 0;
+        user-select: none;
+      }
+
+      #submitOrder {
+        width: 100%;
+        font-weight: 700;
+        padding: 0.6rem;
+        background-color: #c82333;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        user-select: none;
+        margin-bottom: 10px;
+      }
+
+      #submitOrder:hover {
+        background-color: #a71d2a;
+      }
+
+      .discount-btn {
+        width: 100%;
+        font-weight: 700;
+        padding: 0.5rem;
+        background-color: #ffc107;
+        border: none;
+        border-radius: 8px;
+        color: #333;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        user-select: none;
+        margin-bottom: 8px;
+      }
+
+      .discount-btn:hover {
+        background-color: #ffb300;
+      }
+
+      .discount-btn.active {
+        background-color: #ff9800;
+        color: white;
+      }
+
+      #uniformDiscountBtn {
+        width: 100%;
+        font-weight: 700;
+        padding: 0.5rem;
+        background-color: #0d6efd;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        user-select: none;
+        margin-bottom: 8px;
+      }
+
+      #uniformDiscountBtn:hover {
+        background-color: #0b5ed7;
+      }
+
+      #uniformDiscountBtn.active {
+        background-color: #084298;
+        color: white;
+      }
+
+      .tab-btn {
+        width: 100%;
+        font-weight: 700;
+        padding: 0.5rem;
+        background-color: #7e57c2;
+        border: none;
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        user-select: none;
+        margin-bottom: 8px;
+      }
+
+      .tab-btn:hover {
+        background-color: #6a45ad;
+      }
+
+      .tab-btn.active {
+        background-color: #5e35b1;
+        color: white;
+      }
+
+      #tabIndicator {
+        display: none;
+        margin-bottom: 10px;
+        padding: 0.65rem 0.8rem;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-align: center;
+      }
+
+      #tabIndicator.ems {
+        display: block;
+        background: #d9f0ff;
+        color: #0b4f7a;
+        border: 2px solid #7cc4f5;
+      }
+
+      #tabIndicator.doj {
+        display: block;
+        background: #efe0ff;
+        color: #5a2b84;
+        border: 2px solid #b58be0;
+      }
+
+      #notification {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #c82333;
+        color: white;
+        padding: 15px 25px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        font-weight: 700;
+        font-family: "Montserrat", sans-serif;
+        display: none;
+        z-index: 1000;
+        max-width: 90vw;
+        text-align: center;
+        white-space: pre-line;
+      }
+
+      #discountModal,
+      #tabModal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1100;
+      }
+
+      #discountModal .modal-content,
+      #tabModal .modal-content {
+        background: var(--card);
+        color: var(--text);
+        padding: 20px 30px;
+        border-radius: 12px;
+        max-width: 340px;
+        text-align: center;
+        font-weight: 600;
+        user-select: none;
+      }
+
+      #discountModal button,
+      #tabModal button {
+        margin: 15px 10px 0 10px;
+        padding: 0.5rem 1.2rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        cursor: pointer;
+        user-select: none;
+        font-size: 1rem;
+      }
+
+      #discountModal .yes-btn {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      #discountModal .no-btn {
+        background-color: #f44336;
+        color: white;
+      }
+
+      #tabModal .ems-btn {
+        background-color: #1e88e5;
+        color: white;
+      }
+
+      #tabModal .doj-btn {
+        background-color: #7e57c2;
+        color: white;
+      }
+
+      #tabModal .clear-btn {
+        background-color: #9e9e9e;
+        color: white;
+      }
+
+      #tabModal .cancel-btn {
+        background-color: #f44336;
+        color: white;
+      }
+
+      .order-info input#customerName {
+        width: 100%;
+        padding: 0.75rem 3rem 0.75rem 1rem;
+        margin-top: 0.4rem;
+        border-radius: 10px;
+        border: 2px solid #c82333;
+        background-color: var(--input-bg);
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text);
+        transition: all 0.2s ease-in-out;
+        box-sizing: border-box;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' fill='%23c82333' viewBox='0 0 24 24'><circle cx='11' cy='11' r='7' stroke='%23c82333' stroke-width='2' fill='none'/><line x1='16.5' y1='16.5' x2='22' y2='22' stroke='%23c82333' stroke-width='2'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 0.8rem center;
+        background-size: 1.1rem;
+      }
+
+      .order-info input#customerName::placeholder {
+        color: #888;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      .order-info input#customerName:hover {
+        border-color: #a71d2a;
+      }
+
+      .order-info input#customerName:focus {
+        outline: none;
+        border-color: #ff8800;
+        box-shadow: 0 0 6px rgba(255, 136, 0, 0.5);
+      }
+
+      .hamburger {
+        display: none;
+        font-size: 2rem;
+        background: #c82333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 3000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        transition: background 0.2s;
+      }
+
+      .hamburger:hover {
+        background: #a71d2a;
+      }
+
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block !important;
+        }
+
+        .sidebar-toggle-btn {
+          display: none;
+        }
+
+        body.sidebar-collapsed .sidebar {
+          width: 220px;
+          min-width: 220px;
+          padding: 2rem 1.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2 {
+          font-size: 1.8rem;
+          gap: 0.4rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2::before {
+          content: none;
+        }
+
+        body.sidebar-collapsed .sidebar a {
+          justify-content: flex-start;
+          font-size: 1rem;
+          padding: 0.75rem 0.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar a::first-letter {
+          font-size: 1rem;
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          background-color: var(--sidebar);
+          transform: translateX(-100%);
+          z-index: 2500;
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
+        .main-container {
+          flex-direction: column;
+        }
+
+        main {
+          margin-left: 0;
+          padding: 100px 1rem 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <button id="menuToggle" class="hamburger">☰</button>
+    <div
+      class="main-container"
+      style="display: flex; width: 100%; min-height: 100vh"
+    >
+      <aside class="sidebar">
+        <h2>🍔 Snr. Buns</h2>
+        <button id="sidebarCollapseBtn" class="sidebar-toggle-btn">⬅</button>
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html">🏠 Home</a></li>
+            <li><a href="register.html" class="active">🖋️ Register</a></li>
+            <li><a href="orders.html">📋 Orders</a></li>
+            <li><a href="inventory.html">📦 Inventory</a></li>
+            <li><a href="market.html">🏪 Market Run</a></li>
+            <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+            <li><a href="loyalty.html">🎁 Customers</a></li>
+          </ul>
+        </nav>
+        <button id="darkModeToggle" class="dark-mode-btn">🌙 Dark Mode</button>
+      </aside>
+
+      <main class="register-content">
+        <div class="category-filter">
+          <button class="category active">All</button>
+          <button class="category">Combos</button>
+          <button class="category">Bundles</button>
+          <button class="category">Burgers</button>
+          <button class="category">Wraps</button>
+          <button class="category">Sides</button>
+          <button class="category">Drinks</button>
+          <button class="category">Desserts</button>
+          <button class="category">Membership</button>
+          <input
+            type="search"
+            id="searchBar"
+            placeholder="Search menu items..."
+            aria-label="Search menu items"
+          />
+        </div>
+
+        <p
+          style="
+            margin-top: -0.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+            color: #c82333;
+          "
+        >
+          Please use the customer's full name if you're using the register to
+          invoice.
+        </p>
+
+        <div class="item-grid">
+          <!-- Combos -->
+          <div
+            class="item-card"
+            data-name="The Heartstopper Meal"
+            data-price="1400"
+            data-category="Combos"
+            data-image="assets/images/bleederbox.png"
+          >
+            <img src="assets/images/combo.png" alt="The Heartstopper Meal" />
+            <h3>The Heartstopper Meal</h3>
+            <p>$1400</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Patty Pounder Combo"
+            data-price="1100"
+            data-category="Combos"
+            data-image="assets/images/bleederbox.png"
+          >
+            <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
+            <h3>Patty Pounder Combo</h3>
+            <p>$1100</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="The Bleeder Box"
+            data-price="600"
+            data-category="Combos"
+            data-image="assets/images/bleederbox.png"
+          >
+            <img src="assets/images/combo.png" alt="The Bleeder Box" />
+            <h3>The Bleeder Box</h3>
+            <p>$600</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Bundle"
+            data-price="0"
+            data-category="Bundles"
+            data-image="assets/images/bundles.png"
+          >
+            <img src="assets/images/bundles.png" alt="Bundle" />
+            <h3>Bundles</h3>
+            <p>Select type</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <!-- BURGERS -->
+          <div
+            class="item-card"
+            data-name="The Bleeder"
+            data-price="90"
+            data-category="Burgers"
+            data-image="assets/images/bleeder-burger.png"
+          >
+            <img src="assets/images/bleeder-burger.png" alt="Bleeder Burger" />
+            <h3>The Bleeder</h3>
+            <p>$90</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="The Glorious"
+            data-price="90"
+            data-category="Burgers"
+            data-image="assets/images/glorious.png"
+          >
+            <img src="assets/images/glorious.png" alt="The Glorious" />
+            <h3>The Glorious</h3>
+            <p>$90</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="The Prickley"
+            data-price="85"
+            data-category="Burgers"
+            data-image="assets/images/the-prickley.png"
+          >
+            <img src="assets/images/the-prickley.png" alt="The Prickley" />
+            <h3>The Prickley</h3>
+            <p>$85</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="The Simply"
+            data-price="95"
+            data-category="Burgers"
+            data-image="assets/images/the-simply.png"
+          >
+            <img src="assets/images/the-simply.png" alt="The Simply" />
+            <h3>The Simply</h3>
+            <p>$95</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Heart Stopper"
+            data-price="170"
+            data-category="Burgers"
+            data-image="assets/images/heart-stopper.png"
+          >
+            <img src="assets/images/heart-stopper.png" alt="Heart Stopper" />
+            <h3>Heart Stopper</h3>
+            <p>$170</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Money Shot"
+            data-price="130"
+            data-category="Burgers"
+            data-image="assets/images/money-shot.png"
+          >
+            <img src="assets/images/money-shot.png" alt="Money Shot" />
+            <h3>Money Shot</h3>
+            <p>$130</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Double Shot"
+            data-price="90"
+            data-category="Burgers"
+            data-image="assets/images/double-shot.png"
+          >
+            <img src="assets/images/double-shot.png" alt="Double Shot" />
+            <h3>Double Shot</h3>
+            <p>$90</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <!-- WRAPS -->
+          <div
+            class="item-card"
+            data-name="Goat Wrap"
+            data-price="90"
+            data-category="Wraps"
+            data-image="assets/images/goat-wrap.png"
+          >
+            <img src="assets/images/goat-wrap.png" alt="Goat Wrap" />
+            <h3>Goat Wrap</h3>
+            <p>$90</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Chicken Wrap"
+            data-price="100"
+            data-category="Wraps"
+            data-image="assets/images/chicken-wrap.png"
+          >
+            <img src="assets/images/chicken-wrap.png" alt="Chicken Wrap" />
+            <h3>Chicken Wrap</h3>
+            <p>$100</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Chicken Mexican"
+            data-price="90"
+            data-category="Wraps"
+            data-image="assets/images/chicken-mexican.png"
+          >
+            <img
+              src="assets/images/chicken-mexican.png"
+              alt="Chicken Mexican"
+            />
+            <h3>Chicken Mexican</h3>
+            <p>$90</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <!-- SIDES -->
+          <div
+            class="item-card"
+            data-name="Fries"
+            data-price="55"
+            data-category="Sides"
+            data-image="assets/images/fries.png"
+          >
+            <img src="assets/images/fries.png" alt="Fries" />
+            <h3>Fries</h3>
+            <p>$55</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Onion Rings"
+            data-price="50"
+            data-category="Sides"
+            data-image="assets/images/onion-rings.png"
+          >
+            <img src="assets/images/onion-rings.png" alt="Onion Rings" />
+            <h3>Onion Rings</h3>
+            <p>$50</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Chicken Nuggets"
+            data-price="80"
+            data-category="Sides"
+            data-image="assets/images/chickennuggets.png"
+          >
+            <img src="assets/images/chickennuggets.png" alt="Chicken Nuggets" />
+            <h3>Chicken Nuggets</h3>
+            <p>$80</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <!-- DESSERTS -->
+          <div
+            class="item-card"
+            data-name="Cream Pie"
+            data-price="55"
+            data-category="Desserts"
+            data-image="assets/images/cream-pie.png"
+          >
+            <img src="assets/images/cream-pie.png" alt="Cream Pie" />
+            <h3>Cream Pie</h3>
+            <p>$55</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Rim Job"
+            data-price="55"
+            data-category="Desserts"
+            data-image="assets/images/rimjob.png"
+          >
+            <img src="assets/images/rim-job.png" alt="Rim Job" />
+            <h3>Rim Job</h3>
+            <p>$55</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Ice Cream"
+            data-price="55"
+            data-category="Desserts"
+            data-image="assets/images/ice-cream.png"
+          >
+            <img src="assets/images/ice-cream.png" alt="Ice Cream" />
+            <h3>Ice Cream</h3>
+            <p>$55</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <!-- DRINKS -->
+          <div
+            class="item-card"
+            data-name="Soda"
+            data-price="30"
+            data-category="Drinks"
+            data-image="assets/images/soda.png"
+          >
+            <img src="assets/images/soda.png" alt="Soda" />
+            <h3>Soda</h3>
+            <p>$30</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Coffee"
+            data-price="30"
+            data-category="Drinks"
+            data-image="assets/images/coffee.png"
+          >
+            <img src="assets/images/coffee.png" alt="Coffee" />
+            <h3>Coffee</h3>
+            <p>$30</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
+            data-name="Golden Bun Club"
+            data-price="15000"
+            data-category="Membership"
+            data-image="assets/images/bunclub.png"
+            data-pass-type="golden"
+            data-is-pass-payment="true"
+          >
+            <img src="assets/images/bunclub.png" alt="Golden Bun Club" />
+            <h3>Golden Bun Club</h3>
+            <p>$15000</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <aside class="order-summary">
+        <h2>🧾 New Order</h2>
+        <div class="order-info">
+          <label for="employeeName">Employee Name</label>
+          <div class="custom-select-wrapper">
+            <select id="employeeName" required style="display: none">
+              <option value="" disabled selected>Select employee</option>
+              <option value="Savannah">Savannah</option>
+              <option value="Torch">Torch</option>
+              <option value="Slade">Slade</option>
+              <option value="Jack">Jack</option>
+              <option value="Bart">Bart</option>
+              <option value="Bezzy">Bezzy</option>
+              <option value="Evan">Evan</option>
+              <option value="James">James</option>
+              <option value="Drako">Drako</option>
+              <option value="Calvin">Calvin</option>
+              <option value="Griffin">Griffin</option>
+              <option value="Cleetus">Cleetus</option>
+              <option value="Jayden">Jayden</option>
+              <option value="Mick">Mick</option>
+              <option value="Michael">Michael</option>
+            </select>
+
+            <div class="custom-select">
+              <div class="select-selected">Select employee</div>
+              <div class="select-items select-hide">
+                <div data-value="Savannah">Savannah</div>
+                <div data-value="Torch">Torch</div>
+                <div data-value="Slade">Slade</div>
+                <div data-value="Jack">Jack</div>
+                <div data-value="Bart">Bart</div>
+                <div data-value="Bezzy">Bezzy</div>
+                <div data-value="Evan">Evan</div>
+                <div data-value="James">James</div>
+                <div data-value="Drako">Drako</div>
+                <div data-value="Calvin">Calvin</div>
+                <div data-value="Griffin">Griffin</div>
+                <div data-value="Cleetus">Cleetus</div>
+                <div data-value="Jayden">Jayden</div>
+                <div data-value="Mick">Mick</div>
+                <div data-value="Michael">Michael</div>
+              </div>
+            </div>
+          </div>
+
+          <label for="customerName">Customer Name</label>
+          <input
+            type="text"
+            id="customerName"
+            name="no-autofill"
+            list="customerSuggestions"
+            placeholder="Enter customer name"
+            required
+            autocomplete="off"
+          />
+
+          <small
+            style="
+              color: #c82333;
+              font-weight: 700;
+              display: block;
+              margin-top: 10px;
+            "
+          >
+            🚑 DOJ/EMS tabs can now be marked below and saved directly on the
+            order.<br /><br />
+          </small>
+
+          <datalist id="customerSuggestions"></datalist>
+        </div>
+
+        <ul id="orderList"></ul>
+        <p>Subtotal: $<span id="subtotal">0</span></p>
+        <p>
+          <strong>Total: $<span id="total">0</span></strong>
+        </p>
+
+        <div id="tabIndicator"></div>
+
+        <button id="uniformDiscountBtn" class="discount-btn">
+          👮 Apply PD Discount
+        </button>
+        <button id="tabOrderBtn" class="tab-btn">⚖️ Mark DOJ/EMS Tab</button>
+        <button id="redeemPassBtn" class="discount-btn">
+          Redeem Membership
+        </button>
+
+        <div
+          id="redeemPassModal"
+          style="
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1200;
+          "
+        >
+          <div
+            style="
+              background: #fff;
+              padding: 20px;
+              border-radius: 12px;
+              width: 360px;
+              max-height: 70vh;
+              overflow: auto;
+            "
+          >
+            <div style="font-weight: 800; margin-bottom: 10px">
+              Redeem Membership
+            </div>
+            <input
+              id="redeemSearch"
+              placeholder="Search name..."
+              style="
+                width: 100%;
+                padding: 8px;
+                border: 2px solid #c82333;
+                border-radius: 8px;
+                font-weight: 700;
+              "
+            />
+            <div
+              id="redeemList"
+              style="
+                margin-top: 10px;
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+              "
+            ></div>
+            <div
+              style="
+                display: flex;
+                gap: 8px;
+                margin-top: 12px;
+                justify-content: flex-end;
+              "
+            >
+              <button
+                id="closeRedeem"
+                class="no-btn"
+                style="
+                  background: #f44336;
+                  color: #fff;
+                  border: none;
+                  border-radius: 8px;
+                  padding: 8px 12px;
+                  font-weight: 800;
+                "
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button id="submitOrder">Place Order</button>
+      </aside>
+    </div>
+
+    <div id="notification" role="alert"></div>
+
+    <!-- Discount confirmation modal -->
+    <div id="discountModal" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <div style="font-size: 1.2rem; margin-bottom: 10px">
+          Is the customer in uniform?
+        </div>
+        <button class="yes-btn">Yes</button>
+        <button class="no-btn">No</button>
       </div>
-      <p style="margin-top:-0.5rem; margin-bottom:1rem; font-weight:600; color:#c82333;">
-  Please use the customer's full name if you're using the register to invoice.
-</p>
-      <div class="item-grid">
-  <!-- Combos -->
-  <div class="item-card" data-name="The Heartstopper Meal" data-price="1400" data-category="Combos" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="The Heartstopper Meal" />
-    <h3>The Heartstopper Meal</h3>
-    <p>$1400</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
     </div>
-  </div>
 
-  <div class="item-card" data-name="Patty Pounder Combo" data-price="1100" data-category="Combos" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
-    <h3>Patty Pounder Combo</h3>
-    <p>$1100</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-
-     <div class="item-card" data-name="The Bleeder Box" data-price="600" data-category="Combos" data-image="assets/images/bleederbox.png">
-    <img src="assets/images/combo.png" alt="The Bleeder Box" />
-    <h3>The Bleeder Box</h3>
-    <p>$600</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-
-  <div class="item-card" data-name="Bundle" data-price="0" data-category="Bundles" data-image="assets/images/bundles.png">
-    <img src="assets/images/bundles.png" alt="Bundle" />
-    <h3>Bundles</h3>
-    <p>Select type</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-
-  <!-- ===== BURGERS ===== -->
-<div class="item-card" data-name="The Bleeder" data-price="90" data-category="Burgers" data-image="assets/images/bleeder-burger.png">
-  <img src="assets/images/bleeder-burger.png" alt="Bleeder Burger" />
-  <h3>The Bleeder</h3>
-  <p>$90</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-  </div>
-  <div class="item-card" data-name="The Glorious" data-price="90" data-category="Burgers" data-image="assets/images/glorious.png">
-    <img src="assets/images/glorious.png" alt="Bleeder Burger" />
-    <h3>The Glorious</h3>
-    <p>$90</p>
-    <div class="add-controls">
-      <input type="number" class="quantity-input" min="1" value="1" />
-      <button class="add-btn">Add</button>
-    </div>
-  </div>
-
-<div class="item-card" data-name="The Prickley" data-price="85" data-category="Burgers" data-image="assets/images/the-prickley.png">
-  <img src="assets/images/the-prickley.png" alt="The Prickley" />
-  <h3>The Prickley</h3>
-  <p>$85</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="The Simply" data-price="95" data-category="Burgers" data-image="assets/images/the-simply.png">
-  <img src="assets/images/the-simply.png" alt="The Simply" />
-  <h3>The Simply</h3>
-  <p>$95</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Heart Stopper" data-price="170" data-category="Burgers" data-image="assets/images/heart-stopper.png">
-  <img src="assets/images/heart-stopper.png" alt="Heart Stopper" />
-  <h3>Heart Stopper</h3>
-  <p>$170</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Money Shot" data-price="130" data-category="Burgers" data-image="assets/images/money-shot.png">
-  <img src="assets/images/money-shot.png" alt="Money Shot" />
-  <h3>Money Shot</h3>
-  <p>$130</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Double Shot" data-price="90" data-category="Burgers" data-image="assets/images/double-shot.png">
-  <img src="assets/images/double-shot.png" alt="Double Shot" />
-  <h3>Double Shot</h3>
-  <p>$90</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<!-- ===== WRAPS ===== -->
-<div class="item-card" data-name="Goat Wrap" data-price="90" data-category="Wraps" data-image="assets/images/goat-wrap.png">
-  <img src="assets/images/goat-wrap.png" alt="Goat Wrap" />
-  <h3>Goat Wrap</h3>
-  <p>$90</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Chicken Wrap" data-price="100" data-category="Wraps" data-image="assets/images/chicken-wrap.png">
-  <img src="assets/images/chicken-wrap.png" alt="Chicken Wrap" />
-  <h3>Chicken Wrap</h3>
-  <p>$100</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Chicken Mexican" data-price="90" data-category="Wraps" data-image="assets/images/chicken-mexican.png">
-  <img src="assets/images/chicken-mexican.png" alt="Chicken Mexican" />
-  <h3>Chicken Mexican</h3>
-  <p>$90</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<!-- ===== SIDES ===== -->
-<div class="item-card" data-name="Fries" data-price="55" data-category="Sides" data-image="assets/images/fries.png">
-  <img src="assets/images/fries.png" alt="Fries" />
-  <h3>Fries</h3>
-  <p>$55</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Onion Rings" data-price="50" data-category="Sides" data-image="assets/images/onion-rings.png">
-  <img src="assets/images/onion-rings.png" alt="Onion Rings" />
-  <h3>Onion Rings</h3>
-  <p>$50</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Chicken Nuggets" data-price="80" data-category="Sides" data-image="assets/images/chickennuggets.png">
-  <img src="assets/images/chickennuggets.png" alt="Chicken Nuggets" />
-  <h3>Chicken Nuggets</h3>
-  <p>$80</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<!-- ===== DESSERTS ===== -->
-<div class="item-card" data-name="Cream Pie" data-price="55" data-category="Desserts" data-image="assets/images/cream-pie.png">
-  <img src="assets/images/cream-pie.png" alt="Cream Pie" />
-  <h3>Cream Pie</h3>
-  <p>$55</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Rim Job" data-price="55" data-category="Desserts" data-image="assets/images/rimjob.png">
-  <img src="assets/images/rim-job.png" alt="Rim Job" />
-  <h3>Rim Job</h3>
-  <p>$55</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Ice Cream" data-price="55" data-category="Desserts" data-image="assets/images/ice-cream.png">
-  <img src="assets/images/ice-cream.png" alt="Ice Cream" />
-  <h3>Ice Cream</h3>
-  <p>$55</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<!-- ===== DRINKS ===== -->
-
-<div class="item-card" data-name="Soda" data-price="30" data-category="Drinks" data-image="assets/images/soda.png">
-  <img src="assets/images/soda.png" alt="Soda" />
-  <h3>Soda</h3>
-  <p>$30</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card" data-name="Coffee" data-price="30" data-category="Drinks" data-image="assets/images/coffee.png">
-  <img src="assets/images/coffee.png" alt="Coffee" />
-  <h3>Coffee</h3>
-  <p>$30</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-<div class="item-card"
-  data-name="Golden Bun Club"
-  data-price="15000"
-  data-category="Membership"
-  data-image="assets/images/bunclub.png"
-  data-pass-type="golden"
-  data-is-pass-payment="true">
-  
-  <img src="assets/images/bunclub.png" alt="Golden Bun Club" />
-  <h3>Golden Bun Club</h3>
-  <p>$15000</p>
-  <div class="add-controls">
-    <input type="number" class="quantity-input" min="1" value="1" />
-    <button class="add-btn">Add</button>
-  </div>
-</div>
-
-    </main>
-    <aside class="order-summary">
-      <h2>🧾 New Order</h2>
-      <div class="order-info">
-        <label for="employeeName">Employee Name</label>
-<div class="custom-select-wrapper">
-  <!-- hidden real select -->
-  <select id="employeeName" required style="display:none;">
-    <option value="" disabled selected>Select employee</option>
-    <option value="Savannah">Savannah</option>
-    <option value="Torch">Torch</option>
-    <option value="Slade">Slade</option>
-    <option value="Jack">Jack</option>
-    <option value="Bart">Bart</option>
-    <option value="Bezzy">Bezzy</option>
-    <option value="Evan">Evan</option>
-    <option value="James">James</option>
-    <option value="Drako">Drako</option>
-    <option value="Calvin">Calvin</option>
-    <option value="Griffin">Griffin</option>
-    <option value="Cleetus">Cleetus</option>
-    <option value="Jayden">Jayden</option>
-    <option value="Mick">Mick</option>
-    <option value="Michael">Michael</option>
-  </select>
-  <!-- styled fake select -->
-  <div class="custom-select">
-    <div class="select-selected">Select employee</div>
-    <div class="select-items select-hide">
-      <div data-value="Savannah">Savannah</div>
-      <div data-value="Torch">Torch</div>
-      <div data-value="Slade">Slade</div>
-      <div data-value="Jack">Jack</div>
-      <div data-value="Bart">Bart</div>
-    <div data-value="Bezzy">Bezzy</div>
-    <div data-value="Evan">Evan</div>
-    <div data-value="James">James</div>
-    <div data-value="Drako">Drako</div>
-    <div data-value="Calvin">Calvin</div>
-    <div data-value="Griffin">Griffin</div>
-    <div data-value="Cleetus">Cleetus</div>
-    <div data-value="Jayden">Jayden</div>
-    <div data-value="Mick">Mick</div>
-    <div data-value="Michael">Michael</div>
-    </div>
-  </div>
-</div>
-        <label for="customerName">Customer Name</label>
-        <input
-  type="text"
-  id="customerName"
-  name="no-autofill"
-  list="customerSuggestions"
-  placeholder="Enter customer name"
-  required
-  autocomplete="off"
-/>
-        <small style="color:#c82333; font-weight:700; display:block; margin-top:10px;">
-        🚑 Reminder: EMS customers are on a tab.  
-        Place the order but don't invoice them — log it on emails. <br><br>
-        </small>
-        <datalist id="customerSuggestions"></datalist>
+    <!-- DOJ / EMS tab modal -->
+    <div id="tabModal" role="dialog" aria-modal="true">
+      <div class="modal-content">
+        <div style="font-size: 1.2rem; margin-bottom: 10px">
+          Mark this order as a tab?
+        </div>
+        <button class="ems-btn">EMS Tab</button>
+        <button class="doj-btn">DOJ Tab</button>
+        <button class="cancel-btn">Cancel</button>
       </div>
-      <ul id="orderList"></ul>
-      <p>Subtotal: $<span id="subtotal">0</span></p>
-      <p><strong>Total: $<span id="total">0</span></strong></p>
-      <button id="uniformDiscountBtn" class="discount-btn">👮 Apply PD Discount</button>
-      <button id="redeemPassBtn" class="discount-btn">Redeem Membership</button>
-      <div id="redeemPassModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1200;">
-  <div style="background:#fff; padding:20px; border-radius:12px; width:360px; max-height:70vh; overflow:auto;">
-    <div style="font-weight:800; margin-bottom:10px;">Redeem Membership</div>
-    <input id="redeemSearch" placeholder="Search name..." style="width:100%; padding:8px; border:2px solid #c82333; border-radius:8px; font-weight:700;">
-    <div id="redeemList" style="margin-top:10px; display:flex; flex-direction:column; gap:8px;"></div>
-    <div style="display:flex; gap:8px; margin-top:12px; justify-content:flex-end;">
-      <button id="closeRedeem" class="no-btn" style="background:#f44336; color:#fff; border:none; border-radius:8px; padding:8px 12px; font-weight:800;">Close</button>
     </div>
-  </div>
-</div>
-      <button id="submitOrder">Place Order</button>
-    </aside>
-  </div>
-  <div id="notification" role="alert"></div>
-  <!-- Discount confirmation modal -->
-  <div id="discountModal" role="dialog" aria-modal="true">
-    <div class="modal-content">
-      <div style="font-size:1.2rem; margin-bottom: 10px;">Is the customer in uniform?</div>
-      <button class="yes-btn">Yes</button>
-      <button class="no-btn">No</button>
-    </div>
-  </div>
-  <script type="module">
-    import {
-      getFirestore, Timestamp,
-      collection, addDoc, doc, getDoc, setDoc, getDocs,
-      increment, serverTimestamp,
-      query, orderBy, startAt, endAt, limit, documentId,
-      runTransaction, where
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-  
-    const db = getFirestore();
-  
-    const SPECIAL_CUSTOMERS = {};
-    let lastSpecialAlertFor = "";
-  
-    function loyaltyKey(name) {
-      return (name || "").trim().toLowerCase().replace(/\s+/g, " ");
-    }
-  
-    function toTitleCase(str) {
-      return (str || "")
-        .toLowerCase()
-        .split(" ")
-        .filter(Boolean)
-        .map(w => w[0].toUpperCase() + w.slice(1))
-        .join(" ");
-    }
-  
-    async function bumpLoyaltyForOrder(db, customerName, ts, amount = 0) {
-      const raw = customerName || "";
-      const key = loyaltyKey(raw);
-      if (!key) return 0;
-  
-      const ref = doc(db, "loyalty", key);
-      await setDoc(ref, {
-        name: raw.trim(),
-        visits: increment(1),
-        spent: increment(Number(amount) || 0),
-        lastVisit: ts || serverTimestamp(),
-        updatedAt: serverTimestamp()
-      }, { merge: true });
-  
-      const snap = await getDoc(ref);
-      return (snap.exists() && Number(snap.data().visits)) || 0;
-    }
-  
-    function showNotification(message, duration = 4000) {
-      const n = document.getElementById("notification");
-      n.textContent = message;
-      n.style.display = "block";
-      setTimeout(() => {
-        n.style.display = "none";
-      }, duration);
-    }
-  
-    function debounce(fn, delay = 200) {
-      let t;
-      return (...args) => {
-        clearTimeout(t);
-        t = setTimeout(() => fn(...args), delay);
+
+    <script type="module">
+      import {
+        getFirestore,
+        Timestamp,
+        collection,
+        addDoc,
+        doc,
+        getDoc,
+        setDoc,
+        getDocs,
+        increment,
+        serverTimestamp,
+        query,
+        orderBy,
+        startAt,
+        endAt,
+        limit,
+        documentId,
+        runTransaction,
+        where,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
+      const db = getFirestore();
+
+      const SPECIAL_CUSTOMERS = {};
+      let lastSpecialAlertFor = "";
+
+      function loyaltyKey(name) {
+        return (name || "").trim().toLowerCase().replace(/\s+/g, " ");
+      }
+
+      function toTitleCase(str) {
+        return (str || "")
+          .toLowerCase()
+          .split(" ")
+          .filter(Boolean)
+          .map((w) => w[0].toUpperCase() + w.slice(1))
+          .join(" ");
+      }
+
+      async function bumpLoyaltyForOrder(db, customerName, ts, amount = 0) {
+        const raw = customerName || "";
+        const key = loyaltyKey(raw);
+        if (!key) return 0;
+
+        const ref = doc(db, "loyalty", key);
+        await setDoc(
+          ref,
+          {
+            name: raw.trim(),
+            visits: increment(1),
+            spent: increment(Number(amount) || 0),
+            lastVisit: ts || serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          },
+          { merge: true }
+        );
+
+        const snap = await getDoc(ref);
+        return (snap.exists() && Number(snap.data().visits)) || 0;
+      }
+
+      function showNotification(message, duration = 4000) {
+        const n = document.getElementById("notification");
+        n.textContent = message;
+        n.style.display = "block";
+        setTimeout(() => {
+          n.style.display = "none";
+        }, duration);
+      }
+
+      function debounce(fn, delay = 200) {
+        let t;
+        return (...args) => {
+          clearTimeout(t);
+          t = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function subscribeCustomerSuggestions() {
+        const input = document.getElementById("customerName");
+        const datalist = document.getElementById("customerSuggestions");
+        let t;
+
+        input.addEventListener("input", async () => {
+          clearTimeout(t);
+          const val = (input.value || "").trim().toLowerCase();
+          datalist.innerHTML = "";
+          if (!val) return;
+
+          t = setTimeout(async () => {
+            const qL = query(
+              collection(db, "loyalty"),
+              orderBy(documentId()),
+              startAt(val),
+              endAt(val + "\uf8ff"),
+              limit(8)
+            );
+
+            const snap = await getDocs(qL);
+            snap.docs.forEach((d) => {
+              const opt = document.createElement("option");
+              opt.value = d.data()?.name || d.id;
+              datalist.appendChild(opt);
+            });
+          }, 150);
+        });
+      }
+
+      function checkSpecialCustomerReminder() {
+        const input = document.getElementById("customerName");
+        const key = (input.value || "")
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, " ");
+        if (!key) return;
+
+        if (SPECIAL_CUSTOMERS[key] && lastSpecialAlertFor !== key) {
+          showNotification(SPECIAL_CUSTOMERS[key].message, 6000);
+          lastSpecialAlertFor = key;
+        }
+      }
+
+      subscribeCustomerSuggestions();
+      const debouncedCheck = debounce(checkSpecialCustomerReminder, 180);
+      document
+        .getElementById("customerName")
+        .addEventListener("input", debouncedCheck);
+      document
+        .getElementById("customerName")
+        .addEventListener("change", checkSpecialCustomerReminder);
+      document
+        .getElementById("customerName")
+        .addEventListener("blur", checkSpecialCustomerReminder);
+
+      const productIngredients = {
+        "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+        "The Glorious": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
+        "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
+        "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
+        "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
+        "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
+        "Money Shot": { burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
+        "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
+        "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
+        "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
+        Soda: { corn_syrup: 1 },
+        Coffee: { coffee_beans: 1 },
+        Fries: { potato: 2 },
+        "Onion Rings": { onion: 2 },
+        "Chicken Nuggets": { chicken: 2 },
+        "Ice Cream": { ice_cream: 1, vanilla: 2 },
+        "Rim Job": { sugar: 1, flour: 1 },
+        "Cream Pie": { sugar: 1, flour: 1 },
       };
-    }
-  
-    function subscribeCustomerSuggestions() {
-      const input = document.getElementById("customerName");
-      const datalist = document.getElementById("customerSuggestions");
-      let t;
-  
-      input.addEventListener("input", async () => {
-        clearTimeout(t);
-        const val = (input.value || "").trim().toLowerCase();
-        datalist.innerHTML = "";
-        if (!val) return;
-  
-        t = setTimeout(async () => {
-          const qL = query(
-            collection(db, "loyalty"),
-            orderBy(documentId()),
-            startAt(val),
-            endAt(val + "\uf8ff"),
-            limit(8)
-          );
-  
-          const snap = await getDocs(qL);
-          snap.docs.forEach(d => {
-            const opt = document.createElement("option");
-            opt.value = d.data()?.name || d.id;
-            datalist.appendChild(opt);
-          });
-        }, 150);
-      });
-    }
-  
-    function checkSpecialCustomerReminder() {
-      const input = document.getElementById("customerName");
-      const key = (input.value || "").trim().toLowerCase().replace(/\s+/g, " ");
-      if (!key) return;
-  
-      if (SPECIAL_CUSTOMERS[key] && lastSpecialAlertFor !== key) {
-        showNotification(SPECIAL_CUSTOMERS[key].message, 6000);
-        lastSpecialAlertFor = key;
-      }
-    }
-  
-    subscribeCustomerSuggestions();
-    const debouncedCheck = debounce(checkSpecialCustomerReminder, 180);
-    document.getElementById("customerName").addEventListener("input", debouncedCheck);
-    document.getElementById("customerName").addEventListener("change", checkSpecialCustomerReminder);
-    document.getElementById("customerName").addEventListener("blur", checkSpecialCustomerReminder);
-  
-    const productIngredients = {
-      "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-      "The Glorious": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
-      "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
-      "Heart Stopper": { burger_buns: 1, ground_beef: 3, cheese_slices: 1 },
-      "The Prickley": { burger_buns: 1, chicken: 1, lettuce: 1 },
-      "The Simply": { burger_buns: 1, chicken: 1, bacon: 1 },
-      "Money Shot": { burger_buns: 1, ground_beef: 2, cheese_slices: 1 },
-      "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
-      "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
-      "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
-      "Soda": { corn_syrup: 1 },
-      "Coffee": { coffee_beans: 1 },
-      "Fries": { potato: 2 },
-      "Onion Rings": { onion: 2 },
-      "Chicken Nuggets": { chicken: 2 },
-      "Ice Cream": { ice_cream: 1, vanilla: 2 },
-      "Rim Job": { sugar: 1, flour: 1 },
-      "Cream Pie": { sugar: 1, flour: 1 }
-    };
-  
-    const comboDetails = {
-      "The Heartstopper Meal": {
-        price: 1400,
-        components: [
-          { name: "Heart Stopper", quantity: 5 },
-          { name: "Onion Rings", quantity: 5 },
-          { name: "Soda", quantity: 15 }
-        ]
-      },
-      "The Bleeder Box": {
-        price: 600,
-        components: [
-          { name: "The Bleeder", quantity: 5 },
-          { name: "Soda", quantity: 5 }
-        ]
-      },
-      "Patty Pounder Combo": {
-        price: 1100,
-        components: [
-          { name: "The Prickley", quantity: 10 },
-          { name: "Soda", quantity: 10 }
-        ]
-      }
-    };
-  
-    const bundleDetails = {
-      "Fries Bundle": {
-        price: 250,
-        components: [{ name: "Fries", quantity: 5 }]
-      },
-      "Onion Bundle": {
-        price: 250,
-        components: [{ name: "Onion Rings", quantity: 5 }]
-      },
-      "Nuggies Box": {
-        price: 400,
-        components: [{ name: "Chicken Nuggets", quantity: 5 }]
-      },
-      "Cream Pie Bundle": {
-        price: 250,
-        components: [{ name: "Cream Pie", quantity: 5 }]
-      },
-      "Rim Job Bundle": {
-        price: 250,
-        components: [{ name: "Rim Job", quantity: 5 }]
-      },
-      "Ice Cream Bundle": {
-        price: 250,
-        components: [{ name: "Ice Cream", quantity: 5 }]
-      },
-      "Drinks Bundle": {
-        price: 150,
-        components: [{ name: "Soda", quantity: 5 }],
-      }
-    };
-  
-    const ingredientLabels = {
-      burger_buns: "burger buns",
-      burger_patties: "burger patties",
-      ground_beef: "ground beef",
-      sugar: "sugar",
-      flour: "flour",
-      lettuce: "lettuce",
-      cheese_slices: "cheddar cheese slices",
-      corn_syrup: "corn syrup",
-      potato: "potatoes",
-      ice_cream: "ice cream",
-      chicken: "chicken",
-      bacon: "bacon",
-      coffee_beans: "coffee",
-      vanilla: "vanilla",
-      goat_cheese: "goat cheese",
-      onion: "onion",
-      tortilla: "tortilla",
-      tomato: "tomato"
-    };
-  
-    function computeIngredientsNeeded(items) {
-      const totalNeeded = {};
-  
-      items.forEach(item => {
-        const qty = Number(item.quantity || 1);
-  
-        if (comboDetails[item.name]) {
-          comboDetails[item.name].components.forEach(comp => {
-            const needed = productIngredients[comp.name];
-            if (!needed) return;
-  
-            for (const ing in needed) {
-              totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
-            }
-          });
-          return;
-        }
-  
-        if (bundleDetails[item.name]) {
-          bundleDetails[item.name].components.forEach(comp => {
-            const needed = productIngredients[comp.name];
-            if (!needed) return;
-  
-            for (const ing in needed) {
-              totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
-            }
-          });
-          return;
-        }
-  
-        const needed = productIngredients[item.name];
-        if (!needed) return;
-  
-        for (const ing in needed) {
-          totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
-        }
-      });
-  
-      return totalNeeded;
-    }
-  
-    async function getInventory() {
-      const snap = await getDoc(doc(db, "inventory", "current"));
-      return snap.exists() ? snap.data() : {};
-    }
-  
-    async function saveInventory(data) {
-      await setDoc(doc(db, "inventory", "current"), data, { merge: true });
-    }
-  
-    async function deductInventoryForItems(items) {
-      const inventory = await getInventory();
-      const totalNeeded = computeIngredientsNeeded(items);
-  
-      const missing = [];
-      for (const ing in totalNeeded) {
-        const invVal = Number(inventory[ing] || 0);
-        if (invVal < totalNeeded[ing]) {
-          missing.push(`${ingredientLabels[ing] || ing} (need ${totalNeeded[ing]}, have ${invVal})`);
-        }
-      }
-  
-      if (missing.length) {
-        throw new Error("Not enough ingredients:\n" + missing.join("\n"));
-      }
-  
-      for (const ing in totalNeeded) {
-        inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
-        if (inventory[ing] < 0) inventory[ing] = 0;
-      }
-  
-      await saveInventory(inventory);
-    }
-  
-    function dateKeyFromTs(ts = new Date()) {
-      const d = new Date(ts);
-      const yyyy = d.getFullYear();
-      const mm = String(d.getMonth() + 1).padStart(2, "0");
-      const dd = String(d.getDate()).padStart(2, "0");
-      return `${yyyy}-${mm}-${dd}`;
-    }
-  
-    function passDocId(customerKey, passType) {
-      return `${customerKey}|${passType}`;
-    }
-  
-    function addDays(date, n) {
-      const d = new Date(date);
-      d.setDate(d.getDate() + n);
-      return d;
-    }
-  
-    async function upsertPassOnPayment({ customerName, passType, price }) {
-      const key = loyaltyKey(customerName);
-      const id = passDocId(key, passType);
-      const ref = doc(db, "passes", id);
-  
-      const snap = await getDoc(ref);
-      const existing = snap.exists() ? snap.data() : {};
-  
-      const now = new Date();
-      const start = now;
-      const endDate = addDays(start, 30);
-  
-      await setDoc(ref, {
-        customer: toTitleCase(customerName),
-        key,
-        type: passType,
-        startDate: Timestamp.fromDate(start),
-        endDate: Timestamp.fromDate(endDate),
-        active: true,
-        lastUpdated: serverTimestamp(),
-        price: Number(price),
-        maxClaims: 20,
-        claimsUsed: Number(existing.claimsUsed || 0)
-      }, { merge: true });
-  
-      return id;
-    }
-  
-    async function listActivePasses(search = "") {
-      const snap = await getDocs(collection(db, "passes"));
-      const out = [];
-  
-      snap.forEach(d => {
-        const x = d.data();
-        if (!x.active) return;
-  
-        const end = x.endDate?.toDate?.() || new Date(0);
-        if (end < new Date()) return;
-  
-        const name = x.customer || "";
-        if (search && !name.toLowerCase().includes(search.trim().toLowerCase())) return;
-  
-        const maxClaims = Number(x.maxClaims || 20);
-        const claimsUsed = Number(x.claimsUsed || 0);
-        const left = Math.max(0, maxClaims - claimsUsed);
-  
-        out.push({
-          id: d.id,
-          name,
-          type: x.type,
-          claimsUsed,
-          maxClaims,
-          left
+
+      const comboDetails = {
+        "The Heartstopper Meal": {
+          price: 1400,
+          components: [
+            { name: "Heart Stopper", quantity: 5 },
+            { name: "Onion Rings", quantity: 5 },
+            { name: "Soda", quantity: 15 },
+          ],
+        },
+        "The Bleeder Box": {
+          price: 600,
+          components: [
+            { name: "The Bleeder", quantity: 5 },
+            { name: "Soda", quantity: 5 },
+          ],
+        },
+        "Patty Pounder Combo": {
+          price: 1100,
+          components: [
+            { name: "The Prickley", quantity: 10 },
+            { name: "Soda", quantity: 10 },
+          ],
+        },
+      };
+
+      const bundleDetails = {
+        "Fries Bundle": {
+          price: 250,
+          components: [{ name: "Fries", quantity: 5 }],
+        },
+        "Onion Bundle": {
+          price: 250,
+          components: [{ name: "Onion Rings", quantity: 5 }],
+        },
+        "Nuggies Box": {
+          price: 400,
+          components: [{ name: "Chicken Nuggets", quantity: 5 }],
+        },
+        "Cream Pie Bundle": {
+          price: 250,
+          components: [{ name: "Cream Pie", quantity: 5 }],
+        },
+        "Rim Job Bundle": {
+          price: 250,
+          components: [{ name: "Rim Job", quantity: 5 }],
+        },
+        "Ice Cream Bundle": {
+          price: 250,
+          components: [{ name: "Ice Cream", quantity: 5 }],
+        },
+        "Drinks Bundle": {
+          price: 150,
+          components: [{ name: "Soda", quantity: 5 }],
+        },
+      };
+
+      const ingredientLabels = {
+        burger_buns: "burger buns",
+        burger_patties: "burger patties",
+        ground_beef: "ground beef",
+        sugar: "sugar",
+        flour: "flour",
+        lettuce: "lettuce",
+        cheese_slices: "cheddar cheese slices",
+        corn_syrup: "corn syrup",
+        potato: "potatoes",
+        ice_cream: "ice cream",
+        chicken: "chicken",
+        bacon: "bacon",
+        coffee_beans: "coffee",
+        vanilla: "vanilla",
+        goat_cheese: "goat cheese",
+        onion: "onion",
+        tortilla: "tortilla",
+        tomato: "tomato",
+      };
+
+      function computeIngredientsNeeded(items) {
+        const totalNeeded = {};
+
+        items.forEach((item) => {
+          const qty = Number(item.quantity || 1);
+
+          if (comboDetails[item.name]) {
+            comboDetails[item.name].components.forEach((comp) => {
+              const needed = productIngredients[comp.name];
+              if (!needed) return;
+
+              for (const ing in needed) {
+                totalNeeded[ing] =
+                  (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
+              }
+            });
+            return;
+          }
+
+          if (bundleDetails[item.name]) {
+            bundleDetails[item.name].components.forEach((comp) => {
+              const needed = productIngredients[comp.name];
+              if (!needed) return;
+
+              for (const ing in needed) {
+                totalNeeded[ing] =
+                  (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
+              }
+            });
+            return;
+          }
+
+          const needed = productIngredients[item.name];
+          if (!needed) return;
+
+          for (const ing in needed) {
+            totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
+          }
         });
-      });
-  
-      out.sort((a, b) => a.name.localeCompare(b.name));
-      return out;
-    }
-  
-    async function redeemPassTicket({ passId, passType, employee, customer, qty }) {
-      const items = [
-        {
-          name: "Patty Pounder Combo",
-          price: 0,
-          quantity: qty,
-          image: "assets/images/combo.png",
-          isMembershipRedeem: true
+
+        return totalNeeded;
+      }
+
+      async function getInventory() {
+        const snap = await getDoc(doc(db, "inventory", "current"));
+        return snap.exists() ? snap.data() : {};
+      }
+
+      async function saveInventory(data) {
+        await setDoc(doc(db, "inventory", "current"), data, { merge: true });
+      }
+
+      async function deductInventoryForItems(items) {
+        const inventory = await getInventory();
+        const totalNeeded = computeIngredientsNeeded(items);
+
+        const missing = [];
+        for (const ing in totalNeeded) {
+          const invVal = Number(inventory[ing] || 0);
+          if (invVal < totalNeeded[ing]) {
+            missing.push(
+              `${ingredientLabels[ing] || ing} (need ${
+                totalNeeded[ing]
+              }, have ${invVal})`
+            );
+          }
         }
-      ];
-  
-      await deductInventoryForItems(items);
-  
-      await runTransaction(db, async (tx) => {
-        const passRef = doc(db, "passes", passId);
-        const passSnap = await tx.get(passRef);
-  
-        if (!passSnap.exists()) throw new Error("Pass not found.");
-  
-        const pass = passSnap.data();
-        const maxClaims = Number(pass.maxClaims || 20);
-        const claimsUsed = Number(pass.claimsUsed || 0);
-  
-        if (claimsUsed >= maxClaims) {
-          throw new Error(`No claims left (${claimsUsed}/${maxClaims}).`);
+
+        if (missing.length) {
+          throw new Error("Not enough ingredients:\n" + missing.join("\n"));
         }
-  
-        const orderRef = doc(collection(db, "orders"));
-  
-        tx.set(orderRef, {
-          employee: toTitleCase(employee),
-          customer: toTitleCase(customer),
-          items,
-          total: 0,
-          discountApplied: true,
-          membershipRedeem: true,
-          timestamp: Timestamp.now(),
-          done: false,
-          deleted: false
+
+        for (const ing in totalNeeded) {
+          inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+          if (inventory[ing] < 0) inventory[ing] = 0;
+        }
+
+        await saveInventory(inventory);
+      }
+
+      function passDocId(customerKey, passType) {
+        return `${customerKey}|${passType}`;
+      }
+
+      function addDays(date, n) {
+        const d = new Date(date);
+        d.setDate(d.getDate() + n);
+        return d;
+      }
+
+      async function upsertPassOnPayment({ customerName, passType, price }) {
+        const key = loyaltyKey(customerName);
+        const id = passDocId(key, passType);
+        const ref = doc(db, "passes", id);
+
+        const snap = await getDoc(ref);
+        const existing = snap.exists() ? snap.data() : {};
+
+        const now = new Date();
+        const start = now;
+        const endDate = addDays(start, 30);
+
+        await setDoc(
+          ref,
+          {
+            customer: toTitleCase(customerName),
+            key,
+            type: passType,
+            startDate: Timestamp.fromDate(start),
+            endDate: Timestamp.fromDate(endDate),
+            active: true,
+            lastUpdated: serverTimestamp(),
+            price: Number(price),
+            maxClaims: 20,
+            claimsUsed: Number(existing.claimsUsed || 0),
+          },
+          { merge: true }
+        );
+
+        return id;
+      }
+
+      async function listActivePasses(search = "") {
+        const snap = await getDocs(collection(db, "passes"));
+        const out = [];
+
+        snap.forEach((d) => {
+          const x = d.data();
+          if (!x.active) return;
+
+          const end = x.endDate?.toDate?.() || new Date(0);
+          if (end < new Date()) return;
+
+          const name = x.customer || "";
+          if (
+            search &&
+            !name.toLowerCase().includes(search.trim().toLowerCase())
+          )
+            return;
+
+          const maxClaims = Number(x.maxClaims || 20);
+          const claimsUsed = Number(x.claimsUsed || 0);
+          const left = Math.max(0, maxClaims - claimsUsed);
+
+          out.push({
+            id: d.id,
+            name,
+            type: x.type,
+            claimsUsed,
+            maxClaims,
+            left,
+          });
         });
-  
-        tx.update(passRef, {
-          claimsUsed: claimsUsed + 1,
-          lastRedeemedAt: serverTimestamp(),
-          lastUpdated: serverTimestamp()
+
+        out.sort((a, b) => a.name.localeCompare(b.name));
+        return out;
+      }
+
+      async function redeemPassTicket({
+        passId,
+        passType,
+        employee,
+        customer,
+        qty,
+      }) {
+        const items = [
+          {
+            name: "Patty Pounder Combo",
+            price: 0,
+            quantity: qty,
+            image: "assets/images/combo.png",
+            isMembershipRedeem: true,
+          },
+        ];
+
+        await deductInventoryForItems(items);
+
+        await runTransaction(db, async (tx) => {
+          const passRef = doc(db, "passes", passId);
+          const passSnap = await tx.get(passRef);
+
+          if (!passSnap.exists()) throw new Error("Pass not found.");
+
+          const pass = passSnap.data();
+          const maxClaims = Number(pass.maxClaims || 20);
+          const claimsUsed = Number(pass.claimsUsed || 0);
+
+          if (claimsUsed >= maxClaims) {
+            throw new Error(`No claims left (${claimsUsed}/${maxClaims}).`);
+          }
+
+          const orderRef = doc(collection(db, "orders"));
+
+          tx.set(orderRef, {
+            employee: toTitleCase(employee),
+            customer: toTitleCase(customer),
+            items,
+            total: 0,
+            discountApplied: true,
+            membershipRedeem: true,
+            timestamp: Timestamp.now(),
+            done: false,
+            deleted: false,
+            tabType: null,
+          });
+
+          tx.update(passRef, {
+            claimsUsed: claimsUsed + 1,
+            lastRedeemedAt: serverTimestamp(),
+            lastUpdated: serverTimestamp(),
+          });
         });
-      });
-    }
-  
-    let order = [];
-    let activeDiscount = null;
-  
-    const orderList = document.getElementById("orderList");
-    const subtotalSpan = document.getElementById("subtotal");
-    const totalSpan = document.getElementById("total");
-    const categoryButtons = document.querySelectorAll(".category");
-    const itemCards = document.querySelectorAll(".item-card");
-    const searchBar = document.getElementById("searchBar");
-    const discountModal = document.getElementById("discountModal");
-    const yesBtn = discountModal.querySelector(".yes-btn");
-    const noBtn = discountModal.querySelector(".no-btn");
-    const uniformBtn = document.getElementById("uniformDiscountBtn");
-    let discountToApply = null;
-    let discountPercentToApply = 0;
-    const UNIFORM_DISCOUNT = 0.15;
-  
-    function calcTotal(subtotal) {
-      return (activeDiscount && activeDiscount.percent)
-        ? subtotal * (1 - activeDiscount.percent)
-        : subtotal;
-    }
-  
-    function ensureBundleModal() {
-      if (document.getElementById("bundleModal")) return;
-  
-      const wrap = document.createElement("div");
-      wrap.innerHTML = `
+      }
+
+      let order = [];
+      let activeDiscount = null;
+      let activeTabType = null;
+
+      const orderList = document.getElementById("orderList");
+      const subtotalSpan = document.getElementById("subtotal");
+      const totalSpan = document.getElementById("total");
+      const categoryButtons = document.querySelectorAll(".category");
+      const itemCards = document.querySelectorAll(".item-card");
+      const searchBar = document.getElementById("searchBar");
+      const discountModal = document.getElementById("discountModal");
+      const yesBtn = discountModal.querySelector(".yes-btn");
+      const noBtn = discountModal.querySelector(".no-btn");
+      const uniformBtn = document.getElementById("uniformDiscountBtn");
+      const tabOrderBtn = document.getElementById("tabOrderBtn");
+      const tabIndicator = document.getElementById("tabIndicator");
+      const tabModal = document.getElementById("tabModal");
+      const emsTabBtn = tabModal.querySelector(".ems-btn");
+      const dojTabBtn = tabModal.querySelector(".doj-btn");
+      const cancelTabBtn = tabModal.querySelector(".cancel-btn");
+
+      let discountToApply = null;
+      let discountPercentToApply = 0;
+      const UNIFORM_DISCOUNT = 0.15;
+
+      function calcTotal(subtotal) {
+        return activeDiscount && activeDiscount.percent
+          ? subtotal * (1 - activeDiscount.percent)
+          : subtotal;
+      }
+
+      function updateTabUI() {
+        tabIndicator.className = "";
+        tabIndicator.style.display = "none";
+
+        if (activeTabType === "EMS") {
+          tabIndicator.textContent = "🚑 Current tab: EMS";
+          tabIndicator.className = "ems";
+          tabOrderBtn.classList.add("active");
+          tabOrderBtn.textContent = "⚖️ EMS Tab Selected";
+        } else if (activeTabType === "DOJ") {
+          tabIndicator.textContent = "⚖️ Current tab: DOJ";
+          tabIndicator.className = "doj";
+          tabOrderBtn.classList.add("active");
+          tabOrderBtn.textContent = "⚖️ DOJ Tab Selected";
+        } else {
+          tabOrderBtn.classList.remove("active");
+          tabOrderBtn.textContent = "⚖️ Mark DOJ/EMS Tab";
+        }
+      }
+
+      function ensureBundleModal() {
+        if (document.getElementById("bundleModal")) return;
+
+        const wrap = document.createElement("div");
+        wrap.innerHTML = `
         <div id="bundleModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1250;">
           <div style="background:#fff; padding:20px; border-radius:12px; width:420px; max-height:80vh; overflow:auto; font-weight:700;">
             <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -1365,48 +1981,51 @@
           </div>
         </div>
       `;
-      document.body.appendChild(wrap.firstElementChild);
-    }
-  
-    ensureBundleModal();
-  
-    const bundleModal = document.getElementById("bundleModal");
-    const bundleClose = document.getElementById("bundleClose");
-    const bundleConfirm = document.getElementById("bundleConfirm");
-    const bundleSelect = document.getElementById("bundleSelect");
-  
-    function buildBundleSelect() {
-      bundleSelect.innerHTML = '<option value="">— choose a bundle —</option>';
-      Object.keys(bundleDetails).forEach(name => {
-        const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = `${name} - $${bundleDetails[name].price}`;
-        bundleSelect.appendChild(opt);
-      });
-    }
-  
-    function openBundleModal() {
-      buildBundleSelect();
-      bundleModal.style.display = "flex";
-    }
-  
-    function closeBundleModal() {
-      bundleModal.style.display = "none";
-    }
-  
-    bundleClose.addEventListener("click", closeBundleModal);
-  
-    function updateOrderList() {
-      orderList.innerHTML = "";
-      let subtotal = 0;
-  
-      order.forEach((item, idx) => {
-        subtotal += item.price * item.quantity;
-  
-        const li = document.createElement("li");
-        li.innerHTML = `
+        document.body.appendChild(wrap.firstElementChild);
+      }
+
+      ensureBundleModal();
+
+      const bundleModal = document.getElementById("bundleModal");
+      const bundleClose = document.getElementById("bundleClose");
+      const bundleConfirm = document.getElementById("bundleConfirm");
+      const bundleSelect = document.getElementById("bundleSelect");
+
+      function buildBundleSelect() {
+        bundleSelect.innerHTML =
+          '<option value="">— choose a bundle —</option>';
+        Object.keys(bundleDetails).forEach((name) => {
+          const opt = document.createElement("option");
+          opt.value = name;
+          opt.textContent = `${name} - $${bundleDetails[name].price}`;
+          bundleSelect.appendChild(opt);
+        });
+      }
+
+      function openBundleModal() {
+        buildBundleSelect();
+        bundleModal.style.display = "flex";
+      }
+
+      function closeBundleModal() {
+        bundleModal.style.display = "none";
+      }
+
+      bundleClose.addEventListener("click", closeBundleModal);
+
+      function updateOrderList() {
+        orderList.innerHTML = "";
+        let subtotal = 0;
+
+        order.forEach((item, idx) => {
+          subtotal += item.price * item.quantity;
+
+          const li = document.createElement("li");
+          li.innerHTML = `
           <div class="item-details">
-            ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(item.price * item.quantity).toFixed(2)}
+            ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(
+            item.price * item.quantity
+          ).toFixed(2)}
           </div>
           <div class="quantity-controls">
             <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
@@ -1415,456 +2034,596 @@
           </div>
           <div class="remove-btn" data-index="${idx}">Remove</div>
         `;
-        orderList.appendChild(li);
-      });
-  
-      subtotalSpan.textContent = subtotal.toFixed(2);
-      totalSpan.textContent = calcTotal(subtotal).toFixed(2);
-  
-      document.querySelectorAll(".qty-btn").forEach(btn => {
-        btn.addEventListener("click", e => {
-          const index = parseInt(e.target.dataset.index, 10);
-          const action = e.target.dataset.action;
-  
-          if (action === "plus") {
-            order[index].quantity++;
-          } else if (action === "minus") {
-            order[index].quantity = Math.max(1, order[index].quantity - 1);
-          }
-  
-          updateOrderList();
+          orderList.appendChild(li);
         });
-      });
-  
-      document.querySelectorAll(".remove-btn").forEach(btn => {
-        btn.addEventListener("click", e => {
-          const index = parseInt(e.target.dataset.index, 10);
-          order.splice(index, 1);
-          updateOrderList();
-        });
-      });
-    }
-  
-    function filterItems() {
-      const selectedCategory = [...categoryButtons].find(btn => btn.classList.contains("active")).textContent.trim();
-      const searchText = searchBar.value.trim().toLowerCase();
-  
-      itemCards.forEach(card => {
-        const itemCategory = card.getAttribute("data-category");
-        const itemName = card.getAttribute("data-name").toLowerCase();
-  
-        const categoryMatch = selectedCategory === "All" || selectedCategory === itemCategory;
-        const searchMatch = itemName.includes(searchText);
-  
-        card.style.display = (categoryMatch && searchMatch) ? "block" : "none";
-      });
-    }
-  
-    categoryButtons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        categoryButtons.forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        filterItems();
-      });
-    });
-  
-    searchBar.addEventListener("input", filterItems);
-  
-    const customSelect = document.querySelector(".custom-select");
-    const selected = customSelect.querySelector(".select-selected");
-    const optionsBox = customSelect.querySelector(".select-items");
-    const options = optionsBox.querySelectorAll("div");
-    const hiddenSelect = document.getElementById("employeeName");
-    const employeeSelect = hiddenSelect;
-  
-    employeeSelect.addEventListener("change", () => {
-      localStorage.setItem("currentEmployee", employeeSelect.value);
-      const selectedDiv = document.querySelector(".select-selected");
-      if (selectedDiv) selectedDiv.textContent = employeeSelect.value;
-    });
-  
-    window.addEventListener("DOMContentLoaded", () => {
-      const saved = localStorage.getItem("currentEmployee");
-      if (saved) employeeSelect.value = saved;
-  
-      const selectedDiv = document.querySelector(".select-selected");
-      if (selectedDiv) selectedDiv.textContent = saved || "Select employee";
-    });
-  
-    selected.addEventListener("click", () => {
-      optionsBox.classList.toggle("select-hide");
-    });
-  
-    options.forEach(option => {
-      option.addEventListener("click", () => {
-        selected.textContent = option.textContent;
-        hiddenSelect.value = option.dataset.value;
-        hiddenSelect.dispatchEvent(new Event("change"));
-        optionsBox.classList.add("select-hide");
-      });
-    });
-  
-    document.addEventListener("click", e => {
-      if (!customSelect.contains(e.target)) {
-        optionsBox.classList.add("select-hide");
-      }
-    });
-  
-    document.querySelectorAll(".add-btn").forEach(button => {
-      button.addEventListener("click", e => {
-        const card = e.target.closest(".item-card");
-        const name = card.dataset.name;
-        const price = parseFloat(card.dataset.price);
-        const quantity = parseInt(card.querySelector(".quantity-input").value, 10) || 1;
-        const image = card.dataset.image;
-        const passType = card.dataset.passType || null;
-        const isPassPayment = card.dataset.isPassPayment === "true";
-  
-        if (name === "Bundle") {
-          openBundleModal();
-  
-          bundleConfirm.onclick = null;
-          bundleConfirm.onclick = () => {
-            const selectedBundle = bundleSelect.value;
-  
-            if (!selectedBundle) {
-              showNotification("Please choose a bundle.");
-              return;
+
+        subtotalSpan.textContent = subtotal.toFixed(2);
+        totalSpan.textContent = calcTotal(subtotal).toFixed(2);
+
+        document.querySelectorAll(".qty-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            const action = e.target.dataset.action;
+
+            if (action === "plus") {
+              order[index].quantity++;
+            } else if (action === "minus") {
+              order[index].quantity = Math.max(1, order[index].quantity - 1);
             }
-  
-            const bundlePrice = bundleDetails[selectedBundle].price;
-            const existing = order.find(item => item.name === selectedBundle);
-  
-            if (existing) {
-              existing.quantity += quantity;
-            } else {
-              order.push({
-                name: selectedBundle,
-                price: bundlePrice,
-                quantity,
-                image,
-                isBundle: true
-              });
-            }
-  
+
             updateOrderList();
-            closeBundleModal();
-          };
-  
-          return;
-        }
-  
-        const existingItem = order.find(item => item.name === name && item.isPassPayment === isPassPayment);
-        if (existingItem) {
-          existingItem.quantity += quantity;
-        } else {
-          order.push({ name, price, quantity, image, isPassPayment, passType });
-        }
-  
-        updateOrderList();
+          });
+        });
+
+        document.querySelectorAll(".remove-btn").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            const index = parseInt(e.target.dataset.index, 10);
+            order.splice(index, 1);
+            updateOrderList();
+          });
+        });
+      }
+
+      function filterItems() {
+        const selectedCategory = [...categoryButtons]
+          .find((btn) => btn.classList.contains("active"))
+          .textContent.trim();
+        const searchText = searchBar.value.trim().toLowerCase();
+
+        itemCards.forEach((card) => {
+          const itemCategory = card.getAttribute("data-category");
+          const itemName = card.getAttribute("data-name").toLowerCase();
+
+          const categoryMatch =
+            selectedCategory === "All" || selectedCategory === itemCategory;
+          const searchMatch = itemName.includes(searchText);
+
+          card.style.display = categoryMatch && searchMatch ? "block" : "none";
+        });
+      }
+
+      categoryButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          categoryButtons.forEach((b) => b.classList.remove("active"));
+          btn.classList.add("active");
+          filterItems();
+        });
       });
-    });
-  
-    function resetDiscountButtons() {
-      const btn = document.getElementById("uniformDiscountBtn");
-      if (!btn) return;
-  
-      if (activeDiscount?.code === "uniform") {
-        btn.classList.add("active");
-        btn.textContent = "Discount Applied (15%)";
-      } else {
-        btn.classList.remove("active");
-        btn.textContent = "👮 Apply PD Discount";
-      }
-    }
-  
-    yesBtn.addEventListener("click", () => {
-      if (!discountPercentToApply) {
-        discountModal.style.display = "none";
-        showNotification("No discount selected.");
-        return;
-      }
-  
-      activeDiscount = {
-        code: discountToApply || "uniform",
-        percent: discountPercentToApply,
-        uniform: true
-      };
-  
-      resetDiscountButtons();
-      updateOrderList();
-      discountModal.style.display = "none";
-      showNotification(`✅ ${Math.round(activeDiscount.percent * 100)}% uniform discount applied!`);
-      discountToApply = null;
-      discountPercentToApply = 0;
-    });
-  
-    noBtn.addEventListener("click", () => {
-      discountModal.style.display = "none";
-      showNotification("No discount applied.");
-      discountToApply = null;
-      discountPercentToApply = 0;
-    });
-  
-    uniformBtn.addEventListener("click", () => {
-      discountToApply = "uniform";
-      discountPercentToApply = UNIFORM_DISCOUNT;
-      discountModal.style.display = "flex";
-    });
-  
-    function extractPassesFromOrder(items) {
-      return items
-        .filter(i => i?.isPassPayment)
-        .map(i => ({
-          passType: "golden",
-          price: i.price,
-          qty: i.quantity || 1
-        }));
-    }
-  
-    async function processOrder(employee, customerRaw, inventory, totalNeeded) {
-      const formattedCustomer = toTitleCase(customerRaw);
-  
-      const passPurchases = extractPassesFromOrder(order);
-      const normalItems = order.filter(i => !i.isPassPayment && !((i?.name || "").toLowerCase().includes("pass")));
-  
-      if (passPurchases.length) {
-        for (const p of passPurchases) {
-          for (let n = 0; n < p.qty; n++) {
-            await upsertPassOnPayment({
-              customerName: formattedCustomer,
-              passType: p.passType,
-              price: p.price
+
+      searchBar.addEventListener("input", filterItems);
+
+      const customSelect = document.querySelector(".custom-select");
+      const selected = customSelect.querySelector(".select-selected");
+      const optionsBox = customSelect.querySelector(".select-items");
+      const options = optionsBox.querySelectorAll("div");
+      const hiddenSelect = document.getElementById("employeeName");
+      const employeeSelect = hiddenSelect;
+
+      employeeSelect.addEventListener("change", () => {
+        localStorage.setItem("currentEmployee", employeeSelect.value);
+        const selectedDiv = document.querySelector(".select-selected");
+        if (selectedDiv) selectedDiv.textContent = employeeSelect.value;
+      });
+
+      window.addEventListener("DOMContentLoaded", () => {
+        const saved = localStorage.getItem("currentEmployee");
+        if (saved) employeeSelect.value = saved;
+
+        const selectedDiv = document.querySelector(".select-selected");
+        if (selectedDiv) selectedDiv.textContent = saved || "Select employee";
+      });
+
+      selected.addEventListener("click", () => {
+        optionsBox.classList.toggle("select-hide");
+      });
+
+      options.forEach((option) => {
+        option.addEventListener("click", () => {
+          selected.textContent = option.textContent;
+          hiddenSelect.value = option.dataset.value;
+          hiddenSelect.dispatchEvent(new Event("change"));
+          optionsBox.classList.add("select-hide");
+        });
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!customSelect.contains(e.target)) {
+          optionsBox.classList.add("select-hide");
+        }
+      });
+
+      document.querySelectorAll(".add-btn").forEach((button) => {
+        button.addEventListener("click", (e) => {
+          const card = e.target.closest(".item-card");
+          const name = card.dataset.name;
+          const price = parseFloat(card.dataset.price);
+          const quantity =
+            parseInt(card.querySelector(".quantity-input").value, 10) || 1;
+          const image = card.dataset.image;
+          const passType = card.dataset.passType || null;
+          const isPassPayment = card.dataset.isPassPayment === "true";
+
+          if (name === "Bundle") {
+            openBundleModal();
+
+            bundleConfirm.onclick = null;
+            bundleConfirm.onclick = () => {
+              const selectedBundle = bundleSelect.value;
+
+              if (!selectedBundle) {
+                showNotification("Please choose a bundle.");
+                return;
+              }
+
+              const bundlePrice = bundleDetails[selectedBundle].price;
+              const existing = order.find(
+                (item) => item.name === selectedBundle
+              );
+
+              if (existing) {
+                existing.quantity += quantity;
+              } else {
+                order.push({
+                  name: selectedBundle,
+                  price: bundlePrice,
+                  quantity,
+                  image,
+                  isBundle: true,
+                });
+              }
+
+              updateOrderList();
+              closeBundleModal();
+            };
+
+            return;
+          }
+
+          const existingItem = order.find(
+            (item) => item.name === name && item.isPassPayment === isPassPayment
+          );
+          if (existingItem) {
+            existingItem.quantity += quantity;
+          } else {
+            order.push({
+              name,
+              price,
+              quantity,
+              image,
+              isPassPayment,
+              passType,
             });
           }
+
+          updateOrderList();
+        });
+      });
+
+      function resetDiscountButtons() {
+        const btn = document.getElementById("uniformDiscountBtn");
+        if (!btn) return;
+
+        if (activeDiscount?.code === "uniform") {
+          btn.classList.add("active");
+          btn.textContent = "Discount Applied (15%)";
+        } else {
+          btn.classList.remove("active");
+          btn.textContent = "👮 Apply PD Discount";
         }
-  
-        const passSubtotal = passPurchases.reduce((s, p) => s + (p.price * p.qty), 0);
-  
+      }
+
+      yesBtn.addEventListener("click", () => {
+        if (!discountPercentToApply) {
+          discountModal.style.display = "none";
+          showNotification("No discount selected.");
+          return;
+        }
+
+        activeDiscount = {
+          code: discountToApply || "uniform",
+          percent: discountPercentToApply,
+          uniform: true,
+        };
+
+        resetDiscountButtons();
+        updateOrderList();
+        discountModal.style.display = "none";
+        showNotification(
+          `✅ ${Math.round(
+            activeDiscount.percent * 100
+          )}% uniform discount applied!`
+        );
+        discountToApply = null;
+        discountPercentToApply = 0;
+      });
+
+      noBtn.addEventListener("click", () => {
+        discountModal.style.display = "none";
+        showNotification("No discount applied.");
+        discountToApply = null;
+        discountPercentToApply = 0;
+      });
+
+      uniformBtn.addEventListener("click", () => {
+        discountToApply = "uniform";
+        discountPercentToApply = UNIFORM_DISCOUNT;
+        discountModal.style.display = "flex";
+      });
+
+      tabOrderBtn.addEventListener("click", () => {
+        tabModal.style.display = "flex";
+      });
+
+      emsTabBtn.addEventListener("click", () => {
+        activeTabType = "EMS";
+        updateTabUI();
+        tabModal.style.display = "none";
+        showNotification("🚑 EMS tab selected.");
+      });
+
+      dojTabBtn.addEventListener("click", () => {
+        activeTabType = "DOJ";
+        updateTabUI();
+        tabModal.style.display = "none";
+        showNotification("⚖️ DOJ tab selected.");
+      });
+
+      cancelTabBtn.addEventListener("click", () => {
+        tabModal.style.display = "none";
+      });
+
+      function extractPassesFromOrder(items) {
+        return items
+          .filter((i) => i?.isPassPayment)
+          .map((i) => ({
+            passType: "golden",
+            price: i.price,
+            qty: i.quantity || 1,
+          }));
+      }
+
+      async function processOrder(
+        employee,
+        customerRaw,
+        inventory,
+        totalNeeded
+      ) {
+        const formattedCustomer = toTitleCase(customerRaw);
+
+        const passPurchases = extractPassesFromOrder(order);
+        const normalItems = order.filter(
+          (i) =>
+            !i.isPassPayment && !(i?.name || "").toLowerCase().includes("pass")
+        );
+
+        if (passPurchases.length) {
+          for (const p of passPurchases) {
+            for (let n = 0; n < p.qty; n++) {
+              await upsertPassOnPayment({
+                customerName: formattedCustomer,
+                passType: p.passType,
+                price: p.price,
+              });
+            }
+          }
+
+          const passSubtotal = passPurchases.reduce(
+            (s, p) => s + p.price * p.qty,
+            0
+          );
+
+          await addDoc(collection(db, "orders"), {
+            employee: toTitleCase(employee),
+            customer: formattedCustomer,
+            items: passPurchases.map((p) => ({
+              name: `${p.passType} pass`,
+              price: p.price,
+              quantity: p.qty,
+            })),
+            total: passSubtotal,
+            discountApplied: null,
+            timestamp: Timestamp.now(),
+            done: true,
+            deleted: false,
+            kitchen: false,
+            isPassPayment: true,
+            tabType: null,
+          });
+        }
+
+        if (passPurchases.length && normalItems.length === 0) {
+          order = [];
+          updateOrderList();
+          document.getElementById("customerName").value = "";
+          activeDiscount = null;
+          activeTabType = null;
+          resetDiscountButtons();
+          updateTabUI();
+          showNotification("✅ Membership activated");
+          return;
+        }
+
+        order = normalItems;
+
+        for (const ing in totalNeeded) {
+          inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+          if (inventory[ing] < 0) inventory[ing] = 0;
+        }
+
+        await saveInventory(inventory);
+
+        const subtotal = order.reduce(
+          (sum, i) => sum + i.price * i.quantity,
+          0
+        );
+        const total = calcTotal(subtotal);
+        const nowTs = Timestamp.now();
+
+        await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
+
         await addDoc(collection(db, "orders"), {
           employee: toTitleCase(employee),
           customer: formattedCustomer,
-          items: passPurchases.map(p => ({
-            name: `${p.passType} pass`,
-            price: p.price,
-            quantity: p.qty
-          })),
-          total: passSubtotal,
-          discountApplied: null,
-          timestamp: Timestamp.now(),
-          done: true,
+          items: order,
+          total,
+          discountApplied: activeDiscount,
+          timestamp: nowTs,
+          done: false,
           deleted: false,
-          kitchen: false,
-          isPassPayment: true
+          kitchen: true,
+          isPassPayment: false,
+          tabType: activeTabType || null,
         });
-      }
-  
-      if (passPurchases.length && normalItems.length === 0) {
+
         order = [];
         updateOrderList();
         document.getElementById("customerName").value = "";
         activeDiscount = null;
+        activeTabType = null;
         resetDiscountButtons();
-        showNotification("✅ Membership activated");
-        return;
+        updateTabUI();
+        showNotification("✅ Order placed");
       }
-  
-      order = normalItems;
-  
-      for (const ing in totalNeeded) {
-        inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
-        if (inventory[ing] < 0) inventory[ing] = 0;
-      }
-  
-      await saveInventory(inventory);
-  
-      const subtotal = order.reduce((sum, i) => sum + i.price * i.quantity, 0);
-      const total = calcTotal(subtotal);
-      const nowTs = Timestamp.now();
-  
-      await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
-  
-      await addDoc(collection(db, "orders"), {
-        employee: toTitleCase(employee),
-        customer: formattedCustomer,
-        items: order,
-        total,
-        discountApplied: activeDiscount,
-        timestamp: nowTs,
-        done: false,
-        deleted: false,
-        kitchen: true,
-        isPassPayment: false
-      });
-  
-      order = [];
-      updateOrderList();
-      document.getElementById("customerName").value = "";
-      activeDiscount = null;
-      resetDiscountButtons();
-      showNotification("✅ Order placed");
-    }
-  
-    document.getElementById("submitOrder").addEventListener("click", async () => {
-      const employee = document.getElementById("employeeName").value;
-      const customerRaw = document.getElementById("customerName").value.trim();
-  
-      if (!employee || !customerRaw || order.length === 0) {
-        showNotification("Please fill all fields and add items.");
-        return;
-      }
-  
-      const inventory = await getInventory();
-      const totalNeeded = computeIngredientsNeeded(order.filter(item => !item.isPassPayment));
-  
-      const missing = [];
-      for (const ing in totalNeeded) {
-        const invVal = Number(inventory[ing] || 0);
-        if (invVal < totalNeeded[ing]) {
-          const label = ingredientLabels[ing] || ing;
-          missing.push(`${label} (need ${totalNeeded[ing]}, have ${invVal})`);
-        }
-      }
-  
-      const submitBtn = document.getElementById("submitOrder");
-  
-      if (missing.length > 0) {
-        showNotification(`⚠️ Not enough ingredients:\n${missing.join("\n")}\n\nClick again to force submit.`, 6000);
-  
-        if (!submitBtn.dataset.confirmed) {
-          submitBtn.dataset.confirmed = "true";
-          setTimeout(() => {
-            submitBtn.removeAttribute("data-confirmed");
-          }, 6000);
-          return;
-        }
-  
-        delete submitBtn.dataset.confirmed;
-      }
-  
-      await processOrder(employee, customerRaw, inventory, totalNeeded);
-    });
-  
-    const redeemBtn = document.getElementById("redeemPassBtn");
-    const redeemModal = document.getElementById("redeemPassModal");
-    const redeemList = document.getElementById("redeemList");
-    const redeemSearch = document.getElementById("redeemSearch");
-    const closeRedeem = document.getElementById("closeRedeem");
-  
-    function showRedeemModal() {
-      redeemModal.style.display = "flex";
-    }
-  
-    function hideRedeemModal() {
-      redeemModal.style.display = "none";
-    }
-  
-    async function refreshRedeemList() {
-      const q = (redeemSearch.value || "").trim();
-      const passes = await listActivePasses(q);
-      redeemList.innerHTML = "";
-  
-      passes.forEach(p => {
-        const row = document.createElement("div");
-        row.style.cssText = "display:flex; align-items:center; justify-content:space-between; gap:8px; border:2px solid #c82333; border-radius:8px; padding:10px;";
-  
-        const label = document.createElement("div");
-        label.style.cssText = "font-weight:800;";
-        const typeLabel = p.type === "golden" ? "Golden Buns Membership" : "Membership";
-        label.textContent = `${p.name} — ${typeLabel} | Claimed: ${p.claimsUsed}/${p.maxClaims} | Left: ${p.left}`;
-  
-        const redeem = document.createElement("button");
-        redeem.textContent = "Redeem";
-        redeem.style.cssText = "padding:6px 12px; border-radius:8px; border:none; background:#ffc107; font-weight:800; cursor:pointer;";
-  
-        if (p.left <= 0) {
-          redeem.disabled = true;
-          redeem.textContent = "No claims left";
-          redeem.style.opacity = "0.6";
-          redeem.style.cursor = "not-allowed";
-        }
-  
-        redeem.addEventListener("click", async () => {
+
+      document
+        .getElementById("submitOrder")
+        .addEventListener("click", async () => {
           const employee = document.getElementById("employeeName").value;
-          if (!employee) {
-            showNotification("Select employee first.");
+          const customerRaw = document
+            .getElementById("customerName")
+            .value.trim();
+
+          if (!employee || !customerRaw || order.length === 0) {
+            showNotification("Please fill all fields and add items.");
             return;
           }
-  
-          redeem.disabled = true;
-  
-          try {
-            await redeemPassTicket({
-              passId: p.id,
-              passType: p.type,
-              employee,
-              customer: p.name,
-              qty: 1
-            });
-  
-            showNotification(`✅ Confirmed — Patty Pounder Combo sent to kitchen for ${p.name}`);
-            row.style.outline = "3px solid #4caf50";
-            setTimeout(() => {
-              row.style.outline = "none";
-            }, 600);
-          } catch (e) {
-            console.error(e);
-            showNotification("❌ Could not redeem. Not enough ingredients.");
-          } finally {
-            if (p.left > 0) redeem.disabled = false;
+
+          const inventory = await getInventory();
+          const totalNeeded = computeIngredientsNeeded(
+            order.filter((item) => !item.isPassPayment)
+          );
+
+          const missing = [];
+          for (const ing in totalNeeded) {
+            const invVal = Number(inventory[ing] || 0);
+            if (invVal < totalNeeded[ing]) {
+              const label = ingredientLabels[ing] || ing;
+              missing.push(
+                `${label} (need ${totalNeeded[ing]}, have ${invVal})`
+              );
+            }
           }
+
+          const submitBtn = document.getElementById("submitOrder");
+
+          if (missing.length > 0) {
+            showNotification(
+              `⚠️ Not enough ingredients:\n${missing.join(
+                "\n"
+              )}\n\nClick again to force submit.`,
+              6000
+            );
+
+            if (!submitBtn.dataset.confirmed) {
+              submitBtn.dataset.confirmed = "true";
+              setTimeout(() => {
+                submitBtn.removeAttribute("data-confirmed");
+              }, 6000);
+              return;
+            }
+
+            delete submitBtn.dataset.confirmed;
+          }
+
+          await processOrder(employee, customerRaw, inventory, totalNeeded);
         });
-  
-        row.appendChild(label);
-        row.appendChild(redeem);
-        redeemList.appendChild(row);
-      });
-    }
-  
-    redeemBtn.addEventListener("click", async () => {
-      await refreshRedeemList();
-      showRedeemModal();
-    });
-  
-    redeemSearch.addEventListener("input", refreshRedeemList);
-    closeRedeem.addEventListener("click", hideRedeemModal);
-  
-    async function backfillGoldenClaims() {
-      const passesSnap = await getDocs(collection(db, "passes"));
-      let updated = 0;
-  
-      for (const passDoc of passesSnap.docs) {
-        const pass = passDoc.data();
-        if (pass.type !== "golden") continue;
-  
-        const customerName = pass.customer;
-        if (!customerName) continue;
-  
-        const qRedeems = query(
-          collection(db, "orders"),
-          where("membershipRedeem", "==", true),
-          where("customer", "==", customerName)
-        );
-  
-        const redeemsSnap = await getDocs(qRedeems);
-        const claimedCount = redeemsSnap.size;
-  
-        await setDoc(doc(db, "passes", passDoc.id), {
-          maxClaims: 20,
-          claimsUsed: claimedCount
-        }, { merge: true });
-  
-        updated++;
-        console.log(`✅ ${customerName}: claimsUsed = ${claimedCount}`);
+
+      const redeemBtn = document.getElementById("redeemPassBtn");
+      const redeemModal = document.getElementById("redeemPassModal");
+      const redeemList = document.getElementById("redeemList");
+      const redeemSearch = document.getElementById("redeemSearch");
+      const closeRedeem = document.getElementById("closeRedeem");
+
+      function showRedeemModal() {
+        redeemModal.style.display = "flex";
       }
-  
-      console.log(`DONE. Updated ${updated} golden passes.`);
-    }
-  
-    window.backfillGoldenClaims = backfillGoldenClaims;
-  </script>
 
+      function hideRedeemModal() {
+        redeemModal.style.display = "none";
+      }
 
-</body>
+      async function refreshRedeemList() {
+        const q = (redeemSearch.value || "").trim();
+        const passes = await listActivePasses(q);
+        redeemList.innerHTML = "";
+
+        passes.forEach((p) => {
+          const row = document.createElement("div");
+          row.style.cssText =
+            "display:flex; align-items:center; justify-content:space-between; gap:8px; border:2px solid #c82333; border-radius:8px; padding:10px;";
+
+          const label = document.createElement("div");
+          label.style.cssText = "font-weight:800;";
+          const typeLabel =
+            p.type === "golden" ? "Golden Buns Membership" : "Membership";
+          label.textContent = `${p.name} — ${typeLabel} | Claimed: ${p.claimsUsed}/${p.maxClaims} | Left: ${p.left}`;
+
+          const redeem = document.createElement("button");
+          redeem.textContent = "Redeem";
+          redeem.style.cssText =
+            "padding:6px 12px; border-radius:8px; border:none; background:#ffc107; font-weight:800; cursor:pointer;";
+
+          if (p.left <= 0) {
+            redeem.disabled = true;
+            redeem.textContent = "No claims left";
+            redeem.style.opacity = "0.6";
+            redeem.style.cursor = "not-allowed";
+          }
+
+          redeem.addEventListener("click", async () => {
+            const employee = document.getElementById("employeeName").value;
+            if (!employee) {
+              showNotification("Select employee first.");
+              return;
+            }
+
+            redeem.disabled = true;
+
+            try {
+              await redeemPassTicket({
+                passId: p.id,
+                passType: p.type,
+                employee,
+                customer: p.name,
+                qty: 1,
+              });
+
+              showNotification(
+                `✅ Confirmed — Patty Pounder Combo sent to kitchen for ${p.name}`
+              );
+              row.style.outline = "3px solid #4caf50";
+              setTimeout(() => {
+                row.style.outline = "none";
+              }, 600);
+            } catch (e) {
+              console.error(e);
+              showNotification("❌ Could not redeem. Not enough ingredients.");
+            } finally {
+              if (p.left > 0) redeem.disabled = false;
+            }
+          });
+
+          row.appendChild(label);
+          row.appendChild(redeem);
+          redeemList.appendChild(row);
+        });
+      }
+
+      redeemBtn.addEventListener("click", async () => {
+        await refreshRedeemList();
+        showRedeemModal();
+      });
+
+      redeemSearch.addEventListener("input", refreshRedeemList);
+      closeRedeem.addEventListener("click", hideRedeemModal);
+
+      async function backfillGoldenClaims() {
+        const passesSnap = await getDocs(collection(db, "passes"));
+        let updated = 0;
+
+        for (const passDoc of passesSnap.docs) {
+          const pass = passDoc.data();
+          if (pass.type !== "golden") continue;
+
+          const customerName = pass.customer;
+          if (!customerName) continue;
+
+          const qRedeems = query(
+            collection(db, "orders"),
+            where("membershipRedeem", "==", true),
+            where("customer", "==", customerName)
+          );
+
+          const redeemsSnap = await getDocs(qRedeems);
+          const claimedCount = redeemsSnap.size;
+
+          await setDoc(
+            doc(db, "passes", passDoc.id),
+            {
+              maxClaims: 20,
+              claimsUsed: claimedCount,
+            },
+            { merge: true }
+          );
+
+          updated++;
+          console.log(`✅ ${customerName}: claimsUsed = ${claimedCount}`);
+        }
+
+        console.log(`DONE. Updated ${updated} golden passes.`);
+      }
+
+      updateTabUI();
+    </script>
+
+    <script>
+      const body = document.body;
+      const sidebar = document.querySelector(".sidebar");
+      const menuBtn = document.getElementById("menuToggle");
+      const darkModeToggle = document.getElementById("darkModeToggle");
+      const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
+
+      function applyDarkModeSetting() {
+        const darkModeEnabled = localStorage.getItem("darkMode") === "true";
+        body.classList.toggle("dark-mode", darkModeEnabled);
+
+        if (darkModeToggle) {
+          darkModeToggle.textContent = darkModeEnabled
+            ? "☀️ Light Mode"
+            : "🌙 Dark Mode";
+        }
+      }
+
+      function applySidebarSetting() {
+        const collapsed = localStorage.getItem("sidebarCollapsed") === "true";
+
+        if (window.innerWidth > 768) {
+          body.classList.toggle("sidebar-collapsed", collapsed);
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+          }
+        } else {
+          body.classList.remove("sidebar-collapsed");
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = "⬅";
+          }
+        }
+      }
+
+      applyDarkModeSetting();
+      applySidebarSetting();
+
+      darkModeToggle?.addEventListener("click", () => {
+        const isDark = body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", isDark ? "true" : "false");
+        darkModeToggle.textContent = isDark ? "☀️ Light Mode" : "🌙 Dark Mode";
+      });
+
+      menuBtn?.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
+      });
+
+      sidebarCollapseBtn?.addEventListener("click", () => {
+        if (window.innerWidth <= 768) return;
+
+        body.classList.toggle("sidebar-collapsed");
+        const collapsed = body.classList.contains("sidebar-collapsed");
+        localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+        sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+      });
+
+      window.addEventListener("resize", applySidebarSetting);
+    </script>
+  </body>
 </html>
-

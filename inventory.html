@@ -17,36 +17,70 @@
       rel="stylesheet"
     />
 
-    <script type="module" src="auth.js"></script>
-
     <style>
+      :root {
+        --bg: #fff4d6;
+        --text: #333;
+        --sidebar: #c82333;
+        --sidebar-hover: #a71d2a;
+        --card: #ffffff;
+        --accent: #ffc107;
+        --accent-hover: #ff8800;
+        --border: #ccc;
+        --input-bg: #fff;
+        --summary-bg: #fff;
+        --soft-text: #555;
+        --header-text: #000;
+      }
+
+      body.dark-mode {
+        --bg: #121212;
+        --text: #f5f5f5;
+        --sidebar: #8b1e28;
+        --sidebar-hover: #a71d2a;
+        --card: #1e1e1e;
+        --accent: #d39b00;
+        --accent-hover: #ffb300;
+        --border: #555;
+        --input-bg: #2a2a2a;
+        --summary-bg: #1e1e1e;
+        --soft-text: #d0d0d0;
+        --header-text: #1a1a1a;
+      }
+
       body {
         font-family: "Montserrat", sans-serif;
-        background-color: #fff4d6;
+        background-color: var(--bg);
         margin: 0;
         display: flex;
         min-height: 100vh;
-        color: #333;
+        color: var(--text);
       }
+
       .sidebar {
-        background-color: #c82333;
+        background-color: var(--sidebar);
         width: 220px;
+        min-width: 220px;
         color: white;
         padding: 2rem 1.5rem;
         display: flex;
         flex-direction: column;
         flex-shrink: 0;
+        transition: width 0.3s ease, min-width 0.3s ease, padding 0.3s ease,
+          transform 0.3s ease;
+        overflow: hidden;
       }
+
       .sidebar h2 {
         font-weight: 700;
         font-size: 1.8rem;
-        margin-bottom: 2rem;
+        margin-bottom: 0.75rem;
         user-select: none;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 0.4rem;
-        white-space: nowrap; /* ✅ prevents wrapping */
+        white-space: nowrap;
       }
 
       .sidebar a {
@@ -61,49 +95,120 @@
         transition: background-color 0.3s;
         user-select: none;
       }
+
       .sidebar a:hover,
       .sidebar a.active {
-        background-color: #a71d2a;
+        background-color: var(--sidebar-hover);
         text-decoration: none;
       }
+
+      .sidebar-toggle-btn {
+        background: #ffc107;
+        border: none;
+        color: #000;
+        font-weight: 700;
+        border-radius: 8px;
+        padding: 0.5rem 0.75rem;
+        margin-bottom: 1rem;
+        margin-top: 0;
+        cursor: pointer;
+        align-self: flex-end;
+      }
+
+      .sidebar-toggle-btn:hover {
+        background: #ffb300;
+      }
+
+      body.sidebar-collapsed .sidebar {
+        width: 78px;
+        min-width: 78px;
+        padding: 2rem 0.75rem;
+      }
+
+      body.sidebar-collapsed .sidebar h2 {
+        font-size: 0;
+        gap: 0;
+      }
+
+      body.sidebar-collapsed .sidebar h2::before {
+        content: "🍔";
+        font-size: 1.8rem;
+      }
+
+      body.sidebar-collapsed .sidebar a {
+        justify-content: center;
+        font-size: 0;
+        padding: 0.75rem 0;
+      }
+
+      body.sidebar-collapsed .sidebar a::first-letter {
+        font-size: 1.2rem;
+      }
+
+      body.sidebar-collapsed .sidebar-toggle-btn {
+        align-self: center;
+      }
+
       main {
         flex-grow: 1;
         padding: 2rem 3rem;
-        background-color: #fff4d6;
+        background-color: var(--bg);
         overflow-y: auto;
+        color: var(--text);
       }
+
+      /* force inherited text inside main content */
+      main,
+      main p,
+      main span,
+      main div,
+      main li,
+      main ul,
+      main strong,
+      main small,
+      main label {
+        color: inherit;
+      }
+
       h1 {
         color: #c82333;
         font-weight: 700;
         margin-bottom: 2rem;
         user-select: none;
       }
+
       table {
         width: 100%;
         border-collapse: collapse;
-        background: white;
+        background: var(--card);
+        color: var(--text);
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
       }
+
       th,
       td {
         padding: 12px 15px;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--border);
         text-align: left;
         font-weight: 600;
         user-select: none;
+        color: var(--text);
       }
+
       th {
-        background: #ffc107;
-        color: #000;
+        background: var(--accent);
+        color: var(--header-text);
       }
+
       .packs-leftover {
-        color: #555;
+        color: var(--soft-text) !important;
         font-weight: 400;
         font-size: 0.9rem;
         user-select: none;
       }
+
       button#refreshInventory,
       button#reportExpiredBtn {
         margin-top: 1.5rem;
@@ -118,12 +223,12 @@
         transition: background-color 0.3s;
         margin-right: 10px;
       }
+
       button#refreshInventory:hover,
       button#reportExpiredBtn:hover {
         background-color: #a71d2a;
       }
 
-      /* Modal styles */
       #expiredModal {
         position: fixed;
         top: 0;
@@ -136,32 +241,38 @@
         justify-content: center;
         z-index: 1100;
       }
+
       #expiredModal .modal-content {
-        background: #fff4d6;
+        background: var(--bg);
         padding: 20px 30px;
         border-radius: 12px;
         max-width: 320px;
         text-align: center;
         font-weight: 600;
-        color: #333;
+        color: var(--text);
         user-select: none;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
+
       #expiredModal label {
         display: block;
         margin: 15px 0 5px;
         font-weight: 700;
         color: #c82333;
       }
+
       #expiredModal select,
       #expiredModal input[type="number"] {
         width: 100%;
         padding: 10px;
         border-radius: 8px;
-        border: 1px solid #ccc;
+        border: 1px solid var(--border);
+        background-color: var(--input-bg);
+        color: var(--text);
         font-weight: 600;
         font-size: 1rem;
       }
+
       #expiredModal button {
         margin-top: 20px;
         background-color: #c82333;
@@ -174,15 +285,16 @@
         user-select: none;
         transition: background-color 0.3s;
       }
+
       #expiredModal button:hover {
         background-color: #a71d2a;
       }
+
       #expiredModal .close-btn {
         background: #999;
         margin-left: 10px;
       }
 
-      /* Notification styling */
       #notification {
         position: fixed;
         top: 20px;
@@ -201,125 +313,116 @@
         text-align: center;
         white-space: nowrap;
       }
+
       .combo-box {
-        background: white;
+        background: var(--card);
+        color: var(--text) !important;
         padding: 1rem 1.5rem;
         margin-bottom: 1.5rem;
         border-radius: 12px;
         box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
         font-weight: 700;
-        color: #333;
       }
+
+      .combo-box *,
+      #itemCounts,
+      #itemCounts *,
+      table *,
+      main table td *,
+      main table th * {
+        color: inherit !important;
+      }
+
       .combo-box h3 {
         margin-top: 0;
         margin-bottom: 0.75rem;
-        color: #c82333;
+        color: #c82333 !important;
         font-size: 1.4rem;
       }
+
       .combo-box ul {
         list-style: none;
         padding-left: 0;
         margin: 0;
       }
+
       .combo-box li {
         margin-bottom: 0.3rem;
         font-weight: 600;
       }
 
-      /* Make Item Availability a 2-column list (collapses to 1 on mobile) */
       #itemCounts ul {
-        columns: 2; /* modern browsers */
-        -webkit-columns: 2; /* Safari */
-        -moz-columns: 2; /* Firefox */
+        columns: 2;
+        -webkit-columns: 2;
+        -moz-columns: 2;
         column-gap: 1.25rem;
       }
 
       #itemCounts li {
-        break-inside: avoid; /* keep items from splitting between columns */
-        padding-right: 0.5rem; /* a little breathing room near the gutter */
+        break-inside: avoid;
+        padding-right: 0.5rem;
         margin-bottom: 0.25rem;
       }
 
-      /* On small screens, revert to a single column */
-      @media (max-width: 768px) {
-        #itemCounts ul {
-          columns: 1;
-          -webkit-columns: 1;
-          -moz-columns: 1;
-        }
-      }
-
-      .hamburger {
-        display: none;
-        font-size: 2rem;
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: #c82333;
-        margin: 1rem;
-        z-index: 2000;
-        position: fixed;
-        top: 10px;
-        left: 10px;
-      }
-
-      /* Sidebar adjustments for mobile */
-      @media (max-width: 768px) {
-        .hamburger {
-          display: block; /* show hamburger on small screens */
-        }
-
-        .sidebar {
-          position: fixed;
-          top: 0;
-          left: 0;
-          height: 100vh;
-          width: 220px;
-          background-color: #c82333;
-          transform: translateX(-100%); /* hidden */
-          transition: transform 0.3s ease;
-          z-index: 1500;
-        }
-
-        .sidebar.active {
-          transform: translateX(0); /* slide in */
-        }
-
-        /* Make sure main content isn’t squeezed */
-        .main-container {
-          flex-direction: column;
-        }
-        main {
-          padding: 1rem;
-          margin-left: 0;
-        }
-      }
-
-      /* Hamburger button */
       .hamburger {
         display: none;
         font-size: 2rem;
         background: #c82333;
         color: white;
         border: none;
-        border-radius: 8px; /* matches other buttons */
+        border-radius: 8px;
         padding: 6px 12px;
         cursor: pointer;
         position: fixed;
         top: 15px;
         left: 15px;
         z-index: 3000;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25); /* permanent shadow */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
         transition: background 0.2s;
       }
+
       .hamburger:hover {
         background: #a71d2a;
       }
 
-      /* Sidebar adjustments for mobile */
       @media (max-width: 768px) {
+        #itemCounts ul {
+          columns: 1;
+          -webkit-columns: 1;
+          -moz-columns: 1;
+        }
+
         .hamburger {
-          display: block; /* show hamburger on small screens */
+          display: block;
+        }
+
+        .sidebar-toggle-btn {
+          display: none;
+        }
+
+        body.sidebar-collapsed .sidebar {
+          width: 220px;
+          min-width: 220px;
+          padding: 2rem 1.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2 {
+          font-size: 1.8rem;
+          gap: 0.4rem;
+        }
+
+        body.sidebar-collapsed .sidebar h2::before {
+          content: none;
+        }
+
+        body.sidebar-collapsed .sidebar a {
+          justify-content: flex-start;
+          font-size: 1rem;
+          padding: 0.75rem 0.5rem;
+        }
+
+        body.sidebar-collapsed .sidebar a::first-letter {
+          font-size: 1rem;
         }
 
         .sidebar {
@@ -328,82 +431,90 @@
           left: 0;
           height: 100vh;
           width: 220px;
-          background-color: #c82333;
-          transform: translateX(-100%); /* hidden */
+          background-color: var(--sidebar);
+          transform: translateX(-100%);
           transition: transform 0.3s ease;
           z-index: 1500;
         }
 
         .sidebar.active {
-          transform: translateX(0); /* slide in */
+          transform: translateX(0);
         }
 
-        /* Make sure main content isn’t squeezed */
         .main-container {
           flex-direction: column;
         }
+
         main {
           padding: 1rem;
           margin-left: 0;
-          padding-top: 100px; /* 👈 pushes content below hamburger */
+          padding-top: 100px;
         }
       }
     </style>
   </head>
   <body>
     <button id="menuToggle" class="hamburger">☰</button>
-    <aside class="sidebar">
-      <h2>🍔 Snr. Buns</h2>
-      <nav>
-        <ul class="list-unstyled">
-          <li><a href="home.html">🏠 Home</a></li>
-          <li><a href="register.html">🖋️ Register</a></li>
-          <li><a href="orders.html">📋 Orders</a></li>
-          <li><a href="inventory.html" class="active">📦 Inventory</a></li>
-          <li><a href="market.html">🏪 Market Run</a></li>
-          <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
-          <li><a href="loyalty.html">🎁 Customers</a></li>
-        </ul>
-      </nav>
-    </aside>
 
-    <main>
-      <h1>📦 Inventory</h1>
-      <p
-        style="
-          font-weight: 600;
-          color: #c82333;
-          margin-top: -1rem;
-          margin-bottom: 1.5rem;
-        "
-      >
-        This inventory page helps us to track ingredients without having to work
-        it out manually from the fridge or warehouse. <br /><br />
-        Once an order, staff meal or market run is submitted, the inventory will
-        update automatically.
-      </p>
-      <div style="display: flex; gap: 20px; flex-wrap: wrap">
-        <div id="comboCounts" class="combo-box" style="flex: 1"></div>
-        <div id="itemCounts" class="combo-box" style="flex: 1"></div>
-      </div>
+    <div
+      class="main-container"
+      style="display: flex; width: 100%; min-height: 100vh"
+    >
+      <aside class="sidebar">
+        <h2>🍔 Snr. Buns</h2>
+        <button id="sidebarCollapseBtn" class="sidebar-toggle-btn">⬅</button>
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html">🏠 Home</a></li>
+            <li><a href="register.html">🖋️ Register</a></li>
+            <li><a href="orders.html">📋 Orders</a></li>
+            <li><a href="inventory.html" class="active">📦 Inventory</a></li>
+            <li><a href="market.html">🏪 Market Run</a></li>
+            <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+            <li><a href="loyalty.html">🎁 Customers</a></li>
+          </ul>
+        </nav>
+      </aside>
 
-      <table>
-        <thead>
-          <tr>
-            <th>Ingredient</th>
-            <th>Total Units</th>
-          </tr>
-        </thead>
-        <tbody id="inventoryTableBody">
-          <!-- Filled by JS -->
-        </tbody>
-      </table>
+      <main>
+        <h1>📦 Inventory</h1>
+        <p
+          style="
+            font-weight: 600;
+            color: #c82333;
+            margin-top: -1rem;
+            margin-bottom: 1.5rem;
+          "
+        >
+          This inventory page helps us to track ingredients without having to
+          work it out manually from the fridge or warehouse. <br /><br />
+          Once an order, staff meal or market run is submitted, the inventory
+          will update automatically.
+        </p>
 
-      <div style="margin-top: 20px">
-        <button id="refreshInventory">Refresh Inventory</button>
-        <button id="reportExpiredBtn">Report Expired Ingredients</button>
-      </div>
-    </main>
+        <div style="display: flex; gap: 20px; flex-wrap: wrap">
+          <div id="comboCounts" class="combo-box" style="flex: 1"></div>
+          <div id="itemCounts" class="combo-box" style="flex: 1"></div>
+        </div>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Total Units</th>
+            </tr>
+          </thead>
+          <tbody id="inventoryTableBody">
+            <!-- Filled by JS -->
+          </tbody>
+        </table>
+
+        <div style="margin-top: 20px">
+          <button id="refreshInventory">Refresh Inventory</button>
+          <button id="reportExpiredBtn">Report Expired Ingredients</button>
+        </div>
+      </main>
+    </div>
 
     <!-- Expired Ingredients Modal -->
     <div
@@ -487,7 +598,6 @@
         onSnapshot,
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-      // ✅ Reuse the same Firebase app
       import { app } from "./auth.js";
 
       const db = getFirestore(app);
@@ -495,7 +605,6 @@
       const UNIT_PER_PACK = 5;
       const inventoryDocRef = doc(db, "inventory", "current");
 
-      /* === Recipes === */
       const comboRecipes = {
         "Patty Pounder Combo": {
           burger_buns: 10,
@@ -539,7 +648,6 @@
         "Cream Pie": { sugar: 1, flour: 1 },
       };
 
-      /* === Ingredient Labels === */
       const ingredientLabels = {
         burger_buns: "Burger Buns",
         ground_beef: "Ground Beef / Patties",
@@ -560,7 +668,6 @@
         vanilla: "Vanilla Bean",
       };
 
-      /* ===== Ensure inventory has every known key (adds missing as 0) ===== */
       const KNOWN_INGREDIENT_KEYS = [
         "burger_buns",
         "ground_beef",
@@ -579,21 +686,15 @@
         "onion",
         "ice_cream",
         "vanilla",
-        // if you ever add more, keep this list in sync with item/combo recipes
       ];
 
-      /* Optional: migrate old field names -> new ones */
-      const LEGACY_KEY_MAP = {
-        // "syrup": "corn_syrup",      // uncomment if you had a field named "syrup"
-        // "coffee": "coffee_beans",   // example
-      };
+      const LEGACY_KEY_MAP = {};
 
       async function ensureInventoryKeys() {
         try {
           const snap = await getDoc(inventoryDocRef);
           let data = snap.exists() ? snap.data() : {};
 
-          // migrate legacy keys if present
           const updates = {};
           for (const [oldKey, newKey] of Object.entries(LEGACY_KEY_MAP)) {
             if (oldKey in data && !(newKey in data)) {
@@ -602,7 +703,6 @@
             }
           }
 
-          // add any missing known keys as 0 (including corn_syrup)
           KNOWN_INGREDIENT_KEYS.forEach((k) => {
             if (!(k in data)) updates[k] = 0;
           });
@@ -615,7 +715,6 @@
         }
       }
 
-      /* === Inventory Fetching === */
       async function fetchInventory() {
         try {
           const docSnap = await getDoc(inventoryDocRef);
@@ -646,7 +745,6 @@
         }
       });
 
-      /* === Table Rendering === */
       function renderInventoryFromData(inventory) {
         const tbody = document.getElementById("inventoryTableBody");
         tbody.innerHTML = "";
@@ -679,7 +777,6 @@
         });
       }
 
-      /* === Combo Availability === */
       function calculateCombos(inventory) {
         const results = {};
         for (const [comboName, recipe] of Object.entries(comboRecipes)) {
@@ -726,17 +823,16 @@
         );
 
         container.innerHTML = `
-    <h3>Combo Availability</h3>
-    <ul style="list-style:none; padding-left:0; margin:0;">
-      ${comboEntries.join("")}
-    </ul>
-    <p style="margin-top:0.75rem; color:#c82333; font-weight:600; font-size:0.9rem;">
-      ⚠️ Availability is shown per combo individually. Ingredients are shared, so making one combo reduces the availability of the others.
-    </p>
-  `;
+          <h3>Combo Availability</h3>
+          <ul style="list-style:none; padding-left:0; margin:0;">
+            ${comboEntries.join("")}
+          </ul>
+          <p style="margin-top:0.75rem; color:#c82333; font-weight:600; font-size:0.9rem;">
+            ⚠️ Availability is shown per combo individually. Ingredients are shared, so making one combo reduces the availability of the others.
+          </p>
+        `;
       }
 
-      /* === Item Availability === */
       function calculateItems(inventory) {
         const results = {};
         for (const [itemName, recipe] of Object.entries(itemRecipes)) {
@@ -756,21 +852,20 @@
         const items = calculateItems(inventory);
 
         container.innerHTML = `
-    <h3>Item Availability</h3>
-    <ul>
-      ${Object.entries(items)
-        .map(
-          ([name, count]) =>
-            `<li style="color:${
-              count === 0 ? "red" : "#333"
-            }">${name}: ${count}</li>`
-        )
-        .join("")}
-    </ul>
-  `;
+          <h3>Item Availability</h3>
+          <ul>
+            ${Object.entries(items)
+              .map(
+                ([name, count]) =>
+                  `<li style="color:${
+                    count === 0 ? "red" : "#333"
+                  }">${name}: ${count}</li>`
+              )
+              .join("")}
+          </ul>
+        `;
       }
 
-      /* === Notification === */
       function showNotification(message, duration = 4000) {
         const notification = document.getElementById("notification");
         notification.textContent = message;
@@ -794,7 +889,6 @@
         }, duration);
       }
 
-      /* === Expired Ingredients Modal === */
       document
         .getElementById("refreshInventory")
         .addEventListener("click", fetchInventory);
@@ -867,23 +961,55 @@
           document.getElementById("expiredModal").style.display = "none";
         });
 
-      /* === Init === */
+      ensureInventoryKeys();
       fetchInventory();
     </script>
+
     <script>
+      const body = document.body;
       const menuBtn = document.getElementById("menuToggle");
       const sidebar = document.querySelector(".sidebar");
+      const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
 
-      menuBtn.addEventListener("click", () => {
-        sidebar.classList.toggle("active");
+      function applySidebarSetting() {
+        const collapsed = localStorage.getItem("sidebarCollapsed") === "true";
 
-        // Switch between ☰ and ✖
-        if (sidebar.classList.contains("active")) {
-          menuBtn.textContent = "✖";
+        if (window.innerWidth > 768) {
+          body.classList.toggle("sidebar-collapsed", collapsed);
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+          }
         } else {
-          menuBtn.textContent = "☰";
+          body.classList.remove("sidebar-collapsed");
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = "⬅";
+          }
         }
+      }
+
+      applySidebarSetting();
+
+      menuBtn?.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
       });
+
+      sidebarCollapseBtn?.addEventListener("click", () => {
+        if (window.innerWidth <= 768) return;
+
+        body.classList.toggle("sidebar-collapsed");
+        const collapsed = body.classList.contains("sidebar-collapsed");
+        localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+        sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+      });
+
+      window.addEventListener("resize", applySidebarSetting);
+    </script>
+
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
     </script>
   </body>
 </html>
