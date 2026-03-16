@@ -636,6 +636,18 @@
         border: 2px solid #b58be0;
       }
 
+      #tabIndicator.pd {
+        display: block;
+        background: #dbeafe;
+        color: #1e3a8a;
+        border: 2px solid #60a5fa;
+      }
+
+      #tabModal .pd-btn {
+        background-color: #2563eb;
+        color: white;
+      }
+
       #notification {
         position: fixed;
         top: 20px;
@@ -710,11 +722,6 @@
 
       #tabModal .doj-btn {
         background-color: #7e57c2;
-        color: white;
-      }
-
-      #tabModal .clear-btn {
-        background-color: #9e9e9e;
         color: white;
       }
 
@@ -1337,7 +1344,7 @@
               margin-top: 10px;
             "
           >
-            🚑 DOJ/EMS tabs can now be marked below and saved directly on the
+            🚑 DOJ / EMS / PD tabs can be marked below and saved directly on the
             order.<br /><br />
           </small>
 
@@ -1351,11 +1358,7 @@
         </p>
 
         <div id="tabIndicator"></div>
-
-        <button id="uniformDiscountBtn" class="discount-btn">
-          👮 Apply PD Discount
-        </button>
-        <button id="tabOrderBtn" class="tab-btn">⚖️ Mark DOJ/EMS Tab</button>
+        <button id="tabOrderBtn" class="tab-btn">⚖️ Mark PD/EMS/DOJ Tab</button>
         <button id="redeemPassBtn" class="discount-btn">
           Redeem Membership
         </button>
@@ -1437,18 +1440,7 @@
 
     <div id="notification" role="alert"></div>
 
-    <!-- Discount confirmation modal -->
-    <div id="discountModal" role="dialog" aria-modal="true">
-      <div class="modal-content">
-        <div style="font-size: 1.2rem; margin-bottom: 10px">
-          Is the customer in uniform?
-        </div>
-        <button class="yes-btn">Yes</button>
-        <button class="no-btn">No</button>
-      </div>
-    </div>
-
-    <!-- DOJ / EMS tab modal -->
+    <!-- Service tab modal -->
     <div id="tabModal" role="dialog" aria-modal="true">
       <div class="modal-content">
         <div style="font-size: 1.2rem; margin-bottom: 10px">
@@ -1456,6 +1448,7 @@
         </div>
         <button class="ems-btn">EMS Tab</button>
         <button class="doj-btn">DOJ Tab</button>
+        <button class="pd-btn">PD Tab</button>
         <button class="cancel-btn">Cancel</button>
       </div>
     </div>
@@ -1908,7 +1901,6 @@
       }
 
       let order = [];
-      let activeDiscount = null;
       let activeTabType = null;
 
       const orderList = document.getElementById("orderList");
@@ -1917,26 +1909,13 @@
       const categoryButtons = document.querySelectorAll(".category");
       const itemCards = document.querySelectorAll(".item-card");
       const searchBar = document.getElementById("searchBar");
-      const discountModal = document.getElementById("discountModal");
-      const yesBtn = discountModal.querySelector(".yes-btn");
-      const noBtn = discountModal.querySelector(".no-btn");
-      const uniformBtn = document.getElementById("uniformDiscountBtn");
       const tabOrderBtn = document.getElementById("tabOrderBtn");
       const tabIndicator = document.getElementById("tabIndicator");
       const tabModal = document.getElementById("tabModal");
       const emsTabBtn = tabModal.querySelector(".ems-btn");
       const dojTabBtn = tabModal.querySelector(".doj-btn");
+      const pdTabBtn = tabModal.querySelector(".pd-btn");
       const cancelTabBtn = tabModal.querySelector(".cancel-btn");
-
-      let discountToApply = null;
-      let discountPercentToApply = 0;
-      const UNIFORM_DISCOUNT = 0.15;
-
-      function calcTotal(subtotal) {
-        return activeDiscount && activeDiscount.percent
-          ? subtotal * (1 - activeDiscount.percent)
-          : subtotal;
-      }
 
       function updateTabUI() {
         tabIndicator.className = "";
@@ -1946,15 +1925,20 @@
           tabIndicator.textContent = "🚑 Current tab: EMS";
           tabIndicator.className = "ems";
           tabOrderBtn.classList.add("active");
-          tabOrderBtn.textContent = "⚖️ EMS Tab Selected";
+          tabOrderBtn.textContent = "🚑 EMS Tab Selected";
         } else if (activeTabType === "DOJ") {
           tabIndicator.textContent = "⚖️ Current tab: DOJ";
           tabIndicator.className = "doj";
           tabOrderBtn.classList.add("active");
           tabOrderBtn.textContent = "⚖️ DOJ Tab Selected";
+        } else if (activeTabType === "PD") {
+          tabIndicator.textContent = "👮 Current tab: PD";
+          tabIndicator.className = "pd";
+          tabOrderBtn.classList.add("active");
+          tabOrderBtn.textContent = "👮 PD Tab Selected";
         } else {
           tabOrderBtn.classList.remove("active");
-          tabOrderBtn.textContent = "⚖️ Mark DOJ/EMS Tab";
+          tabOrderBtn.textContent = "⚖️ Mark PD/EMS/DOJ Tab";
         }
       }
 
@@ -2040,7 +2024,7 @@
         });
 
         subtotalSpan.textContent = subtotal.toFixed(2);
-        totalSpan.textContent = calcTotal(subtotal).toFixed(2);
+        totalSpan.textContent = subtotal.toFixed(2);
 
         document.querySelectorAll(".qty-btn").forEach((btn) => {
           btn.addEventListener("click", (e) => {
@@ -2201,57 +2185,6 @@
         });
       });
 
-      function resetDiscountButtons() {
-        const btn = document.getElementById("uniformDiscountBtn");
-        if (!btn) return;
-
-        if (activeDiscount?.code === "uniform") {
-          btn.classList.add("active");
-          btn.textContent = "Discount Applied (15%)";
-        } else {
-          btn.classList.remove("active");
-          btn.textContent = "👮 Apply PD Discount";
-        }
-      }
-
-      yesBtn.addEventListener("click", () => {
-        if (!discountPercentToApply) {
-          discountModal.style.display = "none";
-          showNotification("No discount selected.");
-          return;
-        }
-
-        activeDiscount = {
-          code: discountToApply || "uniform",
-          percent: discountPercentToApply,
-          uniform: true,
-        };
-
-        resetDiscountButtons();
-        updateOrderList();
-        discountModal.style.display = "none";
-        showNotification(
-          `✅ ${Math.round(
-            activeDiscount.percent * 100
-          )}% uniform discount applied!`
-        );
-        discountToApply = null;
-        discountPercentToApply = 0;
-      });
-
-      noBtn.addEventListener("click", () => {
-        discountModal.style.display = "none";
-        showNotification("No discount applied.");
-        discountToApply = null;
-        discountPercentToApply = 0;
-      });
-
-      uniformBtn.addEventListener("click", () => {
-        discountToApply = "uniform";
-        discountPercentToApply = UNIFORM_DISCOUNT;
-        discountModal.style.display = "flex";
-      });
-
       tabOrderBtn.addEventListener("click", () => {
         tabModal.style.display = "flex";
       });
@@ -2268,6 +2201,13 @@
         updateTabUI();
         tabModal.style.display = "none";
         showNotification("⚖️ DOJ tab selected.");
+      });
+
+      pdTabBtn.addEventListener("click", () => {
+        activeTabType = "PD";
+        updateTabUI();
+        tabModal.style.display = "none";
+        showNotification("👮 PD tab selected.");
       });
 
       cancelTabBtn.addEventListener("click", () => {
@@ -2337,9 +2277,7 @@
           order = [];
           updateOrderList();
           document.getElementById("customerName").value = "";
-          activeDiscount = null;
           activeTabType = null;
-          resetDiscountButtons();
           updateTabUI();
           showNotification("✅ Membership activated");
           return;
@@ -2358,7 +2296,7 @@
           (sum, i) => sum + i.price * i.quantity,
           0
         );
-        const total = calcTotal(subtotal);
+        const total = subtotal;
         const nowTs = Timestamp.now();
 
         await bumpLoyaltyForOrder(db, formattedCustomer, nowTs, total);
@@ -2368,7 +2306,7 @@
           customer: formattedCustomer,
           items: order,
           total,
-          discountApplied: activeDiscount,
+          discountApplied: null,
           timestamp: nowTs,
           done: false,
           deleted: false,
@@ -2380,9 +2318,7 @@
         order = [];
         updateOrderList();
         document.getElementById("customerName").value = "";
-        activeDiscount = null;
         activeTabType = null;
-        resetDiscountButtons();
         updateTabUI();
         showNotification("✅ Order placed");
       }
