@@ -495,6 +495,7 @@
       }
 
       /* DOJ / EMS tab order styling */
+      /* Service tab order styling */
       #ordersTable tbody tr.tab-ems td {
         background: rgba(13, 110, 253, 0.1) !important;
       }
@@ -503,12 +504,20 @@
         background: rgba(111, 66, 193, 0.1) !important;
       }
 
+      #ordersTable tbody tr.tab-pd td {
+        background: rgba(37, 99, 235, 0.1) !important;
+      }
+
       #ordersTable tbody tr.tab-ems td:first-child {
         border-left: 5px solid #0d6efd !important;
       }
 
       #ordersTable tbody tr.tab-doj td:first-child {
         border-left: 5px solid #6f42c1 !important;
+      }
+
+      #ordersTable tbody tr.tab-pd td:first-child {
+        border-left: 5px solid #2563eb !important;
       }
 
       .tab-badge {
@@ -529,6 +538,10 @@
 
       .tab-badge.doj {
         background: #6f42c1;
+      }
+
+      .tab-badge.pd {
+        background: #2563eb;
       }
 
       .hamburger {
@@ -824,7 +837,7 @@
       const q = query(
         collection(db, "orders"),
         orderBy("timestamp", "desc"),
-        limit(50)
+        limit(150)
       );
 
       let currentOrders = [];
@@ -876,6 +889,7 @@
           const tabType = (order.tabType || "").toUpperCase();
           if (tabType === "EMS") tr.classList.add("tab-ems");
           if (tabType === "DOJ") tr.classList.add("tab-doj");
+          if (tabType === "PD") tr.classList.add("tab-pd");
 
           const counts = parseItems(order.items || []);
 
@@ -910,7 +924,7 @@
           const customerTd = document.createElement("td");
           customerTd.textContent = order.customer || "-";
 
-          if (tabType === "EMS" || tabType === "DOJ") {
+          if (tabType === "EMS" || tabType === "DOJ" || tabType === "PD") {
             const badge = document.createElement("span");
             badge.className = `tab-badge ${tabType.toLowerCase()}`;
             badge.textContent = `${tabType} TAB`;

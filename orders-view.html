@@ -5,19 +5,36 @@
     <title>Snr. Buns - Orders View</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-    <!-- Google Fonts (match orders.html) -->
     <link
       href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
       rel="stylesheet"
     />
 
     <style>
+      :root {
+        --bg: #fff4d6;
+        --text: #333;
+        --card: #ffffff;
+        --accent: #ffc107;
+        --accent-hover: #ffb300;
+        --border: #ddd;
+        --divider: #b07d00;
+        --row-even: #fff9e8;
+        --row-hover: #fff4d1;
+        --fixed-col: #fffdfa;
+        --group-subhead: #ffefb5;
+        --group-head-text: #1a1a1a;
+        --subhead-text: #2b2b2b;
+        --done-text: #666;
+        --done-strike: #393737;
+      }
+
       body {
         font-family: "Montserrat", sans-serif;
-        background-color: #fff4d6;
+        background-color: var(--bg);
         margin: 0;
         padding: 20px;
-        color: #333;
+        color: var(--text);
       }
 
       h1 {
@@ -29,9 +46,14 @@
         text-align: center;
       }
 
+      .actions {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 15px;
+      }
+
       #downloadCSV {
-        display: block;
-        margin: 0 auto 15px auto;
+        display: inline-block;
         padding: 10px 20px;
         background: #c82333;
         color: white;
@@ -44,18 +66,18 @@
         text-align: center;
         user-select: none;
       }
+
       #downloadCSV:hover {
         background: #a71d2a;
       }
 
-      /* Match orders.html table framing */
       .table-container {
         overflow-x: auto;
-        background: #fff;
+        background: var(--card);
         border-radius: 12px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        border: 3px solid #b07d00 !important;
-        outline: 2px solid #b07d00;
+        border: 3px solid var(--divider) !important;
+        outline: 2px solid var(--divider);
         outline-offset: -1px;
       }
 
@@ -66,11 +88,13 @@
         font-weight: 600;
         user-select: none;
         font-size: 0.85rem;
+        color: var(--text);
+        background: var(--card);
       }
 
       table#ordersTable th,
       table#ordersTable td {
-        border: 1px solid #ddd;
+        border: 1px solid var(--border);
         padding: 8px 8px;
         text-align: center;
         vertical-align: middle;
@@ -79,110 +103,116 @@
       }
 
       table#ordersTable th {
-        background-color: #ffc107;
+        background-color: var(--accent);
         font-weight: 700;
+        color: #000;
       }
 
-      /* Section band styling (same vibe as orders.html) */
       #ordersTable thead .group-row th.group,
       #ordersTable thead th[rowspan="2"] {
-        background: #ffc107;
-        color: #1a1a1a;
+        background: var(--accent);
+        color: var(--group-head-text);
       }
 
-      /* Row 2 (individual menu items) lighter gold */
+      #ordersTable thead .group-row th.group {
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-size: 0.78rem;
+        border: 1px solid var(--border);
+      }
+
       #ordersTable thead tr + tr th {
-        background: #ffefb5;
-        color: #2b2b2b;
-        border-color: #e2c86a;
+        background: var(--group-subhead);
+        color: var(--subhead-text);
+        border-color: var(--border);
         font-weight: 700;
         white-space: normal;
         word-break: keep-all;
         overflow-wrap: normal;
         line-height: 1.15;
+        padding-top: 6px;
+        padding-bottom: 6px;
       }
 
-      /* Done row styling (same as orders.html) */
       #ordersTable tbody tr.done td {
-        color: #666;
+        color: var(--done-text);
         text-decoration: line-through;
         text-decoration-thickness: 4px;
-        text-decoration-color: #393737;
+        text-decoration-color: var(--done-strike);
       }
+
       #ordersTable tbody tr.done {
         opacity: 0.8;
       }
 
-      /* Zebra striping */
+      #ordersTable tbody td {
+        background: var(--card);
+        color: var(--text);
+      }
+
       #ordersTable tbody tr:nth-child(even) td {
-        background: #fff9e8;
+        background: var(--row-even);
       }
+
       #ordersTable tbody tr:hover td {
-        background: #fff4d1;
+        background: var(--row-hover);
       }
 
-      /* ===== Column group dividers (matching your orders.html setup) ===== */
-      :root {
-        --divider: #b07d00;
+      #ordersTable tbody td:nth-child(1),
+      #ordersTable tbody td:nth-child(2),
+      #ordersTable tbody td:nth-child(3),
+      #ordersTable tbody td:nth-child(22),
+      #ordersTable tbody td:nth-child(23) {
+        background: var(--fixed-col);
       }
 
-      /* LEFT edges of groups (header row 2 + body) */
-      /* Burgers start (header col 1, body col 4) */
+      /* LEFT edges of groups */
       #ordersTable thead tr + tr th:nth-child(1),
       #ordersTable tbody td:nth-child(4) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Wraps start (header col 8, body col 11) */
       #ordersTable thead tr + tr th:nth-child(8),
       #ordersTable tbody td:nth-child(11) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Sides start (header col 11, body col 14) */
       #ordersTable thead tr + tr th:nth-child(11),
       #ordersTable tbody td:nth-child(14) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Drinks start (header col 14, body col 17) */
       #ordersTable thead tr + tr th:nth-child(14),
       #ordersTable tbody td:nth-child(17) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* Desserts start (header col 16, body col 19) */
       #ordersTable thead tr + tr th:nth-child(16),
       #ordersTable tbody td:nth-child(19) {
         border-left: 3px solid var(--divider) !important;
       }
 
-      /* RIGHT edges of groups (header row 2 + body) */
-      /* Burgers end (header col 7, body col 10) */
+      /* RIGHT edges of groups */
       #ordersTable thead tr + tr th:nth-child(7),
       #ordersTable tbody td:nth-child(10) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Wraps end (header col 10, body col 13) */
       #ordersTable thead tr + tr th:nth-child(10),
       #ordersTable tbody td:nth-child(13) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Sides end (header col 13, body col 16) */
       #ordersTable thead tr + tr th:nth-child(13),
       #ordersTable tbody td:nth-child(16) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Drinks end (header col 15, body col 18) */
       #ordersTable thead tr + tr th:nth-child(15),
       #ordersTable tbody td:nth-child(18) {
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Desserts end (header col 18, body col 21) */
       #ordersTable thead tr + tr th:nth-child(18),
       #ordersTable tbody td:nth-child(21) {
         border-right: 3px solid var(--divider) !important;
@@ -194,12 +224,62 @@
         border-right: 3px solid var(--divider) !important;
       }
 
-      /* Mobile tweaks */
+      /* Group row dividers */
+      #ordersTable thead .group-row th.group {
+        border-right: 3px solid var(--divider) !important;
+      }
+
+      #ordersTable thead .group-row th.group:first-of-type {
+        border-left: 3px solid var(--divider) !important;
+      }
+
+      .tab-badge {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        line-height: 1.2;
+        vertical-align: middle;
+        color: white;
+      }
+
+      .tab-badge.ems {
+        background: #0d6efd;
+      }
+
+      .tab-badge.doj {
+        background: #6f42c1;
+      }
+
+      #ordersTable tbody tr.tab-ems td {
+        background: rgba(13, 110, 253, 0.1) !important;
+      }
+
+      #ordersTable tbody tr.tab-doj td {
+        background: rgba(111, 66, 193, 0.1) !important;
+      }
+
+      #ordersTable tbody tr.tab-ems td:first-child {
+        border-left: 5px solid #0d6efd !important;
+      }
+
+      #ordersTable tbody tr.tab-doj td:first-child {
+        border-left: 5px solid #6f42c1 !important;
+      }
+
+      .empty-row td {
+        padding: 18px;
+        font-weight: 700;
+      }
+
       @media (max-width: 900px) {
         table#ordersTable {
           font-size: 0.78rem;
           min-width: 780px;
         }
+
         table#ordersTable th,
         table#ordersTable td {
           padding: 6px 6px;
@@ -210,12 +290,14 @@
 
   <body>
     <h1>🍔 Snr. Buns - Orders View</h1>
-    <button id="downloadCSV">⬇️ Download Orders CSV</button>
+
+    <div class="actions">
+      <button id="downloadCSV">⬇️ Download Orders CSV</button>
+    </div>
 
     <div class="table-container">
       <table id="ordersTable" aria-label="All Orders">
         <thead>
-          <!-- Row 1: section bands -->
           <tr class="group-row">
             <th rowspan="2">Date</th>
             <th rowspan="2">Employee</th>
@@ -231,9 +313,7 @@
             <th rowspan="2">Done?</th>
           </tr>
 
-          <!-- Row 2: individual items (order matches orders.html) -->
           <tr>
-            <!-- BURGERS -->
             <th>Heart Stopper</th>
             <th>Money Shot</th>
             <th>The Simply</th>
@@ -242,21 +322,17 @@
             <th>The Bleeder</th>
             <th>The Prickley</th>
 
-            <!-- WRAPS -->
             <th>Chicken Wrap</th>
             <th>Chicken Mexican</th>
             <th>Goat Wrap</th>
 
-            <!-- SIDES -->
             <th>Fries</th>
             <th>Onion Rings</th>
             <th>Chicken Nuggets</th>
 
-            <!-- DRINKS -->
             <th>Soda</th>
             <th>Coffee</th>
 
-            <!-- DESSERTS -->
             <th>Rim Job</th>
             <th>Cream Pie</th>
             <th>Ice Cream</th>
@@ -275,8 +351,6 @@
         onSnapshot,
         query,
         orderBy,
-        where,
-        limit,
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
       const db = getFirestore(app);
@@ -284,9 +358,7 @@
       const tbody = document.getElementById("ordersBody");
       const downloadBtn = document.getElementById("downloadCSV");
 
-      // ✅ EXACT PRODUCTS list from orders.html (same order)
       const PRODUCTS = [
-        // BURGERS (7)
         "Heart Stopper",
         "Money Shot",
         "The Simply",
@@ -294,40 +366,29 @@
         "The Glorious",
         "The Bleeder",
         "The Prickley",
-
-        // WRAPS (3)
         "Chicken Wrap",
         "Chicken Mexican",
         "Goat Wrap",
-
-        // SIDES (3)
         "Fries",
         "Onion Rings",
         "Chicken Nuggets",
-
-        // DRINKS (2)
         "Soda",
         "Coffee",
-
-        // DESSERTS (3)
         "Rim Job",
         "Cream Pie",
         "Ice Cream",
       ];
 
-      /* -------- Combos (copied from orders.html) -------- */
+      /* Match all known combo setups so old + new orders both export correctly */
       const comboDetails = {
         "The Heartstopper Meal": {
-          price: 1800,
           components: [
             { name: "Heart Stopper", quantity: 5 },
             { name: "Onion Rings", quantity: 5 },
             { name: "Soda", quantity: 15 },
-            { name: "Ice Cream", quantity: 5 },
           ],
         },
         "Big Buns Deal": {
-          price: 1700,
           components: [
             { name: "The Simply", quantity: 10 },
             { name: "Fries", quantity: 5 },
@@ -336,22 +397,18 @@
           ],
         },
         "The Bleeder Box": {
-          price: 600,
           components: [
             { name: "The Bleeder", quantity: 5 },
             { name: "Soda", quantity: 5 },
-            { name: "Rim Job", quantity: 1 },
           ],
         },
         "Filthy Rich Combo": {
-          price: 800,
           components: [
             { name: "Money Shot", quantity: 5 },
             { name: "Soda", quantity: 5 },
           ],
         },
         "Patty Pounder Combo": {
-          price: 1100,
           components: [
             { name: "The Prickley", quantity: 10 },
             { name: "Soda", quantity: 10 },
@@ -359,7 +416,30 @@
         },
       };
 
-      /* -------- Daisy config (copied from orders.html) -------- */
+      const bundleDetails = {
+        "Fries Bundle": {
+          components: [{ name: "Fries", quantity: 5 }],
+        },
+        "Onion Bundle": {
+          components: [{ name: "Onion Rings", quantity: 5 }],
+        },
+        "Nuggies Box": {
+          components: [{ name: "Chicken Nuggets", quantity: 5 }],
+        },
+        "Cream Pie Bundle": {
+          components: [{ name: "Cream Pie", quantity: 5 }],
+        },
+        "Rim Job Bundle": {
+          components: [{ name: "Rim Job", quantity: 5 }],
+        },
+        "Ice Cream Bundle": {
+          components: [{ name: "Ice Cream", quantity: 5 }],
+        },
+        "Drinks Bundle": {
+          components: [{ name: "Soda", quantity: 5 }],
+        },
+      };
+
       const DAISY_NAME = "Daisy Family Box";
       const DAISY_BURGERS_PER_BOX = 15;
       const DAISY_EXTRAS = [
@@ -367,9 +447,20 @@
         { name: "Cream Pie", quantity: 5 },
       ];
 
+      let ordersData = [];
+
       function formatEST(ts) {
         if (!ts) return "-";
-        const d = ts.toDate ? ts.toDate() : new Date(ts);
+
+        const d =
+          typeof ts?.toDate === "function"
+            ? ts.toDate()
+            : ts instanceof Date
+            ? ts
+            : new Date(ts);
+
+        if (Number.isNaN(d.getTime())) return "-";
+
         return d.toLocaleString("en-US", {
           timeZone: "America/New_York",
           year: "numeric",
@@ -381,41 +472,53 @@
         });
       }
 
-      // ✅ Same expansion logic as orders.html (combos + Daisy + singles)
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      }
+
+      function addComponents(counts, components, multiplier) {
+        components.forEach((component) => {
+          if (counts[component.name] !== undefined) {
+            counts[component.name] +=
+              multiplier * Number(component.quantity || 0);
+          }
+        });
+      }
+
       function parseItems(items = []) {
         const counts = {};
         PRODUCTS.forEach((p) => (counts[p] = 0));
 
         items.forEach((item) => {
-          const qty = Number(item.quantity || 0);
+          const qty = Number(item?.quantity || 0);
           const name = item?.name || "";
-          if (!qty) return;
 
-          // Daisy Family Box → 15 of chosen burger per box + extras
+          if (!qty || !name) return;
+
           if (name === DAISY_NAME && item.daisyChoice) {
             const burger = item.daisyChoice;
             if (counts[burger] !== undefined) {
               counts[burger] += qty * DAISY_BURGERS_PER_BOX;
             }
-            DAISY_EXTRAS.forEach((ex) => {
-              if (counts[ex.name] !== undefined) {
-                counts[ex.name] += qty * ex.quantity;
-              }
-            });
+            addComponents(counts, DAISY_EXTRAS, qty);
             return;
           }
 
-          // Regular combos
+          if (bundleDetails[name]) {
+            addComponents(counts, bundleDetails[name].components, qty);
+            return;
+          }
+
           if (comboDetails[name]) {
-            comboDetails[name].components.forEach((c) => {
-              if (counts[c.name] !== undefined) {
-                counts[c.name] += qty * c.quantity;
-              }
-            });
+            addComponents(counts, comboDetails[name].components, qty);
             return;
           }
 
-          // Single items
           if (counts[name] !== undefined) {
             counts[name] += qty;
           }
@@ -424,35 +527,55 @@
         return counts;
       }
 
-      let ordersData = [];
+      function getNumericTotal(total) {
+        const n = Number(total ?? 0);
+        return Number.isFinite(n) ? n : 0;
+      }
+
+      function getVisibleOrders(rawOrders) {
+        return rawOrders.filter((order) => !order.deleted);
+      }
 
       function renderOrders(orders) {
         tbody.innerHTML = "";
 
         if (!orders.length) {
-          tbody.innerHTML = `<tr><td colspan="${
-            3 + PRODUCTS.length + 2
-          }">No orders found.</td></tr>`;
+          tbody.innerHTML = `
+            <tr class="empty-row">
+              <td colspan="${3 + PRODUCTS.length + 2}">No orders found.</td>
+            </tr>
+          `;
           return;
         }
 
         orders.forEach((order) => {
           const tr = document.createElement("tr");
+
           if (order.done) tr.classList.add("done");
+
+          const tabType = String(order.tabType || "").toUpperCase();
+          if (tabType === "EMS") tr.classList.add("tab-ems");
+          if (tabType === "DOJ") tr.classList.add("tab-doj");
 
           const counts = parseItems(order.items || []);
 
+          const customerHtml = (() => {
+            const base = escapeHtml(order.customer || "-");
+            if (tabType === "EMS" || tabType === "DOJ") {
+              return `${base}<span class="tab-badge ${tabType.toLowerCase()}">${tabType} TAB</span>`;
+            }
+            return base;
+          })();
+
           const cells = [
-            formatEST(order.timestamp),
-            order.employee || "-",
-            order.customer || "-",
+            escapeHtml(formatEST(order.timestamp)),
+            escapeHtml(order.employee || "-"),
+            customerHtml,
             ...PRODUCTS.map((p) => {
               const n = Number(counts[p] || 0);
-              return n > 0 ? n : "";
+              return n > 0 ? escapeHtml(n) : "";
             }),
-            typeof order.total === "number"
-              ? `$${order.total.toFixed(2)}`
-              : `$${Number(order.total ?? 0).toFixed(2)}`,
+            escapeHtml(`$${getNumericTotal(order.total).toFixed(2)}`),
             order.done ? "Yes ✅" : "",
           ];
 
@@ -461,31 +584,35 @@
         });
       }
 
-      // ✅ Match orders.html: show newest first, non-deleted, limit 50
       const qRef = query(
         collection(db, "orders"),
-        orderBy("timestamp", "desc"),
-        limit(200)
+        orderBy("timestamp", "desc")
       );
 
       onSnapshot(
         qRef,
         (snapshot) => {
-          ordersData = snapshot.docs.map((d) => d.data());
-          renderOrders(ordersData);
+          ordersData = snapshot.docs.map((d) => ({
+            id: d.id,
+            ...d.data(),
+          }));
+
+          renderOrders(getVisibleOrders(ordersData));
         },
-        (err) =>
-          console.error("[orders-view] Firestore error:", err?.message || err)
+        (err) => {
+          console.error("[orders-view] Firestore error:", err?.message || err);
+        }
       );
 
-      // CSV export (matches orders.html columns)
       downloadBtn.addEventListener("click", () => {
-        if (!ordersData.length) {
+        const visibleOrders = getVisibleOrders(ordersData);
+
+        if (!visibleOrders.length) {
           alert("No orders to export!");
           return;
         }
 
-        const csv = convertOrdersToCSV(ordersData);
+        const csv = convertOrdersToCSV(visibleOrders);
         const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
         const url = URL.createObjectURL(blob);
 
@@ -513,26 +640,21 @@
 
         const rows = orders.map((order) => {
           const counts = parseItems(order.items || []);
-          const totalValue =
-            typeof order.total === "number"
-              ? order.total.toFixed(2)
-              : Number(order.total ?? 0).toFixed(2);
 
           return [
             formatEST(order.timestamp),
             order.employee || "",
             order.customer || "",
             ...PRODUCTS.map((p) => Number(counts[p] || 0)),
-            totalValue,
+            getNumericTotal(order.total).toFixed(2),
             order.done ? "Yes" : "No",
           ];
         });
 
-        // Quote each field (safe for commas)
         return [
-          header.join(","),
-          ...rows.map((r) =>
-            r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
+          header.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","),
+          ...rows.map((row) =>
+            row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
           ),
         ].join("\n");
       }
