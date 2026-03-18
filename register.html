@@ -730,6 +730,30 @@
         color: white;
       }
 
+      #redeemPassModal > div {
+        background: var(--card) !important;
+        color: var(--text) !important;
+      }
+
+      #redeemPassModal #redeemSearch {
+        background: var(--input-bg) !important;
+        color: var(--text) !important;
+        border: 2px solid #c82333 !important;
+      }
+
+      #redeemPassModal #redeemSearch::placeholder {
+        color: #888;
+      }
+
+      #redeemPassModal #redeemList > div {
+        background: var(--card);
+        color: var(--text);
+      }
+
+      #redeemPassModal button {
+        color: inherit;
+      }
+
       .order-info input#customerName {
         width: 100%;
         padding: 0.75rem 3rem 0.75rem 1rem;
@@ -1740,7 +1764,7 @@
         await setDoc(doc(db, "inventory", "current"), data, { merge: true });
       }
 
-      async function deductInventoryForItems(items) {
+      async function getMissingIngredientsForItems(items) {
         const inventory = await getInventory();
         const totalNeeded = computeIngredientsNeeded(items);
 
@@ -1756,7 +1780,26 @@
           }
         }
 
-        if (missing.length) {
+        return { inventory, totalNeeded, missing };
+      }
+
+      async function deductInventoryForItems(items, force = false) {
+        const inventory = await getInventory();
+        const totalNeeded = computeIngredientsNeeded(items);
+
+        const missing = [];
+        for (const ing in totalNeeded) {
+          const invVal = Number(inventory[ing] || 0);
+          if (invVal < totalNeeded[ing]) {
+            missing.push(
+              `${ingredientLabels[ing] || ing} (need ${
+                totalNeeded[ing]
+              }, have ${invVal})`
+            );
+          }
+        }
+
+        if (missing.length && !force) {
           throw new Error("Not enough ingredients:\n" + missing.join("\n"));
         }
 
@@ -1852,6 +1895,7 @@
         employee,
         customer,
         qty,
+        forceInventory = false,
       }) {
         const items = [
           {
@@ -1863,7 +1907,7 @@
           },
         ];
 
-        await deductInventoryForItems(items);
+        await deductInventoryForItems(items, forceInventory);
 
         await runTransaction(db, async (tx) => {
           const passRef = doc(db, "passes", passId);
@@ -1949,26 +1993,26 @@
 
         const wrap = document.createElement("div");
         wrap.innerHTML = `
-        <div id="bundleModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1250;">
-          <div style="background:#fff; padding:20px; border-radius:12px; width:420px; max-height:80vh; overflow:auto; font-weight:700;">
-            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-              <div style="font-size:1.2rem;">Select Bundle</div>
-              <button id="bundleClose" style="border:none; border-radius:8px; padding:6px 10px; background:#f44336; color:#fff; font-weight:800; cursor:pointer;">Close</button>
-            </div>
-  
-            <div style="margin:14px 0; display:flex; flex-direction:column; gap:8px;">
-              <label for="bundleSelect" style="font-weight:800;">Choose a bundle:</label>
-              <select id="bundleSelect" style="border:2px solid #c82333; border-radius:8px; padding:10px; font-weight:800;">
-                <option value="">— choose a bundle —</option>
-              </select>
-            </div>
-  
-            <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
-              <button id="bundleConfirm" style="border:none; border-radius:8px; padding:10px 16px; background:#4caf50; color:#fff; font-weight:900; cursor:pointer;">Add to Order</button>
+          <div id="bundleModal" style="position:fixed; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,0.5); z-index:1250;">
+            <div style="background:#fff; padding:20px; border-radius:12px; width:420px; max-height:80vh; overflow:auto; font-weight:700;">
+              <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+                <div style="font-size:1.2rem;">Select Bundle</div>
+                <button id="bundleClose" style="border:none; border-radius:8px; padding:6px 10px; background:#f44336; color:#fff; font-weight:800; cursor:pointer;">Close</button>
+              </div>
+    
+              <div style="margin:14px 0; display:flex; flex-direction:column; gap:8px;">
+                <label for="bundleSelect" style="font-weight:800;">Choose a bundle:</label>
+                <select id="bundleSelect" style="border:2px solid #c82333; border-radius:8px; padding:10px; font-weight:800;">
+                  <option value="">— choose a bundle —</option>
+                </select>
+              </div>
+    
+              <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:6px;">
+                <button id="bundleConfirm" style="border:none; border-radius:8px; padding:10px 16px; background:#4caf50; color:#fff; font-weight:900; cursor:pointer;">Add to Order</button>
+              </div>
             </div>
           </div>
-        </div>
-      `;
+        `;
         document.body.appendChild(wrap.firstElementChild);
       }
 
@@ -2010,18 +2054,18 @@
 
           const li = document.createElement("li");
           li.innerHTML = `
-          <div class="item-details">
-            ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(
+            <div class="item-details">
+              ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(
             item.price * item.quantity
           ).toFixed(2)}
-          </div>
-          <div class="quantity-controls">
-            <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
-            <span class="qty-number">${item.quantity}</span>
-            <button class="qty-btn" data-action="plus" data-index="${idx}">+</button>
-          </div>
-          <div class="remove-btn" data-index="${idx}">Remove</div>
-        `;
+            </div>
+            <div class="quantity-controls">
+              <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
+              <span class="qty-number">${item.quantity}</span>
+              <button class="qty-btn" data-action="plus" data-index="${idx}">+</button>
+            </div>
+            <div class="remove-btn" data-index="${idx}">Remove</div>
+          `;
           orderList.appendChild(li);
         });
 
@@ -2427,15 +2471,48 @@
               return;
             }
 
+            const items = [
+              {
+                name: "Patty Pounder Combo",
+                price: 0,
+                quantity: 1,
+                image: "assets/images/combo.png",
+                isMembershipRedeem: true,
+              },
+            ];
+
             redeem.disabled = true;
 
             try {
+              const { missing } = await getMissingIngredientsForItems(items);
+
+              if (missing.length > 0 && !redeem.dataset.confirmed) {
+                showNotification(
+                  `⚠️ Not enough ingredients:\n${missing.join(
+                    "\n"
+                  )}\n\nClick Redeem again to force submit.`,
+                  6000
+                );
+
+                redeem.dataset.confirmed = "true";
+                setTimeout(() => {
+                  delete redeem.dataset.confirmed;
+                }, 6000);
+
+                redeem.disabled = false;
+                return;
+              }
+
+              const forceInventory = redeem.dataset.confirmed === "true";
+              delete redeem.dataset.confirmed;
+
               await redeemPassTicket({
                 passId: p.id,
                 passType: p.type,
                 employee,
                 customer: p.name,
                 qty: 1,
+                forceInventory,
               });
 
               showNotification(
@@ -2445,11 +2522,16 @@
               setTimeout(() => {
                 row.style.outline = "none";
               }, 600);
+
+              await refreshRedeemList();
             } catch (e) {
               console.error(e);
-              showNotification("❌ Could not redeem. Not enough ingredients.");
+              showNotification(
+                `❌ Could not redeem.\n${e.message || "Unknown error."}`,
+                5000
+              );
             } finally {
-              if (p.left > 0) redeem.disabled = false;
+              redeem.disabled = false;
             }
           });
 
