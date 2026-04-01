@@ -391,7 +391,6 @@
         "Ice Cream",
       ];
 
-      /* Match all known combo setups so old + new orders both export correctly */
       const comboDetails = {
         "The Heartstopper Meal": {
           components: [
@@ -548,6 +547,33 @@
         return rawOrders.filter((order) => !order.deleted);
       }
 
+      function getComboBundleInfo(items = []) {
+        const combos = [];
+        const bundles = [];
+
+        items.forEach((item) => {
+          const qty = Number(item?.quantity || 0);
+          const name = item?.name || "";
+
+          if (!qty || !name) return;
+
+          if (comboDetails[name]) {
+            combos.push(qty > 1 ? `${name} x${qty}` : name);
+          }
+
+          if (bundleDetails[name]) {
+            bundles.push(qty > 1 ? `${name} x${qty}` : name);
+          }
+        });
+
+        return {
+          hasCombo: combos.length > 0 ? "Yes" : "No",
+          comboNames: combos.join(", "),
+          hasBundle: bundles.length > 0 ? "Yes" : "No",
+          bundleNames: bundles.join(", "),
+        };
+      }
+
       function renderOrders(orders) {
         tbody.innerHTML = "";
 
@@ -597,6 +623,46 @@
         });
       }
 
+      function convertOrdersToCSV(orders) {
+        const header = [
+          "Date",
+          "Employee",
+          "Customer",
+          ...PRODUCTS,
+          "Total",
+          "Done?",
+          "Has Combo?",
+          "Has Bundle?",
+          "Combo Name",
+          "Bundle Name",
+        ];
+
+        const rows = orders.map((order) => {
+          const counts = parseItems(order.items || []);
+          const comboBundle = getComboBundleInfo(order.items || []);
+
+          return [
+            formatEST(order.timestamp),
+            order.employee || "",
+            order.customer || "",
+            ...PRODUCTS.map((p) => Number(counts[p] || 0)),
+            getNumericTotal(order.total).toFixed(2),
+            order.done ? "Yes" : "No",
+            comboBundle.hasCombo,
+            comboBundle.hasBundle,
+            comboBundle.comboNames,
+            comboBundle.bundleNames,
+          ];
+        });
+
+        return [
+          header.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","),
+          ...rows.map((row) =>
+            row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
+          ),
+        ].join("\n");
+      }
+
       const qRef = query(
         collection(db, "orders"),
         orderBy("timestamp", "desc")
@@ -618,59 +684,33 @@
       );
 
       downloadBtn.addEventListener("click", () => {
-        const visibleOrders = getVisibleOrders(ordersData);
+        try {
+          const visibleOrders = getVisibleOrders(ordersData);
 
-        if (!visibleOrders.length) {
-          alert("No orders to export!");
-          return;
+          if (!visibleOrders.length) {
+            alert("No orders to export!");
+            return;
+          }
+
+          const csv = convertOrdersToCSV(visibleOrders);
+          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+          const url = URL.createObjectURL(blob);
+
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `SnrBuns_Orders_${new Date()
+            .toISOString()
+            .slice(0, 10)}.csv`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        } catch (error) {
+          console.error("[orders-view] CSV download failed:", error);
+          alert("CSV download failed. Check the browser console for details.");
         }
-
-        const csv = convertOrdersToCSV(visibleOrders);
-        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `SnrBuns_Orders_${new Date()
-          .toISOString()
-          .slice(0, 10)}.csv`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        URL.revokeObjectURL(url);
       });
-
-      function convertOrdersToCSV(orders) {
-        const header = [
-          "Date",
-          "Employee",
-          "Customer",
-          ...PRODUCTS,
-          "Total",
-          "Done?",
-        ];
-
-        const rows = orders.map((order) => {
-          const counts = parseItems(order.items || []);
-
-          return [
-            formatEST(order.timestamp),
-            order.employee || "",
-            order.customer || "",
-            ...PRODUCTS.map((p) => Number(counts[p] || 0)),
-            getNumericTotal(order.total).toFixed(2),
-            order.done ? "Yes" : "No",
-          ];
-        });
-
-        return [
-          header.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","),
-          ...rows.map((row) =>
-            row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
-          ),
-        ].join("\n");
-      }
     </script>
   </body>
 </html>
