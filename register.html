@@ -241,19 +241,22 @@
       }
 
       .item-card img {
-        font-weight: 700;
-        margin-bottom: 0.25rem;
-        font-size: 1.25rem;
-        min-height: 3rem; /* keeps titles same height */
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 100%;
+        max-width: 140px;
+        height: 120px;
+        object-fit: contain;
+        margin-bottom: 0.75rem;
+        display: block;
       }
 
       .item-card h3 {
         font-weight: 700;
         margin-bottom: 0.25rem;
         font-size: 1.25rem;
+        min-height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .item-card p {
@@ -2110,7 +2113,7 @@
             selectedCategory === "All" || selectedCategory === itemCategory;
           const searchMatch = itemName.includes(searchText);
 
-          card.style.display = categoryMatch && searchMatch ? "block" : "none";
+          card.style.display = categoryMatch && searchMatch ? "flex" : "none";
         });
       }
 
