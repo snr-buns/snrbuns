@@ -976,6 +976,22 @@
 
           <div
             class="item-card"
+            data-name="The Ivax Special"
+            data-price="600"
+            data-category="Combos"
+            data-image="assets/images/bleederbox.png"
+          >
+            <img src="assets/images/joshua.png" alt="The Ivax Special" />
+            <h3>The Ivax Special</h3>
+            <p>$600</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
             data-name="Bundle"
             data-price="0"
             data-category="Bundles"
@@ -1647,6 +1663,13 @@
           price: 600,
           components: [
             { name: "The Bleeder", quantity: 5 },
+            { name: "Soda", quantity: 5 },
+          ],
+        },
+        "The Ivax Special": {
+          price: 600,
+          components: [
+            { name: "Goat Wrap", quantity: 5 },
             { name: "Soda", quantity: 5 },
           ],
         },
