@@ -89,13 +89,21 @@
           <a href="loyalty.html">CUSTOMERS</a>
         </section>
 
-        <section class="recent-orders" aria-label="Recent orders">
-          <h2>🧾 Recent Orders</h2>
+        <section class="recent-orders">
+          <div class="card-heading">
+            <span>🧾</span>
+            <span>Recent Orders</span>
+          </div>
+
           <ul id="recentOrdersList" tabindex="0"></ul>
         </section>
 
-        <section class="alerts" aria-label="Inventory alerts">
-          <h2>⚠️ Inventory Alerts</h2>
+        <section class="alerts">
+          <div class="card-heading">
+            <span>⚠️</span>
+            <span>Inventory Alerts</span>
+          </div>
+
           <ul id="inventoryAlertsList"></ul>
         </section>
       </main>
@@ -255,7 +263,6 @@
       const body = document.body;
       const sidebar = document.querySelector(".sidebar");
       const menuBtn = document.getElementById("menuToggle");
-      const darkModeToggle = document.getElementById("darkModeToggle");
       const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
 
       function applyDarkModeSetting() {

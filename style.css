@@ -1413,6 +1413,13 @@ h3 {
 .alerts h2 {
   margin: 0 0 15px;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  width: 100%;
+
   font-family: "Lilita One", sans-serif;
   font-size: 1.85rem;
   font-weight: 400;
@@ -1420,6 +1427,7 @@ h3 {
   letter-spacing: 0.2px;
 
   color: var(--red);
+  text-align: center;
 }
 
 .recent-orders ul,
@@ -5166,4 +5174,51 @@ body.dark-mode ::-webkit-scrollbar-thumb {
 
 body.dark-mode ::-webkit-scrollbar-thumb:hover {
   background: #666;
+}
+
+.home-content .recent-orders h2,
+.home-content .alerts h2 {
+  width: 100% !important;
+
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  gap: 10px !important;
+
+  text-align: center !important;
+}
+
+.card-heading {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  margin-bottom: 15px;
+
+  font-family: "Lilita One", sans-serif;
+  font-size: 1.85rem;
+  font-weight: 400;
+
+  color: var(--red);
+
+  text-align: center;
+}
+
+.recent-orders,
+.alerts {
+  text-align: center;
+}
+
+.recent-orders ul,
+.alerts ul {
+  text-align: center;
+}
+
+.recent-orders li,
+.alerts li {
+  text-align: center;
 }
