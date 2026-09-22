@@ -4841,3 +4841,329 @@ h1 {
 
   z-index: 9999;
 }
+
+.dark-mode-btn {
+  width: 100%;
+
+  margin: 0 0 18px;
+  padding: 10px 12px;
+
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 10px;
+
+  font-family: "Lilita One", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 400;
+
+  letter-spacing: 0.5px;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.dark-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* =====================================================
+   GLOBAL DARK MODE
+===================================================== */
+
+body.dark-mode {
+  --cream: #151515;
+  --cream-dark: #1b1b1b;
+
+  --white: #222222;
+  --text: #f4f1eb;
+  --muted: #bdb5aa;
+  --border: #3b3935;
+
+  --red-soft: #402222;
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 10px 28px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.4);
+
+  background: #151515;
+  color: #f4f1eb;
+}
+
+/* =====================================================
+   MAIN PAGE BACKGROUNDS
+===================================================== */
+
+body.dark-mode .home-content,
+body.dark-mode .register-content,
+body.dark-mode .orders-main,
+body.dark-mode .inventory-main,
+body.dark-mode .market-main,
+body.dark-mode .staff-meals-main,
+body.dark-mode .customers-main,
+body.dark-mode .main-content {
+  background: #151515 !important;
+  color: #f4f1eb;
+}
+
+/* =====================================================
+   PAGE HEADINGS / NORMAL TEXT
+===================================================== */
+
+body.dark-mode .page-eyebrow {
+  color: #aaa39a !important;
+}
+
+body.dark-mode .welcome > p,
+body.dark-mode .inventory-intro,
+body.dark-mode .market-intro,
+body.dark-mode .staff-meals-intro {
+  color: #d5cec4 !important;
+}
+
+body.dark-mode p,
+body.dark-mode label,
+body.dark-mode small,
+body.dark-mode li,
+body.dark-mode span {
+  color: inherit;
+}
+
+/* Keep red brand headings */
+body.dark-mode .page-title,
+body.dark-mode .register-page-title,
+body.dark-mode .orders-page-title,
+body.dark-mode .inventory-page-title,
+body.dark-mode .market-page-title,
+body.dark-mode .staff-meals-page-title,
+body.dark-mode .customers-page-title {
+  color: #ef4a4a !important;
+}
+
+/* =====================================================
+   CARDS
+===================================================== */
+
+body.dark-mode .quick-card,
+body.dark-mode .recent-orders,
+body.dark-mode .alerts,
+body.dark-mode .item-card,
+body.dark-mode .order-summary,
+body.dark-mode .combo-box,
+body.dark-mode .staff-meals-form-card,
+body.dark-mode .customer-card,
+body.dark-mode .leaderboard-card {
+  background: #222222 !important;
+  color: #f4f1eb !important;
+
+  border-color: #3b3935 !important;
+
+  box-shadow: var(--shadow-sm);
+}
+
+body.dark-mode .item-card h3,
+body.dark-mode .customer-name,
+body.dark-mode .leaderboard-card p,
+body.dark-mode .quick-card p {
+  color: #f4f1eb !important;
+}
+
+/* Prices / important red text */
+body.dark-mode .item-card p,
+body.dark-mode .total-visits,
+body.dark-mode .combo-box h3,
+body.dark-mode .recent-orders h2,
+body.dark-mode .alerts h2,
+body.dark-mode .order-summary h2 {
+  color: #ef4a4a !important;
+}
+
+/* =====================================================
+   INPUTS / SEARCH / SELECTS
+===================================================== */
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea,
+body.dark-mode #searchBar,
+body.dark-mode .customers-search,
+body.dark-mode .select-selected,
+body.dark-mode .staff-select-selected,
+body.dark-mode .bundle-select-selected {
+  background: #2b2b2b !important;
+  color: #f4f1eb !important;
+
+  border-color: #4b4843 !important;
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder {
+  color: #918b83;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus,
+body.dark-mode #searchBar:focus,
+body.dark-mode .customers-search:focus {
+  background: #303030 !important;
+
+  border-color: #ef4a4a !important;
+
+  box-shadow: 0 0 0 4px rgba(239, 74, 74, 0.12) !important;
+}
+
+/* =====================================================
+   CUSTOM DROPDOWNS
+===================================================== */
+
+body.dark-mode .select-items,
+body.dark-mode .staff-select-items,
+body.dark-mode .bundle-select-items {
+  background: #252525 !important;
+  color: #f4f1eb !important;
+
+  border-color: #4b4843 !important;
+}
+
+body.dark-mode .select-items div,
+body.dark-mode .staff-select-items div,
+body.dark-mode .bundle-select-option {
+  color: #f4f1eb;
+}
+
+/* Keep yellow hover/select */
+body.dark-mode .select-items div:hover,
+body.dark-mode .staff-select-items div:hover,
+body.dark-mode .staff-select-items div.selected,
+body.dark-mode .bundle-select-option:hover,
+body.dark-mode .bundle-select-option.selected {
+  background: var(--yellow) !important;
+  color: #332716 !important;
+}
+
+/* =====================================================
+   TABLES
+===================================================== */
+
+body.dark-mode table,
+body.dark-mode table tbody,
+body.dark-mode table td {
+  background: #222222;
+  color: #f4f1eb;
+
+  border-color: #3b3935;
+}
+
+body.dark-mode table th {
+  background: var(--yellow);
+  color: #332716;
+}
+
+body.dark-mode table tbody tr:nth-child(even) td {
+  background: #272727;
+}
+
+body.dark-mode table tbody tr:hover td {
+  background: #303030;
+}
+
+/* Market table category rows */
+body.dark-mode .divider-row td {
+  background: #3a3323 !important;
+  color: #f6df9d !important;
+}
+
+/* =====================================================
+   ORDER SUMMARY
+===================================================== */
+
+body.dark-mode .order-info label {
+  color: #bdb5aa;
+}
+
+body.dark-mode #orderList li {
+  border-color: #3b3935;
+}
+
+body.dark-mode .item-name {
+  color: #f4f1eb;
+}
+
+body.dark-mode .item-price {
+  color: #bdb5aa;
+}
+
+/* =====================================================
+   OUT OF STOCK
+===================================================== */
+
+body.dark-mode .item-card.out-of-stock {
+  background: #292929 !important;
+  border-color: #444 !important;
+
+  opacity: 0.58;
+}
+
+body.dark-mode .item-card.out-of-stock h3,
+body.dark-mode .item-card.out-of-stock p {
+  color: #aaa !important;
+}
+
+body.dark-mode .item-card.out-of-stock .quantity-input {
+  background: #333 !important;
+  color: #777 !important;
+}
+
+body.dark-mode .bundle-select-option.out-of-stock {
+  background: #333 !important;
+  color: #888 !important;
+}
+
+/* =====================================================
+   CUSTOMER LOYALTY
+===================================================== */
+
+body.dark-mode .circle.empty {
+  background: #333;
+  border-color: #555;
+}
+
+body.dark-mode .circle.filled {
+  background: var(--yellow);
+  border-color: var(--yellow-dark);
+}
+
+/* =====================================================
+   MODALS
+===================================================== */
+
+body.dark-mode .modal-content,
+body.dark-mode #expiredModal .modal-content,
+body.dark-mode #bundleModal > div,
+body.dark-mode #redeemPassModal > div {
+  background: #222222 !important;
+  color: #f4f1eb !important;
+
+  border-color: #3b3935 !important;
+}
+
+/* =====================================================
+   SCROLLBARS
+===================================================== */
+
+body.dark-mode ::-webkit-scrollbar-track {
+  background: #1b1b1b;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 999px;
+}
+
+body.dark-mode ::-webkit-scrollbar-thumb:hover {
+  background: #666;
+}

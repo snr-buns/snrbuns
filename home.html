@@ -34,6 +34,7 @@
             <li><a href="staffmeals.html">STAFF MEALS</a></li>
             <li><a href="loyalty.html">CUSTOMERS</a></li>
           </ul>
+          <button id="darkModeBtn" class="dark-mode-btn">🌙 DARK MODE</button>
         </nav>
       </aside>
 
@@ -305,6 +306,32 @@
       });
 
       window.addEventListener("resize", applySidebarSetting);
+    </script>
+
+    <script>
+      const darkModeBtn = document.getElementById("darkModeBtn");
+
+      function updateDarkModeButton() {
+        const isDark = document.body.classList.contains("dark-mode");
+
+        darkModeBtn.textContent = isDark ? "☀️ LIGHT MODE" : "🌙 DARK MODE";
+      }
+
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+
+      updateDarkModeButton();
+
+      darkModeBtn?.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+
+        const isDark = document.body.classList.contains("dark-mode");
+
+        localStorage.setItem("darkMode", isDark ? "true" : "false");
+
+        updateDarkModeButton();
+      });
     </script>
   </body>
 </html>
