@@ -86,13 +86,13 @@
 
           <div
             class="item-card"
-            data-name="Patty Pounder Combo"
+            data-name="The Spooky Special"
             data-price="1200"
             data-category="Combos"
             data-image="assets/images/bleederbox.png"
           >
-            <img src="assets/images/combo.png" alt="Patty Pounder Combo" />
-            <h3>Patty Pounder Combo</h3>
+            <img src="assets/images/combo.png" alt="The Spooky Special" />
+            <h3>The Spooky Special</h3>
             <p>$1200</p>
             <div class="add-controls">
               <input type="number" class="quantity-input" min="1" value="1" />
@@ -102,13 +102,13 @@
 
           <div
             class="item-card"
-            data-name="The Bleeder Box"
+            data-name="The Haunted Box"
             data-price="500"
             data-category="Combos"
             data-image="assets/images/bleederbox.png"
           >
-            <img src="assets/images/combo.png" alt="The Bleeder Box" />
-            <h3>The Bleeder Box</h3>
+            <img src="assets/images/combo.png" alt="The Haunted Box" />
+            <h3>Haunted Box</h3>
             <p>$500</p>
             <div class="add-controls">
               <input type="number" class="quantity-input" min="1" value="1" />
@@ -907,14 +907,14 @@
             { name: "Soda", quantity: 15 },
           ],
         },
-        "The Bleeder Box": {
+        "Haunted Box": {
           price: 500,
           components: [
             { name: "The Bleeder", quantity: 5 },
             { name: "Soda", quantity: 5 },
           ],
         },
-        "Patty Pounder Combo": {
+        "The Spooky Special": {
           price: 1200,
           components: [
             { name: "The Prickley", quantity: 10 },
@@ -1162,7 +1162,7 @@
       }) {
         const items = [
           {
-            name: "Patty Pounder Combo",
+            name: "The Spooky Special",
             price: 0,
             quantity: qty,
             image: "assets/images/combo.png",
@@ -1824,7 +1824,7 @@
 
             const items = [
               {
-                name: "Patty Pounder Combo",
+                name: "The Spooky Special",
                 price: 0,
                 quantity: 1,
                 image: "assets/images/combo.png",
@@ -1867,7 +1867,7 @@
               });
 
               showNotification(
-                `✅ Confirmed — Patty Pounder Combo sent to kitchen for ${p.name}`
+                `✅ Confirmed — The Spooky Special sent to kitchen for ${p.name}`
               );
               row.style.outline = "3px solid #4caf50";
               setTimeout(() => {
