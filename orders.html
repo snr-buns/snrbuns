@@ -1,8 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
     <title>Snr. Buns - Order Sheet</title>
 
     <link
@@ -13,9 +16,82 @@
     <link rel="stylesheet" href="style.css" />
 
     <script type="module" src="auth.js"></script>
+
+    <style>
+      /* Compact order-sheet layout: six columns, no sideways scrolling. */
+      .orders-page .orders-main {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+      .orders-page .table-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: calc(100vh - 190px);
+      }
+      .orders-page #ordersTable {
+        width: 100%;
+        min-width: 0;
+        table-layout: auto;
+      }
+      .orders-page #ordersTable th,
+      .orders-page #ordersTable td {
+        white-space: normal;
+        vertical-align: middle;
+      }
+      .orders-page #ordersTable thead th {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      .orders-page #ordersTable th:nth-child(1) {
+        width: 145px;
+      }
+      .orders-page #ordersTable th:nth-child(2) {
+        width: 120px;
+      }
+      .orders-page #ordersTable th:nth-child(3) {
+        width: 155px;
+      }
+      .orders-page #ordersTable th:nth-child(5) {
+        width: 110px;
+      }
+      .orders-page #ordersTable th:nth-child(6) {
+        width: 75px;
+      }
+      .orders-page .order-items-cell {
+        min-width: 230px;
+      }
+      .orders-page .order-items-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+      }
+      .orders-page .order-item-chip {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: rgba(220, 161, 0, 0.12);
+        border: 1px solid rgba(220, 161, 0, 0.38);
+        font-size: 0.85rem;
+        line-height: 1.3;
+        white-space: nowrap;
+      }
+      @media (max-width: 800px) {
+        .orders-page #ordersTable {
+          min-width: 750px;
+        }
+      }
+    </style>
   </head>
+
   <body class="orders-page">
     <button id="menuToggle" class="hamburger">☰</button>
+
     <div class="main-container">
       <aside class="sidebar">
         <div class="sidebar-brand">
@@ -27,11 +103,17 @@
         <nav>
           <ul class="list-unstyled">
             <li><a href="home.html">HOME</a></li>
+
             <li><a href="register.html">REGISTER</a></li>
+
             <li><a href="orders.html" class="active">ORDERS</a></li>
+
             <li><a href="inventory.html">INVENTORY</a></li>
+
             <li><a href="market.html">MARKET RUN</a></li>
+
             <li><a href="staffmeals.html">STAFF MEALS</a></li>
+
             <li><a href="loyalty.html">CUSTOMERS</a></li>
           </ul>
         </nav>
@@ -40,50 +122,20 @@
       <main class="main orders-main">
         <header class="orders-header">
           <span class="page-eyebrow">SNR BUNS STAFF PORTAL</span>
+
           <h1 class="orders-page-title">ORDER SHEET</h1>
         </header>
 
         <div class="table-container">
           <table id="ordersTable" aria-label="Order Sheet">
             <thead>
-              <tr class="group-row">
-                <th rowspan="2">Date</th>
-                <th rowspan="2">Employee</th>
-                <th rowspan="2">Customer</th>
-
-                <th class="group" colspan="7">BURGERS</th>
-                <th class="group" colspan="3">WRAPS</th>
-                <th class="group" colspan="3">SIDES</th>
-                <th class="group" colspan="2">DRINKS</th>
-                <th class="group" colspan="3">DESSERTS</th>
-
-                <th rowspan="2">Total</th>
-                <th rowspan="2">Done?</th>
-              </tr>
-
               <tr>
-                <th>Heart Stopper</th>
-                <th>Money Shot</th>
-                <th>The Simply</th>
-                <th>Double Shot</th>
-                <th>The Glorious</th>
-                <th>The Bleeder</th>
-                <th>The Prickley</th>
-
-                <th>Chicken Wrap</th>
-                <th>Chicken Mexican</th>
-                <th>Goat Wrap</th>
-
-                <th>Fries</th>
-                <th>Onion Rings</th>
-                <th>Chicken Nuggets</th>
-
-                <th>Soda</th>
-                <th>Coffee</th>
-
-                <th>Rim Job</th>
-                <th>Cream Pie</th>
-                <th>Ice Cream</th>
+                <th>Date</th>
+                <th>Employee</th>
+                <th>Customer</th>
+                <th>Items Ordered</th>
+                <th>Total</th>
+                <th>Done?</th>
               </tr>
             </thead>
 
@@ -106,7 +158,9 @@
         <div id="confirmTitle" style="font-size: 1.2rem; margin-bottom: 10px">
           Are you sure you want to clear completed orders?
         </div>
+
         <button class="yes-btn">Yes</button>
+
         <button class="no-btn">No</button>
       </div>
     </div>
@@ -124,34 +178,48 @@
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
       import { app } from "./auth.js";
+
       const db = getFirestore(app);
 
       const tbody = document.getElementById("ordersBody");
+
       const clearBtn = document.getElementById("clearDone");
+
       const modal = document.getElementById("clearConfirmModal");
+
       const yesBtn = modal.querySelector(".yes-btn");
+
       const noBtn = modal.querySelector(".no-btn");
 
       const comboDetails = {
         "The Heartstopper Meal": {
           price: 1400,
+
           components: [
             { name: "Heart Stopper", quantity: 5 },
+
             { name: "Onion Rings", quantity: 5 },
+
             { name: "Soda", quantity: 15 },
           ],
         },
+
         "Haunted Box": {
           price: 500,
+
           components: [
             { name: "The Bleeder", quantity: 5 },
+
             { name: "Soda", quantity: 5 },
           ],
         },
+
         "The Spooky Special": {
           price: 1200,
+
           components: [
             { name: "The Prickley", quantity: 10 },
+
             { name: "Soda", quantity: 15 },
           ],
         },
@@ -160,58 +228,90 @@
       const bundleDetails = {
         "Fries Bundle": {
           price: 250,
+
           components: [{ name: "Fries", quantity: 5 }],
         },
+
         "Onion Bundle": {
           price: 250,
+
           components: [{ name: "Onion Rings", quantity: 5 }],
         },
+
         "Nuggies Box": {
           price: 400,
+
           components: [{ name: "Chicken Nuggets", quantity: 5 }],
         },
+
         "Cream Pie Bundle": {
           price: 250,
+
           components: [{ name: "Cream Pie", quantity: 5 }],
         },
+
         "Rim Job Bundle": {
           price: 250,
+
           components: [{ name: "Rim Job", quantity: 5 }],
         },
+
         "Ice Cream Bundle": {
           price: 250,
+
           components: [{ name: "Ice Cream", quantity: 5 }],
         },
+
         "Drinks Bundle": {
           price: 150,
+
           components: [{ name: "Soda", quantity: 5 }],
         },
       };
 
       const PRODUCTS = [
         "Heart Stopper",
+
         "Money Shot",
+
         "The Simply",
+
         "Double Shot",
+
         "The Glorious",
+
         "The Bleeder",
+
         "The Prickley",
+
         "Chicken Wrap",
+
         "Chicken Mexican",
+
         "Goat Wrap",
+
         "Fries",
+
         "Onion Rings",
+
         "Chicken Nuggets",
+
         "Soda",
+
         "Coffee",
+
         "Rim Job",
+
         "Cream Pie",
+
         "Ice Cream",
       ];
 
       const q = query(
         collection(db, "orders"),
+
         orderBy("timestamp", "desc"),
+
         limit(150)
       );
 
@@ -219,11 +319,14 @@
 
       function parseItems(items = []) {
         const counts = {};
+
         PRODUCTS.forEach((p) => (counts[p] = 0));
 
         items.forEach((item) => {
           const qty = Number(item.quantity || 0);
+
           const name = item?.name || "";
+
           if (!qty) return;
 
           if (bundleDetails[name]) {
@@ -232,6 +335,7 @@
                 counts[c.name] += qty * c.quantity;
               }
             });
+
             return;
           }
 
@@ -241,6 +345,7 @@
                 counts[c.name] += qty * c.quantity;
               }
             });
+
             return;
           }
 
@@ -259,68 +364,133 @@
           if (order.deleted) return;
 
           const tr = document.createElement("tr");
+
           if (order.done) tr.classList.add("done");
 
           const tabType = (order.tabType || "").toUpperCase();
+
           if (tabType === "EMS") tr.classList.add("tab-ems");
+
           if (tabType === "DOJ") tr.classList.add("tab-doj");
+
           if (tabType === "PD") tr.classList.add("tab-pd");
 
           const counts = parseItems(order.items || []);
 
           const estDate = order.timestamp?.toDate?.();
+
           const formattedDate = estDate
             ? estDate.toLocaleString("en-US", {
                 timeZone: "America/New_York",
+
                 year: "numeric",
+
                 month: "2-digit",
+
                 day: "2-digit",
+
                 hour: "2-digit",
+
                 minute: "2-digit",
+
                 hour12: false,
               })
             : "-";
 
           const checkbox = document.createElement("input");
+
           checkbox.type = "checkbox";
+
           checkbox.checked = !!order.done;
+
           checkbox.addEventListener("change", async () => {
             await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
           });
 
           const dateTd = document.createElement("td");
+
           dateTd.textContent = formattedDate;
+
           tr.appendChild(dateTd);
 
           const employeeTd = document.createElement("td");
+
           employeeTd.textContent = order.employee || "-";
+
           tr.appendChild(employeeTd);
 
           const customerTd = document.createElement("td");
+
           customerTd.textContent = order.customer || "-";
 
           if (tabType === "EMS" || tabType === "DOJ" || tabType === "PD") {
             const badge = document.createElement("span");
+
             badge.className = `tab-badge ${tabType.toLowerCase()}`;
+
             badge.textContent = `${tabType} TAB`;
+
             customerTd.appendChild(badge);
           }
 
           tr.appendChild(customerTd);
 
-          PRODUCTS.forEach((p) => {
-            const td = document.createElement("td");
-            const n = Number(counts[p] || 0);
-            td.textContent = n > 0 ? n : "";
-            tr.appendChild(td);
+          // Display ordered products together instead of in 18 separate columns.
+          // parseItems already expands combos and bundles into their components.
+          const itemsTd = document.createElement("td");
+          itemsTd.className = "order-items-cell";
+          const itemsList = document.createElement("div");
+          itemsList.className = "order-items-list";
+          const activeProducts = PRODUCTS.filter(
+            (p) => Number(counts[p] || 0) > 0
+          );
+
+          // Show recognised menu products (including expanded combos and bundles).
+          activeProducts.forEach((p) => {
+            const item = document.createElement("span");
+            item.className = "order-item-chip";
+            item.textContent = `${counts[p]}× ${p}`;
+            itemsList.appendChild(item);
           });
 
+          // Do not silently hide products from older orders, memberships,
+          // or products whose names have changed in the menu.
+          const savedItems = Array.isArray(order.items) ? order.items : [];
+          savedItems.forEach((saved) => {
+            const name = String(saved?.name || "").trim();
+            const qty = Number(saved?.quantity ?? 1);
+            if (!name || !Number.isFinite(qty) || qty <= 0) return;
+            if (
+              PRODUCTS.includes(name) ||
+              comboDetails[name] ||
+              bundleDetails[name]
+            )
+              return;
+
+            const item = document.createElement("span");
+            item.className = "order-item-chip";
+            item.textContent = `${qty}× ${name}`;
+            itemsList.appendChild(item);
+          });
+
+          if (!itemsList.children.length) {
+            itemsList.textContent = savedItems.length
+              ? "Order items could not be read"
+              : "No items saved on this order";
+          }
+          itemsTd.appendChild(itemsList);
+          tr.appendChild(itemsTd);
+
           const totalTd = document.createElement("td");
+
           totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
+
           tr.appendChild(totalTd);
 
           const doneTd = document.createElement("td");
+
           doneTd.appendChild(checkbox);
+
           tr.appendChild(doneTd);
 
           tbody.appendChild(tr);
@@ -329,22 +499,27 @@
 
       onSnapshot(
         q,
+
         (snapshot) => {
           currentOrders = snapshot.docs.map((d) => ({
             id: d.id,
+
             data: d.data(),
           }));
+
           renderOrders(currentOrders);
         },
+
         (err) => {
           console.error(
             "[orders] Firestore onSnapshot error:",
+
             err?.message || err
           );
         }
       );
 
-      clearBtn.addEventListener("click", () => {
+      clearBtn?.addEventListener("click", () => {
         modal.style.display = "flex";
       });
 
@@ -352,10 +527,13 @@
         const doneOrders = currentOrders.filter(
           (o) => o.data.done && !o.data.deleted
         );
+
         const updates = doneOrders.map((o) =>
           updateDoc(doc(db, "orders", o.id), { deleted: true })
         );
+
         await Promise.all(updates);
+
         modal.style.display = "none";
       });
 
@@ -366,8 +544,11 @@
 
     <script>
       const body = document.body;
+
       const menuBtn = document.getElementById("menuToggle");
+
       const sidebar = document.querySelector(".sidebar");
+
       const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
 
       function applySidebarSetting() {
@@ -375,11 +556,13 @@
 
         if (window.innerWidth > 768) {
           body.classList.toggle("sidebar-collapsed", collapsed);
+
           if (sidebarCollapseBtn) {
             sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
           }
         } else {
           body.classList.remove("sidebar-collapsed");
+
           if (sidebarCollapseBtn) {
             sidebarCollapseBtn.textContent = "⬅";
           }
@@ -390,6 +573,7 @@
 
       menuBtn?.addEventListener("click", () => {
         sidebar.classList.toggle("active");
+
         menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
       });
 
@@ -397,8 +581,11 @@
         if (window.innerWidth <= 768) return;
 
         body.classList.toggle("sidebar-collapsed");
+
         const collapsed = body.classList.contains("sidebar-collapsed");
+
         localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+
         sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
       });
 
@@ -410,13 +597,15 @@
         document.body.classList.add("dark-mode");
       }
     </script>
+
     <script>
       const darkModeBtn = document.getElementById("darkModeBtn");
 
       function updateDarkModeButton() {
         const isDark = document.body.classList.contains("dark-mode");
 
-        darkModeBtn.textContent = isDark ? "☀️ LIGHT MODE" : "🌙 DARK MODE";
+        if (darkModeBtn)
+          darkModeBtn.textContent = isDark ? "☀️ LIGHT MODE" : "🌙 DARK MODE";
       }
 
       if (localStorage.getItem("darkMode") === "true") {

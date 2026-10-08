@@ -5222,3 +5222,64 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
 .alerts li {
   text-align: center;
 }
+
+/* ORDERS PAGE - FIX HORIZONTAL SCROLLING */
+
+.orders-page .orders-main {
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.orders-page .table-container {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+
+  /* Horizontal scroll within the table */
+  overflow-x: auto;
+  overflow-y: auto;
+
+  /* Keep scrollbar accessible */
+  max-height: calc(100vh - 190px);
+
+  position: relative;
+  scrollbar-width: thin;
+  scrollbar-color: #888 #252525;
+}
+
+.orders-page #ordersTable {
+  width: max-content;
+  min-width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Keep headings visible when scrolling */
+.orders-page #ordersTable thead {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+
+/* Prevent columns being squashed */
+.orders-page #ordersTable th,
+.orders-page #ordersTable td {
+  white-space: nowrap;
+}
+
+/* Scrollbar styling */
+.orders-page .table-container::-webkit-scrollbar {
+  width: 9px;
+  height: 11px;
+}
+
+.orders-page .table-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 8px;
+}
+
+.orders-page .table-container::-webkit-scrollbar-track {
+  background: #252525;
+}
