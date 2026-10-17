@@ -118,6 +118,22 @@
 
           <div
             class="item-card"
+            data-name="Eat My Meat"
+            data-price="1800"
+            data-category="Combos"
+            data-image="assets/images/combo.png"
+          >
+            <img src="assets/images/combo.png" alt="Eat My Meat" />
+            <h3>Eat My Meat</h3>
+            <p>$1800</p>
+            <div class="add-controls">
+              <input type="number" class="quantity-input" min="1" value="1" />
+              <button class="add-btn">Add</button>
+            </div>
+          </div>
+
+          <div
+            class="item-card"
             data-name="Bundle"
             data-price="0"
             data-category="Bundles"
@@ -463,14 +479,11 @@
               <option value="Cook">Cook</option>
               <option value="Sage">Sage</option>
               <option value="John">John</option>
-              <option value="Shitbag">Shitbag</option>
               <option value="Calvin">Calvin</option>
-              <option value="Hailey">Hailey</option>
-              <option value="Anastasia">Anastasia</option>
-              <option value="Kira">Kira</option>
               <option value="Zuriel">Zuriel</option>
               <option value="Max">Max</option>
               <option value="Stevie">Stevie</option>
+              <option value="Jacob">Jacob</option>
             </select>
 
             <div class="custom-select">
@@ -479,20 +492,16 @@
                 <div data-value="Savannah">Savannah</div>
                 <div data-value="Torch">Torch</div>
                 <div data-value="Slade">Slade</div>
-                <div data-value="Jack">Jack</div>
                 <div data-value="Mustard">Mustard</div>
                 <div data-value="Jake">Jake</div>
                 <div data-value="Cook">Cook</div>
                 <div data-value="Sage">Sage</div>
                 <div data-value="John">John</div>
-                <div data-value="Shitbag">Shitbag</div>
                 <div data-value="Calvin">Calvin</div>
-                <div data-value="Hailey">Hailey</div>
-                <div data-value="Anastasia">Anastasia</div>
-                <div data-value="Kira">Kira</div>
                 <div data-value="Zuriel">Zuriel</div>
                 <div data-value="Max">Max</div>
                 <div data-value="Stevie">Stevie</div>
+                <div data-value="Jacob">Jacob</div>
               </div>
             </div>
           </div>
@@ -889,6 +898,7 @@
         "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
         "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
         "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
+        "Torpedo Burger": { burger_buns: 1, onion: 1, pulled_pork: 1 },
         Soda: { corn_syrup: 1 },
         Coffee: { coffee_beans: 1 },
         Fries: { potato: 2 },
@@ -900,6 +910,14 @@
       };
 
       const comboDetails = {
+        "Eat My Meat": {
+          price: 1800,
+          components: [
+            { name: "Torpedo Burger", quantity: 15 },
+            { name: "Cream Pie", quantity: 5 },
+            { name: "Soda", quantity: 25 },
+          ],
+        },
         "The Heartstopper Meal": {
           price: 1400,
           components: [
@@ -972,6 +990,7 @@
         vanilla: "vanilla",
         goat_cheese: "goat cheese",
         onion: "onion",
+        pulled_pork: "pulled pork",
         tortilla: "tortilla",
         tomato: "tomato",
       };

@@ -315,7 +315,7 @@
             <th rowspan="2">Employee</th>
             <th rowspan="2">Customer</th>
 
-            <th class="group" colspan="7">BURGERS</th>
+            <th class="group" colspan="8">BURGERS</th>
             <th class="group" colspan="3">WRAPS</th>
             <th class="group" colspan="3">SIDES</th>
             <th class="group" colspan="2">DRINKS</th>
@@ -333,6 +333,7 @@
             <th>The Glorious</th>
             <th>The Bleeder</th>
             <th>The Prickley</th>
+            <th>Torpedo Burger</th>
 
             <th>Chicken Wrap</th>
             <th>Chicken Mexican</th>
@@ -371,6 +372,7 @@
       const downloadBtn = document.getElementById("downloadCSV");
 
       const PRODUCTS = [
+        "Torpedo Burger",
         "Heart Stopper",
         "Money Shot",
         "The Simply",
@@ -392,6 +394,13 @@
       ];
 
       const comboDetails = {
+        "Eat My Meat": {
+          components: [
+            { name: "Torpedo Burger", quantity: 15 },
+            { name: "Cream Pie", quantity: 5 },
+            { name: "Soda", quantity: 25 },
+          ],
+        },
         "The Heartstopper Meal": {
           components: [
             { name: "Heart Stopper", quantity: 5 },
