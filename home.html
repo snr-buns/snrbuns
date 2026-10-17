@@ -1,541 +1,823 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Snr. Buns - Home</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Snr. Buns - Home</title>
 
-  <!-- Bootstrap CSS CDN -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap CSS CDN -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap" rel="stylesheet" />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <script type="module" src="auth.js"></script>
+    <script type="module" src="auth.js"></script>
 
-  <style>
-    body {
-      font-family: 'Montserrat', sans-serif;
-      background-color: #fff4d6;
-      margin: 0;
-      display: flex;
-      min-height: 100vh;
-      color: #333;
-    }
-    .sidebar {
-      background-color: #c82333;
-      width: 220px;
-      color: white;
-      padding: 2rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-    }
-    .sidebar h2 {
-      font-weight: 700;
-      font-size: 1.8rem;
-      margin-bottom: 2rem;
-      user-select: none;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      white-space: nowrap;
-    }
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 0.75rem 0.5rem;
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      transition: background-color 0.3s;
-      user-select: none;
-    }
-    .sidebar a:hover,
-    .sidebar a.active {
-      background-color: #a71d2a;
-      text-decoration: none;
-    }
-    main.home-content {
-      flex-grow: 1;
-      padding: 2rem 2.5rem;
-      background-color: #fff4d6;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-    header.welcome {
-      text-align: center;
-    }
-    header.welcome h1 {
-      font-weight: 700;
-      color: #c82333;
-      font-size: 2.5rem;
-      margin-bottom: 0.25rem;
-      user-select: none;
-    }
-    header.welcome p {
-      font-weight: 600;
-      color: #555;
-      margin-top: 0;
-      user-select: none;
-    }
-    section.quick-stats {
-      display: flex;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .quick-card {
-      background: white;
-      padding: 1rem 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-      min-width: 140px;
-      text-align: center;
-      user-select: none;
-    }
-    .quick-card h3 {
-      margin: 0.2rem 0;
-      font-size: 1.6rem;
-      color: #c82333;
-    }
-    .quick-card p {
-      margin: 0;
-      font-weight: 600;
-      color: #333;
-    }
-    section.recent-orders {
-      background: white;
-      padding: 1rem 1.5rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-      max-width: 900px;
-      margin: 0 auto;
-    }
-    .recent-orders h2 {
-      font-weight: 700;
-      color: #c82333;
-      margin-top: 0;
-      margin-bottom: 1rem;
-      user-select: none;
-    }
-    .recent-orders ul {
-      list-style: none;
-      padding-left: 0;
-      margin: 0;
-      max-height: 220px;
-      overflow-y: auto;
-    }
-    .recent-orders li {
-      padding: 0.4rem 0.6rem;
-      border-bottom: 1px solid #eee;
-      font-weight: 600;
-      font-size: 1rem;
-      display: flex;
-      justify-content: space-between;
-      user-select: none;
-    }
-    .recent-orders li:last-child {
-      border-bottom: none;
-    }
-    section.quick-nav {
-      display: flex;
-      gap: 1rem;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .quick-nav a {
-      background-color: #c82333;
-      color: white;
-      font-weight: 700;
-      padding: 1rem 1.75rem;
-      border-radius: 8px;
-      text-decoration: none;
-      user-select: none;
-      transition: background-color 0.3s;
-      display: inline-block;
-      min-width: 140px;
-      text-align: center;
-    }
-    .quick-nav a:hover {
-      background-color: #a71d2a;
-    }
-    section.alerts {
-      max-width: 900px;
-      background: white;
-      padding: 0.4rem 0.6rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
-      margin: 0 auto;
-    }
-    .alerts h2 {
-      font-weight: 700;
-      color: #c82333;
-      margin-top: 0;
-      margin-bottom: 1rem;
-      user-select: none;
-    }
-    .alerts ul {
-      list-style: none;
-      padding-left: 1rem;
-      margin: 0;
-      font-weight: 600;
-      color: #333;
-    }
-    .alerts ul li {
-      margin-bottom: 0.3rem;
-    }
-    .recent-orders ul::-webkit-scrollbar {
-      width: 7px;
-    }
-    .recent-orders ul::-webkit-scrollbar-thumb {
-      background-color: #c82333;
-      border-radius: 20px;
-    }
-    .announcement-banner {
-      background-color: #c82333;
-      color: #fff4d6;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 700;
-      padding: 0.5rem 0;
-      overflow: hidden;
-      white-space: nowrap;
-      box-sizing: border-box;
-      user-select: none;
-    }
-    .announcement-banner span {
-      display: inline-block;
-      padding-left: 100%;
-      animation: scroll-left 40s linear infinite;
-    }
-    @keyframes scroll-left {
-      0% { transform: translateX(0); }
-      100% { transform: translateX(-100%); }
-    }
-    .hamburger {
-      display: none;
-      font-size: 2rem;
-      background: #c82333;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 6px 12px;
-      cursor: pointer;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 3000;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-      transition: background 0.2s;
-    }
-    .hamburger:hover { background: #a71d2a; }
-    @media (max-width: 768px) {
-      .hamburger { display: block; }
+    <style>
+      body {
+        font-family: "Montserrat", sans-serif;
+        background-color: #fff4d6;
+        margin: 0;
+        display: flex;
+        min-height: 100vh;
+        color: #333;
+      }
       .sidebar {
-        position: fixed;
-        top: 0;
-        left: 0;
-        height: 100vh;
-        width: 220px;
         background-color: #c82333;
-        transform: translateX(-100%);
-        transition: transform 0.3s ease;
-        z-index: 1500;
+        width: 220px;
+        color: white;
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
       }
-      .sidebar.active { transform: translateX(0); }
-      .main-container { flex-direction: column; }
-      main { padding: 100px 1rem 1rem; margin-left: 0; }
-    }
-
-    /* Plaque styles (unchanged) */
-    :root{
-      --plaque-bg: #fff8ef;
-      --plaque-grad1:#fff1dc;
-      --plaque-grad2:#ffe0b2;
-      --frame:#741b12;
-      --frame-dark:#4f0f0a;
-      --accent-red:#d71c24;
-      --accent-gold:#f7c948;
-      --accent-gold-deep:#d9a500;
-      --ink:#2b2b2b;
-      --ink-soft:#5a5a5a;
-      --shadow: 0 12px 30px rgba(0,0,0,.20);
-    }
-    @media (prefers-color-scheme: dark){
-      :root{
-        --plaque-bg:#26150f;
-        --plaque-grad1:#321a13;
-        --plaque-grad2:#3b1f15;
-        --frame:#3a0b07;
-        --frame-dark:#2a0704;
-        --ink:#f1ece7;
-        --ink-soft:#d9d2ca;
-        --shadow: 0 12px 30px rgba(0,0,0,.6);
+      .sidebar h2 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin-bottom: 2rem;
+        user-select: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        white-space: nowrap;
       }
-    }
-    .award-plaque{ display:grid; place-items:center; padding:clamp(16px, 4vw, 36px); color:var(--ink); }
-    .plaque-frame{ width:min(950px, 95vw); background:linear-gradient(180deg, var(--plaque-grad1), var(--plaque-grad2)); border-radius:22px; border:6px solid var(--frame); box-shadow: var(--shadow); position:relative; overflow:hidden; }
-    .plaque-frame::before{ content:""; position:absolute; inset:0; background: radial-gradient(circle at 12px 12px, rgba(0,0,0,.08) 8px, transparent 9px) 0 0/24px 24px; opacity:.25; pointer-events:none; }
-    .plaque-header{ position:relative; text-align:center; padding: clamp(22px, 5vw, 38px) 16px 8px; background: radial-gradient(1200px 200px at 50% -30%, rgba(255,219,88,.45), transparent 70%), linear-gradient(180deg, rgba(215,28,36,.10), transparent); }
-    .plaque-title{ margin:0; line-height:1.05; letter-spacing: .02em; text-transform: uppercase; color: #fff; text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 0 30px rgba(215,28,36,.6), 0 0 12px rgba(255,208,0,.45); font-weight: 900; }
-    .title-top{ display:block; font-size: clamp(28px, 6vw, 56px); background: linear-gradient(180deg, #fff 0%, #ffe38a 60%, #ffc400 100%); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 10px 20px rgba(255, 0, 0, .15); }
-    .title-sub{ display:block; margin-top: 6px; font-size: clamp(16px, 3.2vw, 28px); color: #fff6d1; letter-spacing: .25em; }
-    .ribbon{ position:absolute; top:18px; width:130px; height:26px; background: linear-gradient(180deg, var(--accent-red), #8e0f14); border:2px solid var(--frame-dark); filter: drop-shadow(0 8px 8px rgba(0,0,0,.25)); }
-    .ribbon.left{ left:14px; transform: skewX(-12deg); }
-    .ribbon.right{ right:14px; transform: skewX(12deg); }
-    .plaque-body{ display:grid; grid-template-columns: minmax(240px, 280px) 1fr; gap: clamp(16px, 3.5vw, 36px); padding: clamp(18px, 4.5vw, 34px); align-items:center; }
-    @media (max-width: 720px){ .plaque-body{ grid-template-columns: 1fr; text-align:center; } }
-    .winner-card{ margin:0; display:grid; gap:12px; justify-items:center; }
-    .winner-photo{ border-radius:18px; border:6px solid var(--accent-gold); outline: 3px solid var(--accent-gold-deep); box-shadow: 0 12px 24px rgba(0,0,0,.25), inset 0 0 0 4px #fff3; object-fit: cover; width:100%; height:auto; max-width:280px; aspect-ratio: 1/1; background: #ddd; }
-    .winner-meta{ display:grid; gap:2px; }
-    .winner-name{ font-weight:900; font-size: clamp(20px, 3.6vw, 28px); color: var(--frame); }
-    .winner-tagline{ color: var(--ink-soft); font-size: 14px; }
-    .winner-date{ font-size: 13px; color:#7a5d19; font-weight:700; }
-    .badges{ grid-column: 1 / -1; display:flex; flex-wrap:wrap; gap:12px; padding-top:6px; }
-    .badge{ display:inline-flex; align-items:center; gap:8px; background: linear-gradient(180deg, #fff7d6, #ffe184); border:2px solid var(--accent-gold-deep); border-radius:999px; padding:8px 12px; font-weight:700; font-size:14px; color:#5d3e00; box-shadow: 0 6px 14px rgba(0,0,0,.15); }
-    .badge svg{ width:18px; height:18px; fill:#8b5e00; filter: drop-shadow(0 1px 0 #fff8); }
-    .plaque-footer{ display:flex; align-items:center; justify-content:space-between; gap:12px; padding: 0 18px 18px; }
-    .cta{ margin: 8px 0 0; background: linear-gradient(180deg, #ffd24a, #ffb300); color:#411000; font-weight:900; border:3px solid #a45a00; border-radius:14px; padding:10px 16px; cursor:pointer; text-transform: uppercase; letter-spacing:.06em; transition: transform .08s ease, filter .2s ease; box-shadow: 0 10px 18px rgba(0,0,0,.18); }
-    .cta:hover{ transform: translateY(-1px); filter: brightness(1.03); }
-    .cta:active{ transform: translateY(1px); }
-    .accent-line{ flex:1; height:10px; background: repeating-linear-gradient(90deg, #fff, #fff 12px, #000 12px, #000 24px); border-radius: 8px; border:2px solid #000; opacity:.35; }
+      .sidebar a {
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        padding: 0.75rem 0.5rem;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: background-color 0.3s;
+        user-select: none;
+      }
+      .sidebar a:hover,
+      .sidebar a.active {
+        background-color: #a71d2a;
+        text-decoration: none;
+      }
+      main.home-content {
+        flex-grow: 1;
+        padding: 2rem 2.5rem;
+        background-color: #fff4d6;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+      header.welcome {
+        text-align: center;
+      }
+      header.welcome h1 {
+        font-weight: 700;
+        color: #c82333;
+        font-size: 2.5rem;
+        margin-bottom: 0.25rem;
+        user-select: none;
+      }
+      header.welcome p {
+        font-weight: 600;
+        color: #555;
+        margin-top: 0;
+        user-select: none;
+      }
+      section.quick-stats {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .quick-card {
+        background: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+        min-width: 140px;
+        text-align: center;
+        user-select: none;
+      }
+      .quick-card h3 {
+        margin: 0.2rem 0;
+        font-size: 1.6rem;
+        color: #c82333;
+      }
+      .quick-card p {
+        margin: 0;
+        font-weight: 600;
+        color: #333;
+      }
+      section.recent-orders {
+        background: white;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+        max-width: 900px;
+        margin: 0 auto;
+      }
+      .recent-orders h2 {
+        font-weight: 700;
+        color: #c82333;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        user-select: none;
+      }
+      .recent-orders ul {
+        list-style: none;
+        padding-left: 0;
+        margin: 0;
+        max-height: 220px;
+        overflow-y: auto;
+      }
+      .recent-orders li {
+        padding: 0.4rem 0.6rem;
+        border-bottom: 1px solid #eee;
+        font-weight: 600;
+        font-size: 1rem;
+        display: flex;
+        justify-content: space-between;
+        user-select: none;
+      }
+      .recent-orders li:last-child {
+        border-bottom: none;
+      }
+      section.quick-nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .quick-nav a {
+        background-color: #c82333;
+        color: white;
+        font-weight: 700;
+        padding: 1rem 1.75rem;
+        border-radius: 8px;
+        text-decoration: none;
+        user-select: none;
+        transition: background-color 0.3s;
+        display: inline-block;
+        min-width: 140px;
+        text-align: center;
+      }
+      .quick-nav a:hover {
+        background-color: #a71d2a;
+      }
+      section.alerts {
+        max-width: 900px;
+        background: white;
+        padding: 0.4rem 0.6rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgb(0 0 0 / 0.1);
+        margin: 0 auto;
+      }
+      .alerts h2 {
+        font-weight: 700;
+        color: #c82333;
+        margin-top: 0;
+        margin-bottom: 1rem;
+        user-select: none;
+      }
+      .alerts ul {
+        list-style: none;
+        padding-left: 1rem;
+        margin: 0;
+        font-weight: 600;
+        color: #333;
+      }
+      .alerts ul li {
+        margin-bottom: 0.3rem;
+      }
+      .recent-orders ul::-webkit-scrollbar {
+        width: 7px;
+      }
+      .recent-orders ul::-webkit-scrollbar-thumb {
+        background-color: #c82333;
+        border-radius: 20px;
+      }
+      .announcement-banner {
+        background-color: #c82333;
+        color: #fff4d6;
+        font-family: "Montserrat", sans-serif;
+        font-weight: 700;
+        padding: 0.5rem 0;
+        overflow: hidden;
+        white-space: nowrap;
+        box-sizing: border-box;
+        user-select: none;
+      }
+      .announcement-banner span {
+        display: inline-block;
+        padding-left: 100%;
+        animation: scroll-left 40s linear infinite;
+      }
+      @keyframes scroll-left {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+      .hamburger {
+        display: none;
+        font-size: 2rem;
+        background: #c82333;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 6px 12px;
+        cursor: pointer;
+        position: fixed;
+        top: 15px;
+        left: 15px;
+        z-index: 3000;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+        transition: background 0.2s;
+      }
+      .hamburger:hover {
+        background: #a71d2a;
+      }
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          height: 100vh;
+          width: 220px;
+          background-color: #c82333;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease;
+          z-index: 1500;
+        }
+        .sidebar.active {
+          transform: translateX(0);
+        }
+        .main-container {
+          flex-direction: column;
+        }
+        main {
+          padding: 100px 1rem 1rem;
+          margin-left: 0;
+        }
+      }
 
-    /* compact plaque tweaks */
-    .plaque-frame{ width: min(680px, 92vw); border-width: 5px; }
-    .plaque-header{ padding: 18px 12px 6px; }
-    .title-top{ font-size: clamp(22px, 5vw, 40px); }
-    .title-sub{ font-size: clamp(13px, 2.6vw, 20px); letter-spacing: .2em; }
-    .plaque-body{ grid-template-columns: 1fr; justify-items: center; text-align: center; gap: 14px; padding: 16px 18px 18px; }
-    .winner-card{ gap: 8px; justify-items: center; }
-    .winner-photo{ max-width: 220px; border-width: 5px; outline-width: 2px; }
-    .winner-name{ font-size: clamp(18px, 3.2vw, 24px); }
-    .winner-tagline, .winner-date{ font-size: 12px; }
-    .badges{ padding-top: 4px; justify-content: center; gap: 10px; }
-    .badge{ padding: 6px 10px; font-size: 13px; border-width: 2px; }
-    .plaque-footer{ padding: 0 14px 14px; }
-    .cta{ padding: 8px 14px; border-width: 2px; font-size: 0.9rem; }
-  </style>
-</head>
-<body>
-  <button id="menuToggle" class="hamburger">☰</button>
-  <div class="main-container" style="display:flex; width:100%; min-height:100vh;">
-    <aside class="sidebar">
-      <h2>🍔 Snr. Buns</h2>
-      <nav>
-        <ul class="list-unstyled">
-          <li><a href="home.html" class="active">🏠 Home</a></li>
-          <li><a href="register.html">🖋️ Register</a></li>
-          <li><a href="orders.html">📋 Orders</a></li>
-          <li><a href="inventory.html">📦 Inventory</a></li>
-          <li><a href="market.html">🏪 Market Run</a></li>
-          <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
-          <li><a href="loyalty.html">🎁 Customers</a></li>
-        </ul>
-      </nav>
-    </aside>
+      /* Plaque styles (unchanged) */
+      :root {
+        --plaque-bg: #fff8ef;
+        --plaque-grad1: #fff1dc;
+        --plaque-grad2: #ffe0b2;
+        --frame: #741b12;
+        --frame-dark: #4f0f0a;
+        --accent-red: #d71c24;
+        --accent-gold: #f7c948;
+        --accent-gold-deep: #d9a500;
+        --ink: #2b2b2b;
+        --ink-soft: #5a5a5a;
+        --shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --plaque-bg: #26150f;
+          --plaque-grad1: #321a13;
+          --plaque-grad2: #3b1f15;
+          --frame: #3a0b07;
+          --frame-dark: #2a0704;
+          --ink: #f1ece7;
+          --ink-soft: #d9d2ca;
+          --shadow: 0 12px 30px rgba(0, 0, 0, 0.6);
+        }
+      }
+      .award-plaque {
+        display: grid;
+        place-items: center;
+        padding: clamp(16px, 4vw, 36px);
+        color: var(--ink);
+      }
+      .plaque-frame {
+        width: min(950px, 95vw);
+        background: linear-gradient(
+          180deg,
+          var(--plaque-grad1),
+          var(--plaque-grad2)
+        );
+        border-radius: 22px;
+        border: 6px solid var(--frame);
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+      }
+      .plaque-frame::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            circle at 12px 12px,
+            rgba(0, 0, 0, 0.08) 8px,
+            transparent 9px
+          )
+          0 0/24px 24px;
+        opacity: 0.25;
+        pointer-events: none;
+      }
+      .plaque-header {
+        position: relative;
+        text-align: center;
+        padding: clamp(22px, 5vw, 38px) 16px 8px;
+        background: radial-gradient(
+            1200px 200px at 50% -30%,
+            rgba(255, 219, 88, 0.45),
+            transparent 70%
+          ),
+          linear-gradient(180deg, rgba(215, 28, 36, 0.1), transparent);
+      }
+      .plaque-title {
+        margin: 0;
+        line-height: 1.05;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: #fff;
+        text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35),
+          0 0 30px rgba(215, 28, 36, 0.6), 0 0 12px rgba(255, 208, 0, 0.45);
+        font-weight: 900;
+      }
+      .title-top {
+        display: block;
+        font-size: clamp(28px, 6vw, 56px);
+        background: linear-gradient(180deg, #fff 0%, #ffe38a 60%, #ffc400 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35),
+          0 10px 20px rgba(255, 0, 0, 0.15);
+      }
+      .title-sub {
+        display: block;
+        margin-top: 6px;
+        font-size: clamp(16px, 3.2vw, 28px);
+        color: #fff6d1;
+        letter-spacing: 0.25em;
+      }
+      .ribbon {
+        position: absolute;
+        top: 18px;
+        width: 130px;
+        height: 26px;
+        background: linear-gradient(180deg, var(--accent-red), #8e0f14);
+        border: 2px solid var(--frame-dark);
+        filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.25));
+      }
+      .ribbon.left {
+        left: 14px;
+        transform: skewX(-12deg);
+      }
+      .ribbon.right {
+        right: 14px;
+        transform: skewX(12deg);
+      }
+      .plaque-body {
+        display: grid;
+        grid-template-columns: minmax(240px, 280px) 1fr;
+        gap: clamp(16px, 3.5vw, 36px);
+        padding: clamp(18px, 4.5vw, 34px);
+        align-items: center;
+      }
+      @media (max-width: 720px) {
+        .plaque-body {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+      }
+      .winner-card {
+        margin: 0;
+        display: grid;
+        gap: 12px;
+        justify-items: center;
+      }
+      .winner-photo {
+        border-radius: 18px;
+        border: 6px solid var(--accent-gold);
+        outline: 3px solid var(--accent-gold-deep);
+        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25), inset 0 0 0 4px #fff3;
+        object-fit: cover;
+        width: 100%;
+        height: auto;
+        max-width: 280px;
+        aspect-ratio: 1/1;
+        background: #ddd;
+      }
+      .winner-meta {
+        display: grid;
+        gap: 2px;
+      }
+      .winner-name {
+        font-weight: 900;
+        font-size: clamp(20px, 3.6vw, 28px);
+        color: var(--frame);
+      }
+      .winner-tagline {
+        color: var(--ink-soft);
+        font-size: 14px;
+      }
+      .winner-date {
+        font-size: 13px;
+        color: #7a5d19;
+        font-weight: 700;
+      }
+      .badges {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        padding-top: 6px;
+      }
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(180deg, #fff7d6, #ffe184);
+        border: 2px solid var(--accent-gold-deep);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-weight: 700;
+        font-size: 14px;
+        color: #5d3e00;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+      }
+      .badge svg {
+        width: 18px;
+        height: 18px;
+        fill: #8b5e00;
+        filter: drop-shadow(0 1px 0 #fff8);
+      }
+      .plaque-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 0 18px 18px;
+      }
+      .cta {
+        margin: 8px 0 0;
+        background: linear-gradient(180deg, #ffd24a, #ffb300);
+        color: #411000;
+        font-weight: 900;
+        border: 3px solid #a45a00;
+        border-radius: 14px;
+        padding: 10px 16px;
+        cursor: pointer;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        transition: transform 0.08s ease, filter 0.2s ease;
+        box-shadow: 0 10px 18px rgba(0, 0, 0, 0.18);
+      }
+      .cta:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.03);
+      }
+      .cta:active {
+        transform: translateY(1px);
+      }
+      .accent-line {
+        flex: 1;
+        height: 10px;
+        background: repeating-linear-gradient(
+          90deg,
+          #fff,
+          #fff 12px,
+          #000 12px,
+          #000 24px
+        );
+        border-radius: 8px;
+        border: 2px solid #000;
+        opacity: 0.35;
+      }
 
-    <main class="home-content">
+      /* compact plaque tweaks */
+      .plaque-frame {
+        width: min(680px, 92vw);
+        border-width: 5px;
+      }
+      .plaque-header {
+        padding: 18px 12px 6px;
+      }
+      .title-top {
+        font-size: clamp(22px, 5vw, 40px);
+      }
+      .title-sub {
+        font-size: clamp(13px, 2.6vw, 20px);
+        letter-spacing: 0.2em;
+      }
+      .plaque-body {
+        grid-template-columns: 1fr;
+        justify-items: center;
+        text-align: center;
+        gap: 14px;
+        padding: 16px 18px 18px;
+      }
+      .winner-card {
+        gap: 8px;
+        justify-items: center;
+      }
+      .winner-photo {
+        max-width: 220px;
+        border-width: 5px;
+        outline-width: 2px;
+      }
+      .winner-name {
+        font-size: clamp(18px, 3.2vw, 24px);
+      }
+      .winner-tagline,
+      .winner-date {
+        font-size: 12px;
+      }
+      .badges {
+        padding-top: 4px;
+        justify-content: center;
+        gap: 10px;
+      }
+      .badge {
+        padding: 6px 10px;
+        font-size: 13px;
+        border-width: 2px;
+      }
+      .plaque-footer {
+        padding: 0 14px 14px;
+      }
+      .cta {
+        padding: 8px 14px;
+        border-width: 2px;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <button id="menuToggle" class="hamburger">☰</button>
+    <div
+      class="main-container"
+      style="display: flex; width: 100%; min-height: 100vh"
+    >
+      <aside class="sidebar">
+        <h2>🍔 Snr. Buns</h2>
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html" class="active">🏠 Home</a></li>
+            <li><a href="register.html">🖋️ Register</a></li>
+            <li><a href="orders.html">📋 Orders</a></li>
+            <li><a href="inventory.html">📦 Inventory</a></li>
+            <li><a href="market.html">🏪 Market Run</a></li>
+            <li><a href="staffmeals.html">🍽️ Staff Meals</a></li>
+            <li><a href="loyalty.html">🎁 Customers</a></li>
+          </ul>
+        </nav>
+      </aside>
 
-      <div class="announcement-banner">
-        <span>
-          ✅ Remember to clock in/out at start of shift and end of shift! &nbsp;&nbsp;|&nbsp;&nbsp;
-          ⏰ Clock in and out on emails for weekly bonuses &nbsp;&nbsp;|&nbsp;&nbsp;
-          💸 Double-check invoices before sending
-        </span>
-      </div>
-
-      <header class="welcome">
-        <h1>🍔 Welcome to Snr. Buns!</h1>
-        <p>Your quick overview & stats dashboard</p>
-        <p style="margin-top:-0.5rem; margin-bottom:1rem; font-weight:600; color:#c82333;">
-          Please report any issues with the website via emails.
-        </p>
-      </header>
-
-      <!-- Quick stats: removed Total Visits card -->
-      <section class="quick-stats" aria-label="Key statistics summary">
-        <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
-          <p>Orders Today</p>
-          <h3 id="ordersToday">0</h3>
+      <main class="home-content">
+        <div class="announcement-banner">
+          <span>
+            ✅ Remember to clock in/out at start of shift and end of shift!
+            &nbsp;&nbsp;|&nbsp;&nbsp; ⏰ Clock in and out on emails for weekly
+            bonuses &nbsp;&nbsp;|&nbsp;&nbsp; 💸 Double-check invoices before
+            sending &nbsp;&nbsp;|&nbsp;&nbsp; TEST
+          </span>
         </div>
-        <div class="quick-card" role="region" aria-live="polite" aria-atomic="true" aria-relevant="text">
-          <p>Low Stock Items</p>
-          <h3 id="lowStockCount">0</h3>
-        </div>
-      </section>
 
-      <section class="quick-nav" aria-label="Quick navigation links">
-        <a href="register.html">🖋️ Register</a>
-        <a href="orders.html">📋 Orders</a>
-        <a href="inventory.html">📦 Inventory</a>
-        <a href="market.html">🏪 Market Run</a>
-        <a href="staffmeals.html">🍽️ Staff Meals</a>
-        <a href="loyalty.html">🎁 Customers</a>
-      </section>
-      
-      <section class="recent-orders" aria-label="Recent orders">
-        <h2>🧾 Recent Orders</h2>
-        <ul id="recentOrdersList" tabindex="0"></ul>
-      </section>
+        <header class="welcome">
+          <h1>🍔 Welcome to Snr. Buns!</h1>
+          <p>Your quick overview & stats dashboard</p>
+          <p
+            style="
+              margin-top: -0.5rem;
+              margin-bottom: 1rem;
+              font-weight: 600;
+              color: #c82333;
+            "
+          >
+            Please report any issues with the website via emails.
+          </p>
+        </header>
 
-      <section class="alerts" aria-label="Inventory alerts">
-        <h2>⚠️ Inventory Alerts</h2>
-        <ul id="inventoryAlertsList"></ul>
-      </section>
-    </main>
-  </div>
+        <!-- Quick stats: removed Total Visits card -->
+        <section class="quick-stats" aria-label="Key statistics summary">
+          <div
+            class="quick-card"
+            role="region"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-relevant="text"
+          >
+            <p>Orders Today</p>
+            <h3 id="ordersToday">0</h3>
+          </div>
+          <div
+            class="quick-card"
+            role="region"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-relevant="text"
+          >
+            <p>Low Stock Items</p>
+            <h3 id="lowStockCount">0</h3>
+          </div>
+        </section>
 
-  <script type="module">
-    import {
-      getFirestore,
-      collection,
-      query,
-      where,
-      orderBy,
-      limit,
-      onSnapshot,
-      doc,
-      Timestamp
-    } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-    import { app } from "./auth.js";
+        <section class="quick-nav" aria-label="Quick navigation links">
+          <a href="register.html">🖋️ Register</a>
+          <a href="orders.html">📋 Orders</a>
+          <a href="inventory.html">📦 Inventory</a>
+          <a href="market.html">🏪 Market Run</a>
+          <a href="staffmeals.html">🍽️ Staff Meals</a>
+          <a href="loyalty.html">🎁 Customers</a>
+        </section>
 
-    const db = getFirestore(app);
-    const LOW_STOCK_THRESHOLD = 21;
+        <section class="recent-orders" aria-label="Recent orders">
+          <h2>🧾 Recent Orders</h2>
+          <ul id="recentOrdersList" tabindex="0"></ul>
+        </section>
 
-    /* ===== Date Helpers ===== */
-    function isSameDayEST(date) {
-      if (!date) return false;
-      const estDate = new Date(date.toLocaleString("en-US", { timeZone: "America/New_York" }));
-      const todayEST = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-      return estDate.toDateString() === todayEST.toDateString();
-    }
+        <section class="alerts" aria-label="Inventory alerts">
+          <h2>⚠️ Inventory Alerts</h2>
+          <ul id="inventoryAlertsList"></ul>
+        </section>
+      </main>
+    </div>
 
-    function formatDate(date) {
-      if (!date) return "-";
-      return date.toLocaleString("en-US", {
-        timeZone: "America/New_York",
-        month: "2-digit",
-        day: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: true
-      }).replace(",", "");
-    }
+    <script type="module">
+      import {
+        getFirestore,
+        collection,
+        query,
+        where,
+        orderBy,
+        limit,
+        onSnapshot,
+        doc,
+        Timestamp,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+      import { app } from "./auth.js";
 
-    function startOfDayEST_Timestamp() {
-      const now = new Date();
-      const estNow = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
-      estNow.setHours(0, 0, 0, 0);
-      return Timestamp.fromDate(estNow);
-    }
+      const db = getFirestore(app);
+      const LOW_STOCK_THRESHOLD = 21;
 
-    /* ===== UI Updates ===== */
-    function updateInventoryUI(inventory) {
-      const patties = Number(inventory.burger_patties || 0);
-      const groundBeefPacks = Number(inventory.ground_beef || 0);
-      const effectivePatties = patties + (groundBeefPacks * 5);
-
-      const adjustedInventory = { ...inventory, ground_beef: effectivePatties };
-
-      const lowStock = Object.entries(adjustedInventory).filter(([_, qty]) => Number(qty) < LOW_STOCK_THRESHOLD);
-      document.getElementById("lowStockCount").textContent = lowStock.length;
-
-      const ingredients = {
-        flour: "Flour Sack",
-        burger_buns: "Package of Buns",
-        sugar: "Sugar Sack",
-        lettuce: "Lettuce Head",
-        potato: "Potato Sack",
-        cheese_slices: "Packaged Cheese",
-        ground_beef: "Packaged Ground Beef",
-        chicken: "Chicken Package",
-        bacon: "Bacon Package",
-        coffee_beans: "Bag of Coffee",
-        corn_syrup: "Bottled Corn Syrup",
-        vanilla: "Vanilla Bean Bundle",
-        ice_cream: "Ice Cream Tub",
-        onion: "Onion Bundle",
-        tomato: "Tomato Bundle",
-        tortilla: "Tortilla Package",
-        goat_cheese: "Goat Cheese"
-      };
-
-      const alertsList = document.getElementById("inventoryAlertsList");
-      alertsList.innerHTML = "";
-      if (lowStock.length === 0) {
-        alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
-      } else {
-        lowStock.forEach(([key]) => {
-          const li = document.createElement("li");
-          li.textContent = `⚠️ Low stock: ${ingredients[key] || key}`;
-          alertsList.appendChild(li);
-        });
+      /* ===== Date Helpers ===== */
+      function isSameDayEST(date) {
+        if (!date) return false;
+        const estDate = new Date(
+          date.toLocaleString("en-US", { timeZone: "America/New_York" })
+        );
+        const todayEST = new Date(
+          new Date().toLocaleString("en-US", { timeZone: "America/New_York" })
+        );
+        return estDate.toDateString() === todayEST.toDateString();
       }
-    }
 
-    function updateOrdersUI(ordersTodayOnly) {
-      document.getElementById("ordersToday").textContent = ordersTodayOnly.length;
-
-      const list = document.getElementById("recentOrdersList");
-      list.innerHTML = "";
-      const last5 = ordersTodayOnly.slice(0, 5);
-      if (last5.length === 0) {
-        list.innerHTML = `<li>No orders placed yet.</li>`;
-      } else {
-        last5.forEach(order => {
-          const li = document.createElement("li");
-          const clearedLabel = order.deleted ? " ✅ Completed" : "";
-          const total = typeof order.total === "number" ? order.total.toFixed(2) : "0.00";
-          li.textContent = `${formatDate(order.timestamp)} - ${order.customer || "-"} (Total: $${total})${clearedLabel}`;
-          list.appendChild(li);
-        });
+      function formatDate(date) {
+        if (!date) return "-";
+        return date
+          .toLocaleString("en-US", {
+            timeZone: "America/New_York",
+            month: "2-digit",
+            day: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true,
+          })
+          .replace(",", "");
       }
-    }
 
-    /* ===== Live Listeners ===== */
+      function startOfDayEST_Timestamp() {
+        const now = new Date();
+        const estNow = new Date(
+          now.toLocaleString("en-US", { timeZone: "America/New_York" })
+        );
+        estNow.setHours(0, 0, 0, 0);
+        return Timestamp.fromDate(estNow);
+      }
 
-    // Inventory
-    onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
-      if (docSnap.exists()) updateInventoryUI(docSnap.data());
-    });
+      /* ===== UI Updates ===== */
+      function updateInventoryUI(inventory) {
+        const patties = Number(inventory.burger_patties || 0);
+        const groundBeefPacks = Number(inventory.ground_beef || 0);
+        const effectivePatties = patties + groundBeefPacks * 5;
 
-    // Orders Today (non-deleted), newest first
-    const qHome = query(
-      collection(db, "orders"),
-      where("deleted", "==", false),
-      where("timestamp", ">=", startOfDayEST_Timestamp()),
-      orderBy("timestamp", "desc"),
-      limit(200)
-    );
+        const adjustedInventory = {
+          ...inventory,
+          ground_beef: effectivePatties,
+        };
 
-    onSnapshot(qHome, (snapshot) => {
-      let orders = snapshot.docs.map(d => {
-        const data = d.data();
-        const ts = data.timestamp?.toDate?.() || (data.timestamp ? new Date(data.timestamp) : null);
-        return { ...data, id: d.id, timestamp: ts };
+        const lowStock = Object.entries(adjustedInventory).filter(
+          ([_, qty]) => Number(qty) < LOW_STOCK_THRESHOLD
+        );
+        document.getElementById("lowStockCount").textContent = lowStock.length;
+
+        const ingredients = {
+          flour: "Flour Sack",
+          burger_buns: "Package of Buns",
+          sugar: "Sugar Sack",
+          lettuce: "Lettuce Head",
+          potato: "Potato Sack",
+          cheese_slices: "Packaged Cheese",
+          ground_beef: "Packaged Ground Beef",
+          chicken: "Chicken Package",
+          bacon: "Bacon Package",
+          coffee_beans: "Bag of Coffee",
+          corn_syrup: "Bottled Corn Syrup",
+          vanilla: "Vanilla Bean Bundle",
+          ice_cream: "Ice Cream Tub",
+          onion: "Onion Bundle",
+          tomato: "Tomato Bundle",
+          tortilla: "Tortilla Package",
+          goat_cheese: "Goat Cheese",
+        };
+
+        const alertsList = document.getElementById("inventoryAlertsList");
+        alertsList.innerHTML = "";
+        if (lowStock.length === 0) {
+          alertsList.innerHTML = `<li>No current inventory alerts.</li>`;
+        } else {
+          lowStock.forEach(([key]) => {
+            const li = document.createElement("li");
+            li.textContent = `⚠️ Low stock: ${ingredients[key] || key}`;
+            alertsList.appendChild(li);
+          });
+        }
+      }
+
+      function updateOrdersUI(ordersTodayOnly) {
+        document.getElementById("ordersToday").textContent =
+          ordersTodayOnly.length;
+
+        const list = document.getElementById("recentOrdersList");
+        list.innerHTML = "";
+        const last5 = ordersTodayOnly.slice(0, 5);
+        if (last5.length === 0) {
+          list.innerHTML = `<li>No orders placed yet.</li>`;
+        } else {
+          last5.forEach((order) => {
+            const li = document.createElement("li");
+            const clearedLabel = order.deleted ? " ✅ Completed" : "";
+            const total =
+              typeof order.total === "number" ? order.total.toFixed(2) : "0.00";
+            li.textContent = `${formatDate(order.timestamp)} - ${
+              order.customer || "-"
+            } (Total: $${total})${clearedLabel}`;
+            list.appendChild(li);
+          });
+        }
+      }
+
+      /* ===== Live Listeners ===== */
+
+      // Inventory
+      onSnapshot(doc(db, "inventory", "current"), (docSnap) => {
+        if (docSnap.exists()) updateInventoryUI(docSnap.data());
       });
 
-      // Defensive filter for EST day boundaries
-      orders = orders.filter(o => isSameDayEST(o.timestamp));
-      updateOrdersUI(orders);
-    });
+      // Orders Today (non-deleted), newest first
+      const qHome = query(
+        collection(db, "orders"),
+        where("deleted", "==", false),
+        where("timestamp", ">=", startOfDayEST_Timestamp()),
+        orderBy("timestamp", "desc"),
+        limit(200)
+      );
 
-    // (Total Visits removed)
-  </script>
+      onSnapshot(qHome, (snapshot) => {
+        let orders = snapshot.docs.map((d) => {
+          const data = d.data();
+          const ts =
+            data.timestamp?.toDate?.() ||
+            (data.timestamp ? new Date(data.timestamp) : null);
+          return { ...data, id: d.id, timestamp: ts };
+        });
 
-  <script>
-    const menuBtn = document.getElementById("menuToggle");
-    const sidebar = document.querySelector(".sidebar");
-    menuBtn.addEventListener("click", () => {
-      sidebar.classList.toggle("active");
-      menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
-    });
-  </script>
-</body>
+        // Defensive filter for EST day boundaries
+        orders = orders.filter((o) => isSameDayEST(o.timestamp));
+        updateOrdersUI(orders);
+      });
+
+      // (Total Visits removed)
+    </script>
+
+    <script>
+      const menuBtn = document.getElementById("menuToggle");
+      const sidebar = document.querySelector(".sidebar");
+      menuBtn.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+        menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
+      });
+    </script>
+  </body>
 </html>
