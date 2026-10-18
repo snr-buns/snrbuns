@@ -191,7 +191,7 @@
             </tr>
 
             <tr>
-              <td>Pulled Pork Package</td>
+              <td>Pork Shoulder</td>
               <td><input type="number" min="0" value="0" data-ingredient="pulled_pork" class="pack-qty" /></td>
               <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
               <td class="subtotal">$0.00</td>
@@ -511,6 +511,7 @@
 
       const inventoryDocRef = doc(db, "inventory", "current");
       const UNIT_PER_PACK = 5;
+      const unitsPerPack = (ingredient) => ingredient === "pulled_pork" ? 1 : UNIT_PER_PACK;
       const notification = document.getElementById("notification");
 
       function showNotification(message, duration = 3000) {
@@ -575,6 +576,8 @@
               weight += qty * 2.5;
             } else if (ingredient === "goat_cheese") {
               weight += qty * 1;
+            } else if (ingredient === "pulled_pork") {
+              weight += qty * 1.25;
             } else {
               weight += qty * 5;
             }
@@ -618,7 +621,7 @@
             if (qty > 0) {
               anyPurchase = true;
               inventory[ingredient] =
-                (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
+                (Number(inventory[ingredient]) || 0) + qty * unitsPerPack(ingredient);
 
               purchasedItems.push({
                 ingredient,
@@ -669,7 +672,7 @@
         const required = {
           burger_buns: 60,
           ground_beef: 60,
-          pulled_pork: 15,
+          pulled_pork: 100,
           cheese_slices: 30,
           lettuce: 40,
           chicken: 60,
@@ -697,7 +700,7 @@
           const ingredient = qtyInput.getAttribute("data-ingredient");
           if (ingredient && required[ingredient] !== undefined) {
             const currentUnits = inventory[ingredient] || 0;
-            const currentPacks = Math.floor(currentUnits / UNIT_PER_PACK);
+            const currentPacks = Math.floor(currentUnits / unitsPerPack(ingredient));
             const needed = Math.max(required[ingredient] - currentPacks, 0);
             suggestedCell.textContent = needed;
           }

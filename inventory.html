@@ -107,7 +107,7 @@
           <option value="tomato">Tomatoes</option>
           <option value="goat_cheese">Goat Cheese</option>
           <option value="onion">Onions</option>
-          <option value="pulled_pork">Pulled Pork</option>
+          <option value="pulled_pork">Pork Shoulder</option>
           <option value="ice_cream">Ice Cream</option>
           <option value="vanilla">Vanilla Bean</option>
         </select>
@@ -154,16 +154,17 @@
       const db = getFirestore(app);
 
       const UNIT_PER_PACK = 5;
+      const unitsPerPack = (ingredient) => ingredient === "pulled_pork" ? 1 : UNIT_PER_PACK;
       const inventoryDocRef = doc(db, "inventory", "current");
 
       const comboRecipes = {
         "Eat My Meat": {
-          burger_buns: 15,
-          onion: 15,
-          pulled_pork: 15,
+          burger_buns: 10,
+          onion: 10,
+          pulled_pork: 10,
           sugar: 5,
           flour: 5,
-          corn_syrup: 25,
+          corn_syrup: 20,
         },
         "The Spooky Special": {
           burger_buns: 10,
@@ -224,7 +225,7 @@
         tomato: "Tomatoes",
         goat_cheese: "Goat Cheese",
         onion: "Onions",
-        pulled_pork: "Pulled Pork",
+        pulled_pork: "Pork Shoulder",
         ice_cream: "Ice Cream",
         vanilla: "Vanilla Bean",
       };
@@ -327,6 +328,7 @@
           { key: "tomato", label: "Tomatoes" },
           { key: "goat_cheese", label: "Goat Cheese" },
           { key: "onion", label: "Onions" },
+          { key: "pulled_pork", label: "Pork Shoulder" },
           { key: "ice_cream", label: "Ice Cream" },
           { key: "vanilla", label: "Vanilla Bean" },
         ];
@@ -461,7 +463,19 @@
           document.getElementById("expiredModal").style.display = "flex";
           document.getElementById("expiredQuantityInput").value = 1;
           document.getElementById("expiredIngredientSelect").focus();
+          updateExpiredPackLabel();
         });
+
+      function updateExpiredPackLabel() {
+        const ingredient = document.getElementById("expiredIngredientSelect").value;
+        const packOption = document.querySelector('#expiredTypeSelect option[value="pack"]');
+        packOption.textContent = ingredient === "pulled_pork"
+          ? "Pork Shoulder(s) — 1 unit each"
+          : "Pack(s) of 5 Units";
+      }
+      document.getElementById("expiredIngredientSelect")
+        .addEventListener("change", updateExpiredPackLabel);
+      updateExpiredPackLabel();
 
       document
         .getElementById("closeExpiredBtn")
@@ -497,7 +511,7 @@
           const currentInventory = docSnap.data();
           const currentQty = currentInventory[ingredientKey] || 0;
           const unitsToRemove =
-            expiredType === "pack" ? expiredQty * UNIT_PER_PACK : expiredQty;
+            expiredType === "pack" ? expiredQty * unitsPerPack(ingredientKey) : expiredQty;
 
           if (unitsToRemove > currentQty) {
             showNotification(
