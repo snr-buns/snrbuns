@@ -511,7 +511,7 @@
 
       const inventoryDocRef = doc(db, "inventory", "current");
       const UNIT_PER_PACK = 5;
-      const unitsPerPack = (ingredient) => ingredient === "pulled_pork" ? 1 : UNIT_PER_PACK;
+      const unitsPerPack = (ingredient) => UNIT_PER_PACK;
       const notification = document.getElementById("notification");
 
       function showNotification(message, duration = 3000) {
@@ -672,20 +672,20 @@
         const required = {
           burger_buns: 60,
           ground_beef: 60,
-          pulled_pork: 100,
+          pulled_pork: 40,
           cheese_slices: 30,
           lettuce: 40,
-          chicken: 60,
+          chicken: 40,
           bacon: 0,
           tomato: 0,
           tortilla: 0,
           goat_cheese: 0,
-          potato: 5,
+          potato: 0,
           onion: 40,
-          sugar: 5,
-          flour: 5,
-          ice_cream: 5,
-          vanilla: 10,
+          sugar: 3,
+          flour: 3,
+          ice_cream: 0,
+          vanilla: 0,
           coffee_beans: 0,
           corn_syrup: 90,
         };
