@@ -79,4 +79,4 @@ window.logout = function () {
 };
 
 // ✅ Export app so Firestore can reuse it in other scripts
-export { app, auth, isManager, requireManager };
+export { app, auth, requireManager };
