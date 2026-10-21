@@ -28,7 +28,7 @@ const auth = getAuth(app);
 
 const MANAGER_UID = "FI4aD3rB0hStDYe0Jou8G3kQrxq2";
 
-function isManager(user) {
+export function isManager(user) {
   return Boolean(user && user.uid === MANAGER_UID);
 }
 
