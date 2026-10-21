@@ -1,6 +1,13 @@
 // login.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+
+import { isManager } from "./auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
@@ -20,16 +27,21 @@ document.getElementById("loginForm").addEventListener("submit", (e) => {
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "home.html"; // redirect after login
+
+  setPersistence(auth, browserSessionPersistence)
+    .then(() => signInWithEmailAndPassword(auth, email, password))
+    .then(({ user }) => {
+      window.location.href = isManager(user)
+        ? "management.html"
+        : "home.html";
     })
+
     .catch((error) => {
       const errorMessage = error.code === "auth/wrong-password"
         ? "❌ Incorrect password."
         : error.code === "auth/user-not-found"
-        ? "❌ User not found."
-        : "❌ Login failed. Please try again.";
+          ? "❌ User not found."
+          : "❌ Login failed. Please try again.";
       document.getElementById("loginError").textContent = errorMessage;
     });
 });

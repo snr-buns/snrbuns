@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Snr Buns - Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lilita+One&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="management.css" />
+</head>
+
+<body class="management-page">
+  <main class="hq-main" id="managementContent" hidden>
+    <header class="hq-header">
+      <span class="hq-eyebrow">SNR BUNS · MANAGEMENT PORTAL</span>
+      <h1>SNR BUNS HQ</h1>
+      <p>Management Control Centre</p>
+    </header>
+    <div class="hq-toolbar">
+      <a class="hq-link" href="home.html">← Staff Dashboard</a>
+      <button class="hq-btn outline" type="button" id="logoutBtn">Log out</button>
+    </div>
+
+    <nav class="hq-tabs" aria-label="Management sections">
+      <a href="#challengesTitle">🏆 Challenges</a>
+      <a href="#announcementsTitle">📢 Announcements</a>
+      <a href="#stockTitle">📦 Stock Management</a>
+    </nav>
+
+    <section class="hq-panel" aria-labelledby="challengesTitle">
+      <h2 id="challengesTitle">🏆 Daily Challenges</h2>
+      <p>Automatically rotates between four combos every day at midnight New York time. Sell 5 combos for a $1,000
+        per-person bonus.</p>
+      <div class="hq-challenge-preview" id="challengeSavedSummary">
+        Loading today's challenge...
+      </div>
+
+      <h3 class="hq-challenge-subtitle">✏️ Manual Challenge Override</h3>
+      <p class="hq-note">
+        Override today's automatic challenge. Your chosen combo,
+        target and reward will apply until midnight New York time.
+        Tomorrow's automatic rotation will resume as normal.
+      </p>
+
+      <form id="manualChallengeForm">
+        <div class="hq-challenge-fields">
+
+          <label class="hq-field">
+            Combo to sell
+            <select id="manualChallengeCombo" required>
+              <option value="Eat My Meat">Eat My Meat</option>
+              <option value="The Heartstopper Meal">The Heartstopper Meal</option>
+              <option value="Haunted Box">Haunted Box</option>
+              <option value="The Spooky Special">The Spooky Special</option>
+            </select>
+          </label>
+
+          <label class="hq-field">
+            Number to sell
+            <input type="number" id="manualChallengeTarget" min="1" step="1" value="5" required />
+          </label>
+
+          <label class="hq-field" style="flex-basis:100%">
+            Reward
+            <input type="text" id="manualChallengeReward" maxlength="240" value="Everyone on shift gets a $1,000 bonus!"
+              required />
+          </label>
+
+        </div>
+
+        <div class="hq-modal-actions">
+          <button class="hq-btn" type="submit" id="saveManualChallenge">
+            Save Manual Challenge
+          </button>
+        </div>
+
+        <p class="hq-feedback" id="manualChallengeFeedback" role="status"></p>
+      </form>
+      <h3 class="hq-challenge-subtitle">💰 Challenge Completions</h3>
+      <p class="hq-note">Completed challenges from the last 30 days. Check who was actually on shift before paying.
+        Marking paid records your confirmation.</p>
+      <div id="challengeCompletionList" class="hq-completion-list">Loading completion history...</div>
+      <p class="hq-feedback" id="challengeFeedback" role="status"></p>
+    </section>
+    <section class="hq-panel" aria-labelledby="announcementsTitle">
+      <h2 id="announcementsTitle">📢 Staff Announcements</h2>
+      <p>Publish a notice to the banner at the top of the staff Home page. Everyone will see changes straight away.</p>
+      <form id="announcementForm">
+        <label class="hq-field" for="announcementText">Announcement text (up to 500 characters)</label>
+        <textarea class="hq-announcement-input" id="announcementText" maxlength="500"
+          placeholder="Write a message for the team..." required></textarea>
+        <p class="hq-note" id="announcementCount">0/500 characters</p>
+        <strong>Currently published:</strong>
+        <div id="announcementPreview" class="hq-announcement-preview">Loading announcement...</div>
+        <p class="hq-note" id="announcementUpdated"></p>
+        <div class="hq-modal-actions">
+          <button class="hq-btn" id="publishAnnouncement" type="submit">Publish Announcement</button>
+          <button class="hq-btn outline" id="clearAnnouncement" type="button">Remove Announcement</button>
+        </div>
+        <p class="hq-feedback" id="announcementFeedback" role="status"></p>
+      </form>
+    </section>
+
+    <section class="hq-panel" aria-labelledby="stockTitle">
+      <div class="hq-flex">
+        <div>
+          <h2 id="stockTitle">📦 Stock Management</h2>
+          <p>Update live stock or use the ingredient calculator.</p>
+        </div>
+        <button class="hq-btn secondary" type="button" id="openCalculator" title="Ingredient calculator">🧮
+          Calculator</button>
+      </div>
+      <div class="hq-table-wrap">
+        <table class="hq-table">
+          <thead>
+            <tr>
+              <th>Ingredient</th>
+              <th>Current stock</th>
+              <th>New quantity</th>
+            </tr>
+          </thead>
+          <tbody id="stockTableBody"></tbody>
+        </table>
+      </div>
+      <div class="hq-modal-actions"><button class="hq-btn" type="button" id="saveStock">Save Stock
+          Changes</button><button class="hq-btn outline" type="button" id="resetStock">Undo Unsaved Changes</button>
+      </div>
+      <p class="hq-feedback" id="stockFeedback" role="status"></p>
+    </section>
+
+  </main>
+
+  <dialog id="snrConfirmDialog" class="snr-confirm-dialog">
+    <div class="snr-confirm-heading">🍔 SNR BUNS HQ</div>
+
+    <h2 id="snrConfirmTitle">Are you sure?</h2>
+
+    <p id="snrConfirmMessage"></p>
+
+    <div class="snr-confirm-actions">
+      <button type="button" id="snrConfirmCancel">
+        Cancel
+      </button>
+      <button type="button" id="snrConfirmAccept">
+        Confirm
+      </button>
+    </div>
+  </dialog>
+
+  <div class="hq-modal" id="calculatorModal" role="dialog" aria-modal="true" aria-labelledby="calculatorTitle" hidden>
+    <div class="hq-dialog">
+      <div class="hq-dialog-head">
+        <h2 id="calculatorTitle">🧮 Ingredient Calculator</h2><button type="button" class="hq-btn outline"
+          id="closeCalculator">✕ Close</button>
+      </div>
+      <p class="hq-note">Use up to three pack entries and three individual entries per ingredient, as on your
+        spreadsheet. Only tick the rows you want to replace in Firebase.</p>
+      <div class="hq-table-wrap">
+        <table class="hq-table hq-calc-table">
+          <thead>
+            <tr>
+              <th>Apply?</th>
+              <th>Ingredient</th>
+              <th colspan="3">Packs</th>
+              <th colspan="3">Individual</th>
+              <th>Units/pack</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="calculatorBody"></tbody>
+        </table>
+      </div>
+      <div class="hq-modal-actions"><button class="hq-btn secondary" type="button" id="reviewCalculator">Review
+          Changes</button><button class="hq-btn outline" type="button" id="clearCalculator">Clear Calculator</button>
+      </div>
+      <div class="hq-review" id="reviewArea" hidden>
+        <strong>Review before applying</strong>
+        <p class="hq-note">The quantities below will <strong>replace</strong> current inventory amounts. They will not
+          be added to them.</p>
+        <ul id="reviewList"></ul>
+        <button class="hq-btn" type="button" id="applyCalculator">Apply Selected Totals to Inventory</button>
+      </div>
+      <p class="hq-feedback" id="calculatorFeedback" role="status"></p>
+    </div>
+  </div>
+
+  <script>
+    if (localStorage.getItem("darkMode") === "true") document.body.classList.add("dark-mode");
+  </script>
+
+  <script type="module">
+    import {
+      getFirestore, doc, collection, query, where,
+      orderBy, limit, Timestamp, onSnapshot,
+      runTransaction, setDoc, serverTimestamp
+    } from 'https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js';
+    import { requireManager, auth } from './auth.js';
+    import {
+      nyDateKey,
+      dailyChallenge,
+      challengeForDay,
+      countDailySales,
+      FIRST_CHALLENGE_DATE,
+      DAILY_COMBOS
+    } from './daily-challenges.js';
+    const ingredients = [
+      ['burger_buns', 'Buns', 5], ['cheese_slices', 'Cheese', 5], ['chicken', 'Chicken', 5],
+      ['coffee_beans', 'Coffee', 5], ['corn_syrup', 'Corn Syrup', 5], ['flour', 'Flour', 5],
+      ['ground_beef', 'Beef', 5], ['ice_cream', 'Ice Cream', 5], ['lettuce', 'Lettuce', 5],
+      ['onion', 'Onion', 5], ['potato', 'Potatoes', 5], ['sugar', 'Sugar', 5],
+      ['vanilla', 'Vanilla', 5], ['pulled_pork', 'Pulled Pork', 1], ['bacon', 'Bacon', 5],
+      ['tomato', 'Tomatoes', 5], ['tortilla', 'Tortillas', 5], ['goat_cheese', 'Goat Cheese', 5]
+    ];
+    const $ = id => document.getElementById(id);
+
+    // SNR Buns custom confirmation window
+    function snrConfirm(message, title = "Are you sure?") {
+      return new Promise(resolve => {
+        const dialog = $("snrConfirmDialog");
+        const accept = $("snrConfirmAccept");
+        const cancel = $("snrConfirmCancel");
+
+        $("snrConfirmTitle").textContent = title;
+        $("snrConfirmMessage").textContent = message;
+
+        let answered = false;
+
+        function finish(result) {
+          if (answered) return;
+          answered = true;
+
+          accept.removeEventListener("click", onAccept);
+          cancel.removeEventListener("click", onCancel);
+          dialog.removeEventListener("close", onClose);
+
+          if (dialog.open) dialog.close();
+          resolve(result);
+        }
+
+        function onAccept() {
+          finish(true);
+        }
+
+        function onCancel() {
+          finish(false);
+        }
+
+        function onClose() {
+          finish(false);
+        }
+
+        accept.addEventListener("click", onAccept);
+        cancel.addEventListener("click", onCancel);
+        dialog.addEventListener("close", onClose);
+
+        dialog.showModal();
+        cancel.focus();
+      });
+    }
+
+    const inventoryRef = doc(getFirestore(), 'inventory', 'current');
+    const announcementRef = doc(getFirestore(), 'announcements', 'current');
+    let currentInventory = {};
+    let pending = null;
+    let stopListening;
+    const text = (id, message, kind = '') => { $(id).textContent = message; $(id).className = 'hq-feedback ' + kind; };
+    const validWhole = value => /^\d+$/.test(String(value).trim()) && Number.isSafeInteger(Number(value));
+    const formatQty = value => Number(value || 0).toLocaleString('en-US');
+
+    function drawStock() {
+      $('stockTableBody').innerHTML = '';
+      for (const [key, label] of ingredients) {
+        const tr = document.createElement('tr');
+        const title = document.createElement('td'); title.textContent = label;
+        const current = document.createElement('td'); current.textContent = formatQty(currentInventory[key]);
+        const field = document.createElement('td');
+        const input = document.createElement('input'); input.type = 'number'; input.min = '0'; input.step = '1'; input.placeholder = 'Unchanged'; input.dataset.stockKey = key;
+        field.append(input); tr.append(title, current, field); $('stockTableBody').append(tr);
+      }
+    }
+    function drawCalculator() {
+      $('calculatorBody').innerHTML = '';
+      for (const [key, label, packSize] of ingredients) {
+        const tr = document.createElement('tr'); tr.dataset.key = key; tr.dataset.packSize = packSize;
+        const checkTd = document.createElement('td'); const check = document.createElement('input'); check.type = 'checkbox'; check.className = 'calc-use'; check.setAttribute('aria-label', 'Apply ' + label); checkTd.append(check);
+        const name = document.createElement('td'); name.textContent = label; tr.append(checkTd, name);
+        for (let j = 0; j < 6; j++) {
+          const td = document.createElement('td'); const input = document.createElement('input'); input.type = 'number'; input.min = '0'; input.step = '1'; input.placeholder = '0'; input.className = j < 3 ? 'calc-pack' : 'calc-single'; input.setAttribute('aria-label', `${label} ${j < 3 ? 'packs' : 'individual'} ${j % 3 + 1}`); td.append(input); tr.append(td);
+        }
+        const pack = document.createElement('td'); pack.textContent = packSize;
+        const total = document.createElement('td'); total.className = 'total'; total.textContent = '0'; tr.append(pack, total); $('calculatorBody').append(tr);
+      }
+    }
+    function calculateRow(row) {
+      const inputs = [...row.querySelectorAll('.calc-pack,.calc-single')];
+      if (inputs.some(i => i.value.trim() !== '' && !validWhole(i.value))) throw new Error('All quantities must be non-negative whole numbers.');
+      const packs = [...row.querySelectorAll('.calc-pack')].reduce((sum, i) => sum + Number(i.value || 0), 0);
+      const singles = [...row.querySelectorAll('.calc-single')].reduce((sum, i) => sum + Number(i.value || 0), 0);
+      const total = packs * Number(row.dataset.packSize) + singles;
+      if (!Number.isSafeInteger(total)) throw new Error('Calculated total is too large.');
+      row.querySelector('.total').textContent = formatQty(total);
+      return total;
+    }
+    function closeReview() { pending = null; $('reviewArea').hidden = true; }
+    $('calculatorBody').addEventListener('input', e => {
+      const row = e.target.closest('tr'); if (!row) return;
+      try { calculateRow(row); text('calculatorFeedback', ''); } catch (err) { row.querySelector('.total').textContent = 'Invalid'; text('calculatorFeedback', err.message, 'error'); }
+      closeReview();
+    });
+    $('calculatorBody').addEventListener('change', closeReview);
+    $('openCalculator').addEventListener('click', () => { $('calculatorModal').hidden = false; $('openCalculator').disabled = true; });
+    function closeCalculator() { $('calculatorModal').hidden = true; $('openCalculator').disabled = false; closeReview(); }
+    $('closeCalculator').addEventListener('click', closeCalculator);
+    $('clearCalculator').addEventListener('click', () => { drawCalculator(); closeReview(); text('calculatorFeedback', ''); });
+    $('reviewCalculator').addEventListener('click', () => {
+      try {
+        const changes = {};
+        for (const row of $('calculatorBody').querySelectorAll('tr')) {
+          if (!row.querySelector('.calc-use').checked) continue;
+          changes[row.dataset.key] = calculateRow(row);
+        }
+        if (!Object.keys(changes).length) throw new Error('Tick at least one ingredient to apply.');
+        pending = { changes, previous: { ...currentInventory } };
+        $('reviewList').replaceChildren();
+        for (const [key, value] of Object.entries(changes)) {
+          const label = ingredients.find(i => i[0] === key)[1];
+          const li = document.createElement('li'); li.textContent = `${label}: ${formatQty(currentInventory[key])} → ${formatQty(value)}`; $('reviewList').append(li);
+        }
+        $('reviewArea').hidden = false; text('calculatorFeedback', 'Review the changes, then apply.');
+      } catch (err) { closeReview(); text('calculatorFeedback', err.message, 'error'); }
+    });
+    async function applyChanges(changes, previous, button, feedbackId) {
+      button.disabled = true;
+      try {
+        await runTransaction(getFirestore(), async tx => {
+          const snap = await tx.get(inventoryRef);
+          const fresh = snap.exists() ? snap.data() : {};
+          for (const key of Object.keys(changes)) {
+            if (Number(fresh[key] || 0) !== Number(previous[key] || 0)) throw new Error(`Stock for ${ingredients.find(i => i[0] === key)?.[1] || key} changed since you started. Reload the figures and review again.`);
+          }
+          tx.set(inventoryRef, changes, { merge: true });
+        });
+        text(feedbackId, '✅ Stock successfully updated in Firebase.', 'success');
+        return true;
+      } catch (err) { text(feedbackId, err.message || 'Unable to save changes.', 'error'); return false; }
+      finally { button.disabled = false; }
+    }
+    $('applyCalculator').addEventListener('click', async () => {
+      if (!pending) return;
+      const { changes, previous } = pending;
+      const ok = await applyChanges(changes, previous, $('applyCalculator'), 'calculatorFeedback');
+      if (ok) { closeReview(); closeCalculator(); text('stockFeedback', '✅ Calculator totals applied to inventory.', 'success'); }
+    });
+    $('saveStock').addEventListener('click', async () => {
+      const changes = {};
+      for (const input of $('stockTableBody').querySelectorAll('input')) {
+        const value = input.value.trim(); if (value === '') continue;
+        if (!validWhole(value)) { text('stockFeedback', 'Please enter non-negative whole numbers only.', 'error'); return; }
+        changes[input.dataset.stockKey] = Number(value);
+      }
+      if (!Object.keys(changes).length) { text('stockFeedback', 'Enter a new quantity for at least one ingredient.', 'error'); return; }
+      const description = Object.entries(changes).map(([k, v]) => `${ingredients.find(i => i[0] === k)[1]}: ${formatQty(currentInventory[k])} → ${formatQty(v)}`).join('\n');
+      if (!await snrConfirm(
+        'Replace these inventory quantities?\n\n' + description,
+        '📦 Update Stock?'
+      )) return;
+      const ok = await applyChanges(changes, { ...currentInventory }, $('saveStock'), 'stockFeedback');
+      if (ok) drawStock();
+    });
+    $('resetStock').addEventListener('click', () => { drawStock(); text('stockFeedback', ''); });
+    // Daily completion history is calculated from orders, with payout flags stored separately.
+    const db = getFirestore();
+    const payoutsRef = collection(db, 'challengePayouts');
+    const challengeOverridesRef = collection(db, 'challenges');
+    let challengeOverrides = {};
+
+    function todayChallenge() {
+      const day = nyDateKey();
+
+      return challengeForDay(
+        day,
+        challengeOverrides[day]
+      );
+    }
+
+    $('manualChallengeForm').addEventListener(
+      'submit',
+      async event => {
+        event.preventDefault();
+
+        const dayKey = nyDateKey();
+        const combo = $('manualChallengeCombo').value;
+        const target = Number($('manualChallengeTarget').value);
+        const reward = $('manualChallengeReward').value.trim();
+
+        if (
+          !DAILY_COMBOS.includes(combo) ||
+          !Number.isSafeInteger(target) ||
+          target < 1 ||
+          !reward
+        ) {
+          text(
+            'manualChallengeFeedback',
+            'Please enter a valid combo, target and reward.',
+            'error'
+          );
+          return;
+        }
+
+        if (!await snrConfirm(
+          `Start a new manual challenge for today?\n\n` +
+          `Start a new manual challenge for today?\n\n` +
+          `Combo: ${combo}\n` +
+          `Target: ${target}\n` +
+          `Reward: ${reward}\n\n` +
+          `Sales will count from the time you save. ` +
+          `The automatic rotation returns at midnight New York time.`
+        )) {
+          return;
+        }
+
+        const button = $('saveManualChallenge');
+        button.disabled = true;
+
+        try {
+          // Same collection already permitted for managers.
+          await setDoc(doc(db, 'challenges', dayKey), {
+            date: dayKey,
+            active: true,
+            combo,
+            target,
+            reward,
+            startAt: serverTimestamp()
+          });
+
+          text(
+            'manualChallengeFeedback',
+            '✅ Manual challenge saved! Staff will see it shortly.',
+            'success'
+          );
+
+        } catch (error) {
+          text(
+            'manualChallengeFeedback',
+            'Unable to save challenge: ' + error.message,
+            'error'
+          );
+        } finally {
+          button.disabled = false;
+        }
+      }
+    );
+    const COMPLETION_DAYS = 30;
+    let historyOrders = [];
+    let payoutFlags = {};
+
+    function nyTime(date) {
+      return date.toLocaleString('en-US', {
+        timeZone: 'America/New_York', month: '2-digit', day: '2-digit',
+        year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true
+      }) + ' (New York time)';
+    }
+
+    function drawChallengeHistory() {
+      const now = nyDateKey();
+      const today = todayChallenge();
+      const current = countDailySales(
+        historyOrders,
+        now,
+        challengeOverrides[now]
+      );
+      $('challengeSavedSummary').textContent =
+        `${today.manual ? '✏️ MANUAL' : '🔄 AUTOMATIC'} · ` +
+        `Sell ${today.target} ${today.combo} Combos · ` +
+        `${Math.min(current.sold, today.target)}/${today.target} sold · ` +
+        `Reward: ${today.reward} · ` +
+        (current.completedAt
+          ? '🎉 Completed at ' + nyTime(current.completedAt)
+          : 'In progress');
+
+      const container = $('challengeCompletionList');
+      container.replaceChildren();
+      const byDate = new Map();
+      for (const order of historyOrders) {
+        if (!order.timestamp || isNaN(order.timestamp)) continue;
+        const key = nyDateKey(order.timestamp);
+        if (key < FIRST_CHALLENGE_DATE || key > now) continue;
+        if (!byDate.has(key)) byDate.set(key, []);
+        byDate.get(key).push(order);
+      }
+      const completions = [...byDate.entries()]
+        .map(([key, orders]) =>
+          countDailySales(orders, key, challengeOverrides[key])
+        )
+        .filter(result => result.completedAt).sort((a, b) => b.date.localeCompare(a.date));
+      const pendingCount = completions.filter(x => !payoutFlags[x.date]?.paid).length;
+      const heading = document.createElement('p');
+      heading.className = 'hq-note';
+      heading.textContent = `${pendingCount} awaiting payout · ${completions.length} completed in the available order history`;
+      container.append(heading);
+      if (!completions.length) {
+        const empty = document.createElement('p');
+        empty.textContent = 'No completed challenges found in the available order history.';
+        container.append(empty);
+      }
+      for (const item of completions) {
+        const paid = payoutFlags[item.date]?.paid === true;
+        const card = document.createElement('div');
+        card.className = 'hq-completion';
+        const details = document.createElement('div');
+        const title = document.createElement('strong');
+        title.textContent = `${item.date} · ${item.combo}`;
+        const sub = document.createElement('div');
+        sub.className = 'hq-note';
+        sub.textContent =
+          `${item.target}/${item.target} sold • ` +
+          `Completed ${nyTime(item.completedAt)} • ` +
+          `Reward: ${item.reward}` +
+          (item.manual ? ' • Manual challenge' : '');
+        details.append(title, sub);
+        const actions = document.createElement('div');
+        actions.className = 'hq-completion-actions';
+        const badge = document.createElement('span');
+        badge.className = paid ? 'hq-paid' : 'hq-pending';
+        badge.textContent = paid ? 'PAID' : 'PENDING';
+        const button = document.createElement('button');
+        button.className = paid ? 'hq-btn outline' : 'hq-btn';
+        button.type = 'button';
+        button.textContent = paid ? 'Undo Paid' : 'Mark as Paid';
+        button.addEventListener('click', async () => {
+          const question = paid ? 'Mark this challenge as unpaid again?' :
+            'Confirm bonuses were given to all eligible staff on shift/s?';
+          if (!await snrConfirm(question, '💰 Bonus Payout')) return;
+          button.disabled = true;
+          try {
+            await setDoc(doc(db, 'challengePayouts', item.date), {
+              paid: !paid,
+              combo: item.combo,
+              target: item.target,
+              reward: item.reward,
+              manual: item.manual,
+              updatedAt: serverTimestamp(), updatedBy: auth.currentUser?.uid || ''
+            });
+            text('challengeFeedback', '✅ Payout status saved.', 'success');
+          } catch (error) {
+            text('challengeFeedback', 'Could not save payout status: ' + error.message, 'error');
+          } finally { button.disabled = false; }
+        });
+        actions.append(badge, button);
+        card.append(details, actions);
+        container.append(card);
+      }
+    }
+
+    // Single manager-controlled announcement shown at the top of Home.
+    let announcementLoaded = false;
+    let liveAnnouncement = null;
+    const defaultAnnouncement = '✅ Remember to clock in/out at start and end of shift! | ⏰ Clock in and out on emails for weekly bonuses | 💸 Double-check invoices before sending';
+    $('announcementText').addEventListener('input', () => {
+      $('announcementCount').textContent = `${$('announcementText').value.length}/500 characters`;
+    });
+    $('announcementForm').addEventListener('submit', async event => {
+      event.preventDefault();
+      const message = $('announcementText').value.trim();
+      if (!message || message.length > 500) { text('announcementFeedback', 'Enter a message between 1 and 500 characters.', 'error'); return; }
+      if (!await snrConfirm(
+        'Publish this announcement to the staff Home page?',
+        '📢 Publish Announcement?'
+      )) return;
+      $('publishAnnouncement').disabled = true;
+      try {
+        await setDoc(announcementRef, { message, active: true, updatedAt: serverTimestamp() });
+        text('announcementFeedback', '✅ Announcement published to the staff dashboard.', 'success');
+      } catch (error) { text('announcementFeedback', 'Could not publish: ' + error.message, 'error'); }
+      finally { $('publishAnnouncement').disabled = false; }
+    });
+    $('clearAnnouncement').addEventListener('click', async () => {
+      if (!liveAnnouncement?.active) { text('announcementFeedback', 'There is no published announcement to remove.'); return; }
+      if (!await snrConfirm(
+        'Remove the current announcement from the staff Home page?',
+        '🗑️ Remove Announcement?'
+      )) return;
+      $('clearAnnouncement').disabled = true;
+      try {
+        await setDoc(announcementRef, { active: false, updatedAt: serverTimestamp() }, { merge: true });
+        text('announcementFeedback', '✅ Announcement removed.', 'success');
+      } catch (error) { text('announcementFeedback', 'Could not remove: ' + error.message, 'error'); }
+      finally { $('clearAnnouncement').disabled = false; }
+    });
+    $('logoutBtn').addEventListener('click', () => window.logout());
+    requireManager().then(() => {
+      $('managementContent').hidden = false;
+      drawStock(); drawCalculator();
+      onSnapshot(announcementRef, snap => {
+        liveAnnouncement = snap.exists() ? snap.data() : null;
+        const message = liveAnnouncement?.active && typeof liveAnnouncement.message === 'string' ? liveAnnouncement.message : '';
+        $('announcementPreview').textContent = message || 'No announcement currently published.';
+        const date = liveAnnouncement?.updatedAt?.toDate?.();
+        $('announcementUpdated').textContent = date ? 'Last updated: ' + date.toLocaleString('en-US', { timeZone: 'America/New_York' }) + ' (New York time)' : '';
+        if (!announcementLoaded) {
+          $('announcementText').value = message || defaultAnnouncement;
+          $('announcementCount').textContent = `${$('announcementText').value.length}/500 characters`;
+          announcementLoaded = true;
+        }
+      }, e => text('announcementFeedback', 'Unable to load announcements: ' + e.message, 'error'));
+
+      onSnapshot(challengeOverridesRef, snapshot => {
+        challengeOverrides = Object.fromEntries(
+          snapshot.docs.map(document => [
+            document.id,
+            document.data()
+          ])
+        );
+
+        const today = challengeOverrides[nyDateKey()];
+
+        if (today?.active) {
+          $('manualChallengeCombo').value = today.combo;
+          $('manualChallengeTarget').value = today.target;
+          $('manualChallengeReward').value = today.reward;
+        }
+
+        drawChallengeHistory();
+
+      }, error => {
+        text(
+          'challengeFeedback',
+          'Unable to load challenge overrides: ' + error.message,
+          'error'
+        );
+      });
+
+      const historyStart = new Date(Date.now() - (COMPLETION_DAYS + 2) * 86400000);
+      const historyQuery = query(collection(db, 'orders'),
+        where('timestamp', '>=', Timestamp.fromDate(historyStart)),
+        orderBy('timestamp', 'asc'), limit(10000));
+      onSnapshot(historyQuery, snapshot => {
+        historyOrders = snapshot.docs.map(d => {
+          const data = d.data();
+          return { ...data, timestamp: data.timestamp?.toDate?.() || null };
+        }).filter(o => o.timestamp);
+        drawChallengeHistory();
+      }, e => text('challengeFeedback', 'Unable to load order history: ' + e.message, 'error'));
+      onSnapshot(payoutsRef, snapshot => {
+        payoutFlags = Object.fromEntries(snapshot.docs.map(d => [d.id, d.data()]));
+        drawChallengeHistory();
+      }, e => text('challengeFeedback', 'Unable to load payouts: ' + e.message, 'error'));
+      drawChallengeHistory();
+      setInterval(drawChallengeHistory, 60000);
+      stopListening = onSnapshot(inventoryRef, snapshot => {
+        currentInventory = snapshot.exists() ? snapshot.data() : {};
+        for (const input of $('stockTableBody').querySelectorAll('input')) {
+          const curr = input.parentElement.previousElementSibling;
+          curr.textContent = formatQty(currentInventory[input.dataset.stockKey]);
+        }
+      }, error => text('stockFeedback', 'Could not load inventory: ' + error.message, 'error'));
+    }).catch(() => { });
+  </script>
+</body>
+
+</html>

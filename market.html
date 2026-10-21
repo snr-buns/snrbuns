@@ -94,7 +94,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -117,7 +117,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -140,7 +140,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -163,7 +163,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -186,7 +186,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
 
@@ -194,7 +194,7 @@
               <td>Pork Shoulder</td>
               <td><input type="number" min="0" value="0" data-ingredient="pulled_pork" class="pack-qty" /></td>
               <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr class="divider-row">
@@ -220,7 +220,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -243,7 +243,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -266,7 +266,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -289,7 +289,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -312,7 +312,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -335,7 +335,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
 
@@ -362,7 +362,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -385,7 +385,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -408,7 +408,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
 
@@ -435,7 +435,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -458,7 +458,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -481,13 +481,13 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
           </tbody>
         </table>
 
-        <div id="totalCost">Total Cost: $0.00</div>
+        <div id="totalCost">Total Cost: $0</div>
         <div id="totalWeight">Total Weight: 0.0</div>
 
         <button id="confirmPurchase">Confirm Purchase</button>
@@ -567,7 +567,7 @@
           const price = parseFloat(priceInput.value) || 0;
           const subtotal = qty * price;
 
-          subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+          subtotalCell.textContent = `$${subtotal.toLocaleString("en-US")}`;
           total += subtotal;
 
           const ingredient = qtyInput.getAttribute("data-ingredient");
@@ -586,7 +586,7 @@
 
         document.getElementById(
           "totalCost"
-        ).textContent = `Total Cost: $${total.toFixed(2)}`;
+        ).textContent = `Total Cost: $${total.toLocaleString("en-US")}`;
         document.getElementById(
           "totalWeight"
         ).textContent = `Total Weight: ${weight.toFixed(1)}`;
@@ -632,7 +632,7 @@
 
               qtyInput.value = 0;
               priceInput.value = 0;
-              subtotalCell.textContent = "$0.00";
+              subtotalCell.textContent = "$0";
             }
           }
 

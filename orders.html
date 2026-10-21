@@ -126,8 +126,9 @@
           <h1 class="orders-page-title">ORDER SHEET</h1>
         </header>
 
-        <div class="table-container">
-          <table id="ordersTable" aria-label="Order Sheet">
+        <div class="orders-table-frame">
+          <div class="table-container">
+            <table id="ordersTable" aria-label="Order Sheet">
             <thead>
               <tr>
                 <th>Date</th>
@@ -141,6 +142,7 @@
 
             <tbody id="ordersBody"></tbody>
           </table>
+        </div>
         </div>
       </main>
     </div>
@@ -491,7 +493,7 @@
 
           const totalTd = document.createElement("td");
 
-          totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
+          totalTd.textContent = `$${Number(order.total ?? 0).toLocaleString("en-US")}`;
 
           tr.appendChild(totalTd);
 

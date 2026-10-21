@@ -1412,8 +1412,8 @@
           li.innerHTML = `
             <div class="item-details">
               ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(
-            item.price * item.quantity
-          ).toFixed(2)}
+                item.price * item.quantity
+                ).toLocaleString("en-US")}
             </div>
             <div class="quantity-controls">
               <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
@@ -1425,8 +1425,8 @@
           orderList.appendChild(li);
         });
 
-        subtotalSpan.textContent = subtotal.toFixed(2);
-        totalSpan.textContent = subtotal.toFixed(2);
+        subtotalSpan.textContent = subtotal.toLocaleString("en-US");
+        totalSpan.textContent = subtotal.toLocaleString("en-US");
 
         document.querySelectorAll(".qty-btn").forEach((btn) => {
           btn.addEventListener("click", (e) => {
