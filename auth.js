@@ -61,11 +61,18 @@ setPersistence(auth, browserSessionPersistence).catch((error) => {
 });
 
 // ✅ Redirect to login if not authenticated
+
 onAuthStateChanged(auth, (user) => {
-  if (!user && window.location.pathname.indexOf("index.html") === -1) {
-    window.location.href = "index.html";
+  const page = window.location.pathname.split("/").pop();
+
+  const isLoginPage =
+    page === "index.html" || page === "";
+
+  if (!user && !isLoginPage) {
+    window.location.replace("index.html");
   }
 });
+
 
 // ✅ Add a logout function if you ever need it
 window.logout = function () {
