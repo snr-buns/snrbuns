@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 
+
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Snr. Buns - Order Sheet</title>
   <head>
     <meta charset="UTF-8" />
 
@@ -12,11 +19,118 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
 
+    <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="style.css" />
 
     <script type="module" src="auth.js"></script>
+    <script type="module" src="auth.js"></script>
 
+    <style>
+      /* Compact order-sheet layout: six columns, no sideways scrolling. */
+      .orders-page .orders-main {
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+      .orders-page .table-container {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        overflow-y: auto;
+        max-height: calc(100vh - 190px);
+      }
+      .orders-page #ordersTable {
+        width: 100%;
+        min-width: 0;
+        table-layout: auto;
+      }
+      .orders-page #ordersTable th,
+      .orders-page #ordersTable td {
+        white-space: normal;
+        vertical-align: middle;
+      }
+      .orders-page #ordersTable thead th {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      .orders-page #ordersTable th:nth-child(1) {
+        width: 145px;
+      }
+      .orders-page #ordersTable th:nth-child(2) {
+        width: 120px;
+      }
+      .orders-page #ordersTable th:nth-child(3) {
+        width: 155px;
+      }
+      .orders-page #ordersTable th:nth-child(5) {
+        width: 110px;
+      }
+      .orders-page #ordersTable th:nth-child(6) {
+        width: 75px;
+      }
+      .orders-page .order-items-cell {
+        min-width: 230px;
+      }
+      .orders-page .order-items-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        align-items: center;
+      }
+      .orders-page .order-item-chip {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 6px;
+        background: rgba(220, 161, 0, 0.12);
+        border: 1px solid rgba(220, 161, 0, 0.38);
+        font-size: 0.85rem;
+        line-height: 1.3;
+        white-space: nowrap;
+      }
+      @media (max-width: 800px) {
+        .orders-page #ordersTable {
+          min-width: 750px;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="orders-page">
+    <button id="menuToggle" class="hamburger">☰</button>
+
+    <div class="main-container">
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-text">SNR BUNS</div>
+        </div>
+
+        <button id="sidebarCollapseBtn" class="sidebar-toggle-btn">‹</button>
+
+        <nav>
+          <ul class="list-unstyled">
+            <li><a href="home.html">HOME</a></li>
+
+            <li><a href="register.html">REGISTER</a></li>
+
+            <li><a href="orders.html" class="active">ORDERS</a></li>
+
+            <li><a href="inventory.html">INVENTORY</a></li>
+
+            <li><a href="market.html">MARKET RUN</a></li>
+
+            <li><a href="staffmeals.html">STAFF MEALS</a></li>
+
+            <li><a href="loyalty.html">CUSTOMERS</a></li>
+          </ul>
+        </nav>
+      </aside>
     <style>
       /* Compact order-sheet layout: six columns, no sideways scrolling. */
       .orders-page .orders-main {
@@ -148,7 +262,25 @@
     </div>
 
     <div id="notification"></div>
+    <div id="notification"></div>
 
+    <div
+      id="clearConfirmModal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="confirmTitle"
+      aria-describedby="confirmDesc"
+    >
+      <div class="modal-content">
+        <div id="confirmTitle" style="font-size: 1.2rem; margin-bottom: 10px">
+          Are you sure you want to clear completed orders?
+        </div>
+
+        <button class="yes-btn">Yes</button>
+
+        <button class="no-btn">No</button>
+      </div>
+    </div>
     <div
       id="clearConfirmModal"
       role="dialog"
@@ -178,11 +310,34 @@
         orderBy,
         limit,
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+    <script type="module">
+      import {
+        getFirestore,
+        doc,
+        updateDoc,
+        onSnapshot,
+        collection,
+        query,
+        orderBy,
+        limit,
+      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
       import { app } from "./auth.js";
 
       const db = getFirestore(app);
+      import { app } from "./auth.js";
 
+      const db = getFirestore(app);
+
+      const tbody = document.getElementById("ordersBody");
+
+      const clearBtn = document.getElementById("clearDone");
+
+      const modal = document.getElementById("clearConfirmModal");
+
+      const yesBtn = modal.querySelector(".yes-btn");
+
+      const noBtn = modal.querySelector(".no-btn");
       const tbody = document.getElementById("ordersBody");
 
       const clearBtn = document.getElementById("clearDone");
@@ -317,9 +472,21 @@
 
         limit(150)
       );
+      const q = query(
+        collection(db, "orders"),
+
+        orderBy("timestamp", "desc"),
+
+        limit(150)
+      );
 
       let currentOrders = [];
+      let currentOrders = [];
 
+      function parseItems(items = []) {
+        const counts = {};
+
+        PRODUCTS.forEach((p) => (counts[p] = 0));
       function parseItems(items = []) {
         const counts = {};
 
@@ -331,7 +498,22 @@
           const name = item?.name || "";
 
           if (!qty) return;
+        items.forEach((item) => {
+          const qty = Number(item.quantity || 0);
 
+          const name = item?.name || "";
+
+          if (!qty) return;
+
+          if (bundleDetails[name]) {
+            bundleDetails[name].components.forEach((c) => {
+              if (counts[c.name] !== undefined) {
+                counts[c.name] += qty * c.quantity;
+              }
+            });
+
+            return;
+          }
           if (bundleDetails[name]) {
             bundleDetails[name].components.forEach((c) => {
               if (counts[c.name] !== undefined) {
@@ -351,7 +533,20 @@
 
             return;
           }
+          if (comboDetails[name]) {
+            comboDetails[name].components.forEach((c) => {
+              if (counts[c.name] !== undefined) {
+                counts[c.name] += qty * c.quantity;
+              }
+            });
 
+            return;
+          }
+
+          if (counts[name] !== undefined) {
+            counts[name] += qty;
+          }
+        });
           if (counts[name] !== undefined) {
             counts[name] += qty;
           }
@@ -359,7 +554,14 @@
 
         return counts;
       }
+        return counts;
+      }
 
+      function renderOrders(orders) {
+        tbody.innerHTML = "";
+
+        orders.forEach(({ id, data: order }) => {
+          if (order.deleted) return;
       function renderOrders(orders) {
         tbody.innerHTML = "";
 
@@ -377,7 +579,19 @@
           if (tabType === "DOJ") tr.classList.add("tab-doj");
 
           if (tabType === "PD") tr.classList.add("tab-pd");
+          const tr = document.createElement("tr");
 
+          if (order.done) tr.classList.add("done");
+
+          const tabType = (order.tabType || "").toUpperCase();
+
+          if (tabType === "EMS") tr.classList.add("tab-ems");
+
+          if (tabType === "DOJ") tr.classList.add("tab-doj");
+
+          if (tabType === "PD") tr.classList.add("tab-pd");
+
+          const counts = parseItems(order.items || []);
           const counts = parseItems(order.items || []);
 
           const estDate = order.timestamp?.toDate?.();
@@ -399,7 +613,35 @@
                 hour12: false,
               })
             : "-";
+          const estDate = order.timestamp?.toDate?.();
 
+          const formattedDate = estDate
+            ? estDate.toLocaleString("en-US", {
+                timeZone: "America/New_York",
+
+                year: "numeric",
+
+                month: "2-digit",
+
+                day: "2-digit",
+
+                hour: "2-digit",
+
+                minute: "2-digit",
+
+                hour12: false,
+              })
+            : "-";
+
+          const checkbox = document.createElement("input");
+
+          checkbox.type = "checkbox";
+
+          checkbox.checked = !!order.done;
+
+          checkbox.addEventListener("change", async () => {
+            await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
+          });
           const checkbox = document.createElement("input");
 
           checkbox.type = "checkbox";
@@ -497,11 +739,40 @@
           doneTd.appendChild(checkbox);
 
           tr.appendChild(doneTd);
+          const doneTd = document.createElement("td");
+
+          doneTd.appendChild(checkbox);
+
+          tr.appendChild(doneTd);
 
           tbody.appendChild(tr);
         });
       }
+          tbody.appendChild(tr);
+        });
+      }
 
+      onSnapshot(
+        q,
+
+        (snapshot) => {
+          currentOrders = snapshot.docs.map((d) => ({
+            id: d.id,
+
+            data: d.data(),
+          }));
+
+          renderOrders(currentOrders);
+        },
+
+        (err) => {
+          console.error(
+            "[orders] Firestore onSnapshot error:",
+
+            err?.message || err
+          );
+        }
+      );
       onSnapshot(
         q,
 
@@ -602,7 +873,112 @@
         document.body.classList.add("dark-mode");
       }
     </script>
+      clearBtn?.addEventListener("click", () => {
+        modal.style.display = "flex";
+      });
 
+      yesBtn.addEventListener("click", async () => {
+        const doneOrders = currentOrders.filter(
+          (o) => o.data.done && !o.data.deleted
+        );
+
+        const updates = doneOrders.map((o) =>
+          updateDoc(doc(db, "orders", o.id), { deleted: true })
+        );
+
+        await Promise.all(updates);
+
+        modal.style.display = "none";
+      });
+
+      noBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+      });
+    </script>
+
+    <script>
+      const body = document.body;
+
+      const menuBtn = document.getElementById("menuToggle");
+
+      const sidebar = document.querySelector(".sidebar");
+
+      const sidebarCollapseBtn = document.getElementById("sidebarCollapseBtn");
+
+      function applySidebarSetting() {
+        const collapsed = localStorage.getItem("sidebarCollapsed") === "true";
+
+        if (window.innerWidth > 768) {
+          body.classList.toggle("sidebar-collapsed", collapsed);
+
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+          }
+        } else {
+          body.classList.remove("sidebar-collapsed");
+
+          if (sidebarCollapseBtn) {
+            sidebarCollapseBtn.textContent = "⬅";
+          }
+        }
+      }
+
+      applySidebarSetting();
+
+      menuBtn?.addEventListener("click", () => {
+        sidebar.classList.toggle("active");
+
+        menuBtn.textContent = sidebar.classList.contains("active") ? "✖" : "☰";
+      });
+
+      sidebarCollapseBtn?.addEventListener("click", () => {
+        if (window.innerWidth <= 768) return;
+
+        body.classList.toggle("sidebar-collapsed");
+
+        const collapsed = body.classList.contains("sidebar-collapsed");
+
+        localStorage.setItem("sidebarCollapsed", collapsed ? "true" : "false");
+
+        sidebarCollapseBtn.textContent = collapsed ? "➡" : "⬅";
+      });
+
+      window.addEventListener("resize", applySidebarSetting);
+    </script>
+
+    <script>
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+    </script>
+
+    <script>
+      const darkModeBtn = document.getElementById("darkModeBtn");
+
+      function updateDarkModeButton() {
+        const isDark = document.body.classList.contains("dark-mode");
+
+        if (darkModeBtn)
+          darkModeBtn.textContent = isDark ? "☀️ LIGHT MODE" : "🌙 DARK MODE";
+      }
+
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark-mode");
+      }
+
+      updateDarkModeButton();
+
+      darkModeBtn?.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+
+        const isDark = document.body.classList.contains("dark-mode");
+
+        localStorage.setItem("darkMode", isDark ? "true" : "false");
+
+        updateDarkModeButton();
+      });
+    </script>
+  </body>
     <script>
       const darkModeBtn = document.getElementById("darkModeBtn");
 
