@@ -23,17 +23,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+
+/* SNR BUNS MANAGEMENT ACCESS */
+
+const MANAGER_UID = "FI4aD3rB0hStDYe0Jou8G3kQrxq2";
+
+export function isManager(user) {
+  return Boolean(user && user.uid === MANAGER_UID);
+}
+
+function requireManager() {
+  return new Promise((resolve, reject) => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      unsubscribe();
+
+      if (!user) {
+        window.location.replace("index.html");
+        reject(new Error("Not signed in"));
+        return;
+      }
+
+      if (!isManager(user)) {
+        window.location.replace("home.html");
+        reject(new Error("Manager access required"));
+        return;
+      }
+
+      resolve(user);
+    });
+  });
+}
+
+
 // ✅ Ensure session-only persistence (user must log in each browser session)
 setPersistence(auth, browserSessionPersistence).catch((error) => {
   console.error("Persistence setup failed:", error);
 });
 
 // ✅ Redirect to login if not authenticated
+
 onAuthStateChanged(auth, (user) => {
-  if (!user && window.location.pathname.indexOf("index.html") === -1) {
-    window.location.href = "index.html";
+  const page = window.location.pathname.split("/").pop();
+
+  const isLoginPage =
+    page === "index.html" || page === "";
+
+  if (!user && !isLoginPage) {
+    window.location.replace("index.html");
   }
 });
+
 
 // ✅ Add a logout function if you ever need it
 window.logout = function () {
@@ -47,4 +86,4 @@ window.logout = function () {
 };
 
 // ✅ Export app so Firestore can reuse it in other scripts
-export { app };
+export { app, auth, requireManager };

@@ -86,13 +86,13 @@
 
           <div
             class="item-card"
-            data-name="The Spooky Special"
+            data-name="Patty Pounder"
             data-price="1200"
             data-category="Combos"
             data-image="assets/images/bleederbox.png"
           >
-            <img src="assets/images/combo.png" alt="The Spooky Special" />
-            <h3>The Spooky Special</h3>
+            <img src="assets/images/combo.png" alt="Patty Pounder" />
+            <h3>Patty Pounder</h3>
             <p>$1200</p>
             <div class="add-controls">
               <input type="number" class="quantity-input" min="1" value="1" />
@@ -102,13 +102,13 @@
 
           <div
             class="item-card"
-            data-name="Haunted Box"
+            data-name="Bleeder Box"
             data-price="500"
             data-category="Combos"
             data-image="assets/images/bleederbox.png"
           >
-            <img src="assets/images/combo.png" alt="The Haunted Box" />
-            <h3>Haunted Box</h3>
+            <img src="assets/images/combo.png" alt="The Bleeder Box" />
+            <h3>Bleeder Box</h3>
             <p>$500</p>
             <div class="add-controls">
               <input type="number" class="quantity-input" min="1" value="1" />
@@ -463,14 +463,12 @@
               <option value="Cook">Cook</option>
               <option value="Sage">Sage</option>
               <option value="John">John</option>
-              <option value="Shitbag">Shitbag</option>
               <option value="Calvin">Calvin</option>
-              <option value="Hailey">Hailey</option>
-              <option value="Anastasia">Anastasia</option>
-              <option value="Kira">Kira</option>
               <option value="Zuriel">Zuriel</option>
               <option value="Max">Max</option>
               <option value="Stevie">Stevie</option>
+              <option value="Jacob">Jacob</option>
+              <option value="Blake">Blake</option>
             </select>
 
             <div class="custom-select">
@@ -479,20 +477,17 @@
                 <div data-value="Savannah">Savannah</div>
                 <div data-value="Torch">Torch</div>
                 <div data-value="Slade">Slade</div>
-                <div data-value="Jack">Jack</div>
                 <div data-value="Mustard">Mustard</div>
                 <div data-value="Jake">Jake</div>
                 <div data-value="Cook">Cook</div>
                 <div data-value="Sage">Sage</div>
                 <div data-value="John">John</div>
-                <div data-value="Shitbag">Shitbag</div>
                 <div data-value="Calvin">Calvin</div>
-                <div data-value="Hailey">Hailey</div>
-                <div data-value="Anastasia">Anastasia</div>
-                <div data-value="Kira">Kira</div>
                 <div data-value="Zuriel">Zuriel</div>
                 <div data-value="Max">Max</div>
                 <div data-value="Stevie">Stevie</div>
+                <div data-value="Jacob">Jacob</div>
+                <div data-value="Blake">Blake</div>
               </div>
             </div>
           </div>
@@ -889,6 +884,7 @@
         "Chicken Wrap": { chicken: 1, tomato: 1, lettuce: 1 },
         "Chicken Mexican": { chicken: 1, tomato: 1, tortilla: 1 },
         "Goat Wrap": { goat_cheese: 1, chicken: 1, lettuce: 1 },
+        "Torpedo Burger": { burger_buns: 1, onion: 1, pulled_pork: 1 },
         Soda: { corn_syrup: 1 },
         Coffee: { coffee_beans: 1 },
         Fries: { potato: 2 },
@@ -908,14 +904,14 @@
             { name: "Soda", quantity: 15 },
           ],
         },
-        "Haunted Box": {
+        "Bleeder Box": {
           price: 500,
           components: [
             { name: "The Bleeder", quantity: 5 },
             { name: "Soda", quantity: 5 },
           ],
         },
-        "The Spooky Special": {
+        "Patty Pounder": {
           price: 1200,
           components: [
             { name: "The Prickley", quantity: 10 },
@@ -972,6 +968,7 @@
         vanilla: "vanilla",
         goat_cheese: "goat cheese",
         onion: "onion",
+        pulled_pork: "pulled pork",
         tortilla: "tortilla",
         tomato: "tomato",
       };
@@ -1163,7 +1160,7 @@
       }) {
         const items = [
           {
-            name: "The Spooky Special",
+            name: "Patty Pounder",
             price: 0,
             quantity: qty,
             image: "assets/images/combo.png",
@@ -1395,7 +1392,7 @@
             <div class="item-details">
               ${item.name}${item.isPassPayment ? " (pass)" : ""} - $${(
             item.price * item.quantity
-          ).toFixed(2)}
+          ).toLocaleString("en-US")}
             </div>
             <div class="quantity-controls">
               <button class="qty-btn" data-action="minus" data-index="${idx}">−</button>
@@ -1407,8 +1404,8 @@
           orderList.appendChild(li);
         });
 
-        subtotalSpan.textContent = subtotal.toFixed(2);
-        totalSpan.textContent = subtotal.toFixed(2);
+        subtotalSpan.textContent = subtotal.toLocaleString("en-US");
+        totalSpan.textContent = subtotal.toLocaleString("en-US");
 
         document.querySelectorAll(".qty-btn").forEach((btn) => {
           btn.addEventListener("click", (e) => {
@@ -1825,7 +1822,7 @@
 
             const items = [
               {
-                name: "The Spooky Special",
+                name: "Patty Pounder",
                 price: 0,
                 quantity: 1,
                 image: "assets/images/combo.png",
@@ -1868,7 +1865,7 @@
               });
 
               showNotification(
-                `✅ Confirmed — The Spooky Special sent to kitchen for ${p.name}`
+                `✅ Confirmed — Patty Pounder sent to kitchen for ${p.name}`
               );
               row.style.outline = "3px solid #4caf50";
               setTimeout(() => {

@@ -126,21 +126,23 @@
           <h1 class="orders-page-title">ORDER SHEET</h1>
         </header>
 
-        <div class="table-container">
-          <table id="ordersTable" aria-label="Order Sheet">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Employee</th>
-                <th>Customer</th>
-                <th>Items Ordered</th>
-                <th>Total</th>
-                <th>Done?</th>
-              </tr>
-            </thead>
+        <div class="orders-table-frame">
+          <div class="table-container">
+            <table id="ordersTable" aria-label="Order Sheet">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Employee</th>
+                  <th>Customer</th>
+                  <th>Items Ordered</th>
+                  <th>Total</th>
+                  <th>Done?</th>
+                </tr>
+              </thead>
 
-            <tbody id="ordersBody"></tbody>
-          </table>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
         </div>
       </main>
     </div>
@@ -204,7 +206,7 @@
           ],
         },
 
-        "Haunted Box": {
+        "Bleeder Box": {
           price: 500,
 
           components: [
@@ -214,7 +216,7 @@
           ],
         },
 
-        "The Spooky Special": {
+        "Patty Pounder": {
           price: 1200,
 
           components: [
@@ -270,6 +272,7 @@
       };
 
       const PRODUCTS = [
+        "Torpedo Burger",
         "Heart Stopper",
 
         "Money Shot",
@@ -483,7 +486,9 @@
 
           const totalTd = document.createElement("td");
 
-          totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
+          totalTd.textContent = `$${Number(order.total ?? 0).toLocaleString(
+            "en-US"
+          )}`;
 
           tr.appendChild(totalTd);
 

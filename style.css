@@ -5245,8 +5245,6 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
   max-height: calc(100vh - 190px);
 
   position: relative;
-  scrollbar-width: thin;
-  scrollbar-color: #888 #252525;
 }
 
 .orders-page #ordersTable {
@@ -5269,17 +5267,192 @@ body.dark-mode ::-webkit-scrollbar-thumb:hover {
   white-space: nowrap;
 }
 
-/* Scrollbar styling */
-.orders-page .table-container::-webkit-scrollbar {
-  width: 9px;
-  height: 11px;
+
+/* ==========================================
+   ORDER SHEET - FINAL SCROLLBAR FIX
+========================================== */
+
+/* Outer rounded yellow border */
+.orders-page .orders-table-frame {
+  border: 2px solid #e7b72d;
+  border-radius: 16px;
+  padding: 8px;
+  background: #fff8e8;
+  overflow: hidden;
 }
 
-.orders-page .table-container::-webkit-scrollbar-thumb {
-  background: #888;
+/* Scrollable table area */
+.orders-page .orders-table-frame .table-container {
+  width: 100%;
+  max-width: 100%;
+  max-height: calc(100vh - 210px);
+  overflow-x: auto;
+  overflow-y: auto;
+  border: none;
   border-radius: 8px;
+  box-shadow: none;
+  padding: 0;
+
+  scrollbar-width: auto;
+  scrollbar-color: auto;
 }
 
+/* Scrollbar width */
+.orders-page .table-container::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+/* Transparent track */
 .orders-page .table-container::-webkit-scrollbar-track {
-  background: #252525;
+  background: transparent;
+}
+
+/* Rounded red thumb */
+.orders-page .table-container::-webkit-scrollbar-thumb {
+  background: #c62828;
+  border: 2px solid #fff8e8;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+/* Hover colour */
+.orders-page .table-container::-webkit-scrollbar-thumb:hover {
+  background: #991f1f;
+  background-clip: padding-box;
+}
+
+/* Remove scrollbar arrows */
+.orders-page .table-container::-webkit-scrollbar-button {
+  width: 0;
+  height: 0;
+  display: none;
+}
+
+/* Transparent scrollbar corner */
+.orders-page .table-container::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+
+/* ==========================================
+   SNR BUNS - DAILY STAFF CHALLENGE
+========================================== */
+
+.staff-challenge {
+  width: min(100%, 620px);
+  margin: 0 auto;
+  padding: 20px 24px;
+  background: #fffdf7;
+  border: 2px solid #e7b72d;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(76, 44, 19, 0.07);
+}
+
+.challenge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 15px;
+}
+
+.challenge-label {
+  display: block;
+  color: #c62828;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 6px;
+}
+
+.staff-challenge h3 {
+  font-family: "Lilita One", sans-serif;
+  color: #991f1f;
+  font-size: 1.4rem;
+  margin: 0 0 5px;
+}
+
+.staff-challenge p {
+  color: #776f68;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.challenge-target {
+  background: #f6c945;
+  color: #553400;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.challenge-progress {
+  width: 100%;
+  height: 14px;
+  margin-top: 18px;
+  background: #eadfcb;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+#challengeProgressFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #991f1f, #e53935);
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+.challenge-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 9px;
+  color: #776f68;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+#challengeProgressText {
+  color: #c62828;
+}
+
+.challenge-completed {
+  margin-top: 15px;
+  padding: 12px;
+  background: #fff0bd;
+  border-radius: 10px;
+  color: #795000;
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.challenge-completed[hidden] {
+  display: none;
+}
+
+#challengeCompletedAt {
+  display: block;
+  margin-top: 5px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+@media (max-width: 600px) {
+  .challenge-header {
+    flex-wrap: wrap;
+  }
+
+  .challenge-footer {
+    flex-wrap: wrap;
+  }
+}
+
+/* Hide the manager navigation link for staff */
+#managerNavItem[hidden] {
+  display: none !important;
 }

@@ -94,7 +94,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -117,7 +117,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -140,7 +140,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -163,7 +163,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -186,10 +186,17 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
 
+            <tr>
+              <td>Pork Shoulder</td>
+              <td><input type="number" min="0" value="0" data-ingredient="pulled_pork" class="pack-qty" /></td>
+              <td><input type="number" min="0" step="0.01" value="0" class="price-per-pack" /></td>
+              <td class="subtotal">$0</td>
+              <td class="suggested"></td>
+            </tr>
             <tr class="divider-row">
               <td colspan="5">Fruit Stand</td>
             </tr>
@@ -213,7 +220,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -236,7 +243,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -259,7 +266,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -282,7 +289,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -305,7 +312,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -328,7 +335,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
 
@@ -355,7 +362,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -378,7 +385,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -401,7 +408,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
 
@@ -428,7 +435,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -451,7 +458,7 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
             <tr>
@@ -474,13 +481,13 @@
                   class="price-per-pack"
                 />
               </td>
-              <td class="subtotal">$0.00</td>
+              <td class="subtotal">$0</td>
               <td class="suggested"></td>
             </tr>
           </tbody>
         </table>
 
-        <div id="totalCost">Total Cost: $0.00</div>
+        <div id="totalCost">Total Cost: $0</div>
         <div id="totalWeight">Total Weight: 0.0</div>
 
         <button id="confirmPurchase">Confirm Purchase</button>
@@ -504,6 +511,7 @@
 
       const inventoryDocRef = doc(db, "inventory", "current");
       const UNIT_PER_PACK = 5;
+      const unitsPerPack = (ingredient) => UNIT_PER_PACK;
       const notification = document.getElementById("notification");
 
       function showNotification(message, duration = 3000) {
@@ -559,7 +567,7 @@
           const price = parseFloat(priceInput.value) || 0;
           const subtotal = qty * price;
 
-          subtotalCell.textContent = `$${subtotal.toFixed(2)}`;
+          subtotalCell.textContent = `$${subtotal.toLocaleString("en-US")}`;
           total += subtotal;
 
           const ingredient = qtyInput.getAttribute("data-ingredient");
@@ -568,6 +576,8 @@
               weight += qty * 2.5;
             } else if (ingredient === "goat_cheese") {
               weight += qty * 1;
+            } else if (ingredient === "pulled_pork") {
+              weight += qty * 1.25;
             } else {
               weight += qty * 5;
             }
@@ -576,7 +586,7 @@
 
         document.getElementById(
           "totalCost"
-        ).textContent = `Total Cost: $${total.toFixed(2)}`;
+        ).textContent = `Total Cost: $${total.toLocaleString("en-US")}`;
         document.getElementById(
           "totalWeight"
         ).textContent = `Total Weight: ${weight.toFixed(1)}`;
@@ -611,7 +621,7 @@
             if (qty > 0) {
               anyPurchase = true;
               inventory[ingredient] =
-                (inventory[ingredient] || 0) + qty * UNIT_PER_PACK;
+                (Number(inventory[ingredient]) || 0) + qty * unitsPerPack(ingredient);
 
               purchasedItems.push({
                 ingredient,
@@ -622,7 +632,7 @@
 
               qtyInput.value = 0;
               priceInput.value = 0;
-              subtotalCell.textContent = "$0.00";
+              subtotalCell.textContent = "$0";
             }
           }
 
@@ -662,19 +672,20 @@
         const required = {
           burger_buns: 60,
           ground_beef: 60,
+          pulled_pork: 40,
           cheese_slices: 30,
           lettuce: 40,
-          chicken: 60,
+          chicken: 40,
           bacon: 0,
           tomato: 0,
           tortilla: 0,
           goat_cheese: 0,
-          potato: 5,
+          potato: 0,
           onion: 40,
-          sugar: 5,
-          flour: 5,
-          ice_cream: 5,
-          vanilla: 10,
+          sugar: 3,
+          flour: 3,
+          ice_cream: 0,
+          vanilla: 0,
           coffee_beans: 0,
           corn_syrup: 90,
         };
@@ -689,7 +700,7 @@
           const ingredient = qtyInput.getAttribute("data-ingredient");
           if (ingredient && required[ingredient] !== undefined) {
             const currentUnits = inventory[ingredient] || 0;
-            const currentPacks = Math.floor(currentUnits / UNIT_PER_PACK);
+            const currentPacks = Math.floor(currentUnits / unitsPerPack(ingredient));
             const needed = Math.max(required[ingredient] - currentPacks, 0);
             suggestedCell.textContent = needed;
           }

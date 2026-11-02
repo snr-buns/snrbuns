@@ -107,6 +107,7 @@
           <option value="tomato">Tomatoes</option>
           <option value="goat_cheese">Goat Cheese</option>
           <option value="onion">Onions</option>
+          <option value="pulled_pork">Pork Shoulder</option>
           <option value="ice_cream">Ice Cream</option>
           <option value="vanilla">Vanilla Bean</option>
         </select>
@@ -153,16 +154,18 @@
       const db = getFirestore(app);
 
       const UNIT_PER_PACK = 5;
+      const unitsPerPack = (ingredient) =>
+        ingredient === "pulled_pork" ? 1 : UNIT_PER_PACK;
       const inventoryDocRef = doc(db, "inventory", "current");
 
       const comboRecipes = {
-        "The Spooky Special": {
+        "Patty Pounder": {
           burger_buns: 10,
           chicken: 10,
           lettuce: 10,
           corn_syrup: 10,
         },
-        "Haunted Box": {
+        "Bleeder Box": {
           burger_buns: 5,
           ground_beef: 5,
           cheese_slices: 5,
@@ -178,6 +181,7 @@
       };
 
       const itemRecipes = {
+        "Torpedo Burger": { burger_buns: 1, onion: 1, pulled_pork: 1 },
         "The Bleeder": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
         "The Glorious": { burger_buns: 1, ground_beef: 1, cheese_slices: 1 },
         "Double Shot": { burger_buns: 1, ground_beef: 1, lettuce: 1 },
@@ -214,6 +218,7 @@
         tomato: "Tomatoes",
         goat_cheese: "Goat Cheese",
         onion: "Onions",
+        pulled_pork: "Pork Shoulder",
         ice_cream: "Ice Cream",
         vanilla: "Vanilla Bean",
       };
@@ -234,6 +239,7 @@
         "tomato",
         "goat_cheese",
         "onion",
+        "pulled_pork",
         "ice_cream",
         "vanilla",
       ];
@@ -315,6 +321,7 @@
           { key: "tomato", label: "Tomatoes" },
           { key: "goat_cheese", label: "Goat Cheese" },
           { key: "onion", label: "Onions" },
+          { key: "pulled_pork", label: "Pork Shoulder" },
           { key: "ice_cream", label: "Ice Cream" },
           { key: "vanilla", label: "Vanilla Bean" },
         ];
@@ -449,7 +456,25 @@
           document.getElementById("expiredModal").style.display = "flex";
           document.getElementById("expiredQuantityInput").value = 1;
           document.getElementById("expiredIngredientSelect").focus();
+          updateExpiredPackLabel();
         });
+
+      function updateExpiredPackLabel() {
+        const ingredient = document.getElementById(
+          "expiredIngredientSelect"
+        ).value;
+        const packOption = document.querySelector(
+          '#expiredTypeSelect option[value="pack"]'
+        );
+        packOption.textContent =
+          ingredient === "pulled_pork"
+            ? "Pork Shoulder(s) — 1 unit each"
+            : "Pack(s) of 5 Units";
+      }
+      document
+        .getElementById("expiredIngredientSelect")
+        .addEventListener("change", updateExpiredPackLabel);
+      updateExpiredPackLabel();
 
       document
         .getElementById("closeExpiredBtn")
@@ -485,7 +510,9 @@
           const currentInventory = docSnap.data();
           const currentQty = currentInventory[ingredientKey] || 0;
           const unitsToRemove =
-            expiredType === "pack" ? expiredQty * UNIT_PER_PACK : expiredQty;
+            expiredType === "pack"
+              ? expiredQty * unitsPerPack(ingredientKey)
+              : expiredQty;
 
           if (unitsToRemove > currentQty) {
             showNotification(

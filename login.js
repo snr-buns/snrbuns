@@ -1,35 +1,55 @@
-// login.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBgsHAYXZeLIv-vC0LCHbNHjOTrZOq3GBA",
-  authDomain: "burgershotorders.firebaseapp.com",
-  projectId: "burgershotorders",
-  storageBucket: "burgershotorders.appspot.com",
-  messagingSenderId: "244133569976",
-  appId: "1:244133569976:web:0dcca3439958188439db4d",
-  measurementId: "G-2X69N31D9Q"
-};
+import {
+  signInWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence
+} from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+import { auth, isManager } from "./auth.js";
 
-document.getElementById("loginForm").addEventListener("submit", (e) => {
-  e.preventDefault();
-  const email = document.getElementById("email").value;
+const loginForm = document.getElementById("loginForm");
+const loginError = document.getElementById("loginError");
+
+loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+
+  loginError.textContent = "";
+
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "home.html"; // redirect after login
-    })
-    .catch((error) => {
-      const errorMessage = error.code === "auth/wrong-password"
-        ? "❌ Incorrect password."
-        : error.code === "auth/user-not-found"
-        ? "❌ User not found."
-        : "❌ Login failed. Please try again.";
-      document.getElementById("loginError").textContent = errorMessage;
-    });
+  const button = loginForm.querySelector('button[type="submit"]');
+  button.disabled = true;
+  button.textContent = "Logging in...";
+
+  try {
+    await setPersistence(auth, browserSessionPersistence);
+
+    const { user } = await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    window.location.replace(
+      isManager(user) ? "management.html" : "home.html"
+    );
+
+  } catch (error) {
+    console.error("Firebase login error:", error.code, error.message);
+
+    const messages = {
+      "auth/invalid-credential": "❌ Incorrect email or password.",
+      "auth/wrong-password": "❌ Incorrect email or password.",
+      "auth/user-not-found": "❌ Account not found.",
+      "auth/unauthorized-domain": "❌ This website domain is not authorised in Firebase.",
+      "auth/network-request-failed": "❌ Network error. Please try again."
+    };
+
+    loginError.textContent =
+      messages[error.code] || `❌ Login failed: ${error.code || "Unknown error"}`;
+
+    button.disabled = false;
+    button.textContent = "Login";
+  }
 });
