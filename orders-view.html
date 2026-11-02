@@ -713,17 +713,7 @@
         query,
         orderBy,
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
-    <script type="module">
-      import { app } from "./auth.js";
-      import {
-        getFirestore,
-        collection,
-        onSnapshot,
-        query,
-        orderBy,
-      } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
 
-      const db = getFirestore(app);
       const db = getFirestore(app);
 
       const tbody = document.getElementById("ordersBody");
@@ -750,130 +740,23 @@
         "Cream Pie",
         "Ice Cream",
       ];
-      const tbody = document.getElementById("ordersBody");
-      const downloadBtn = document.getElementById("downloadCSV");
 
-      const PRODUCTS = [
-        "Torpedo Burger",
-        "Heart Stopper",
-        "Money Shot",
-        "The Simply",
-        "Double Shot",
-        "The Glorious",
-        "The Bleeder",
-        "The Prickley",
-        "Chicken Wrap",
-        "Chicken Mexican",
-        "Goat Wrap",
-        "Fries",
-        "Onion Rings",
-        "Chicken Nuggets",
-        "Soda",
-        "Coffee",
-        "Rim Job",
-        "Cream Pie",
-        "Ice Cream",
-      ];
+    // ✅ Combo breakdowns (synced with orders.html)
+    const comboDetails = {
+      "Big Buns Deal": [
+        { name: "The Simply", quantity: 10 },
+        { name: "Fries", quantity: 5 },
+        { name: "Coffee", quantity: 15 },
+        { name: "Rim Job", quantity: 1 }
+      ],
+      "The Bleeder Box": [
+        { name: "The Bleeder", quantity: 5 },
+        { name: "Fries", quantity: 5 },
+        { name: "Coffee", quantity: 10 },
+        { name: "Rim Job", quantity: 1 }
+      ]
+    };
 
-      const comboDetails = {
-        "The Heartstopper Meal": {
-          components: [
-            { name: "Heart Stopper", quantity: 5 },
-            { name: "Onion Rings", quantity: 5 },
-            { name: "Soda", quantity: 15 },
-          ],
-        },
-        "Bleeder Box": {
-          components: [
-            { name: "The Bleeder", quantity: 5 },
-            { name: "Soda", quantity: 5 },
-          ],
-        },
-        "Patty Pounder": {
-          components: [
-            { name: "The Prickley", quantity: 10 },
-            { name: "Soda", quantity: 10 },
-          ],
-        },
-      };
-
-      const bundleDetails = {
-        "Fries Bundle": {
-          components: [{ name: "Fries", quantity: 5 }],
-        },
-        "Onion Bundle": {
-          components: [{ name: "Onion Rings", quantity: 5 }],
-        },
-        "Nuggies Box": {
-          components: [{ name: "Chicken Nuggets", quantity: 5 }],
-        },
-        "Cream Pie Bundle": {
-          components: [{ name: "Cream Pie", quantity: 5 }],
-        },
-        "Rim Job Bundle": {
-          components: [{ name: "Rim Job", quantity: 5 }],
-        },
-        "Ice Cream Bundle": {
-          components: [{ name: "Ice Cream", quantity: 5 }],
-        },
-        "Drinks Bundle": {
-          components: [{ name: "Soda", quantity: 5 }],
-        },
-      };
-
-      const DAISY_NAME = "Daisy Family Box";
-      const DAISY_BURGERS_PER_BOX = 15;
-      const DAISY_EXTRAS = [
-        { name: "Coffee", quantity: 20 },
-        { name: "Cream Pie", quantity: 5 },
-      ];
-
-      let ordersData = [];
-
-      function formatEST(ts) {
-        if (!ts) return "-";
-
-        const d =
-          typeof ts?.toDate === "function"
-            ? ts.toDate()
-            : ts instanceof Date
-            ? ts
-            : new Date(ts);
-
-        if (Number.isNaN(d.getTime())) return "-";
-
-        return d.toLocaleString("en-US", {
-          timeZone: "America/New_York",
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        });
-      }
-
-      function escapeHtml(value) {
-        return String(value)
-          .replaceAll("&", "&amp;")
-          .replaceAll("<", "&lt;")
-          .replaceAll(">", "&gt;")
-          .replaceAll('"', "&quot;")
-          .replaceAll("'", "&#39;");
-      }
-
-      function addComponents(counts, components, multiplier) {
-        components.forEach((component) => {
-          if (counts[component.name] !== undefined) {
-            counts[component.name] +=
-              multiplier * Number(component.quantity || 0);
-          }
-        });
-      }
-
-      function parseItems(items = []) {
-        const counts = {};
-        PRODUCTS.forEach((p) => (counts[p] = 0));
       function formatEST(ts) {
         if (!ts) return "-";
 
@@ -924,35 +807,7 @@
           const name = item?.name || "";
 
           if (!qty || !name) return;
-        items.forEach((item) => {
-          const qty = Number(item?.quantity || 0);
-          const name = item?.name || "";
 
-          if (!qty || !name) return;
-
-          if (name === DAISY_NAME && item.daisyChoice) {
-            const burger = item.daisyChoice;
-            if (counts[burger] !== undefined) {
-              counts[burger] += qty * DAISY_BURGERS_PER_BOX;
-            }
-            addComponents(counts, DAISY_EXTRAS, qty);
-            return;
-          }
-
-          if (bundleDetails[name]) {
-            addComponents(counts, bundleDetails[name].components, qty);
-            return;
-          }
-
-          if (comboDetails[name]) {
-            addComponents(counts, comboDetails[name].components, qty);
-            return;
-          }
-
-          if (counts[name] !== undefined) {
-            counts[name] += qty;
-          }
-        });
           if (name === DAISY_NAME && item.daisyChoice) {
             const burger = item.daisyChoice;
             if (counts[burger] !== undefined) {
@@ -979,44 +834,7 @@
 
         return counts;
       }
-        return counts;
-      }
 
-      function getNumericTotal(total) {
-        const n = Number(total ?? 0);
-        return Number.isFinite(n) ? n : 0;
-      }
-
-      function getVisibleOrders(rawOrders) {
-        return rawOrders.filter((order) => !order.deleted);
-      }
-
-      function getComboBundleInfo(items = []) {
-        const combos = [];
-        const bundles = [];
-
-        items.forEach((item) => {
-          const qty = Number(item?.quantity || 0);
-          const name = item?.name || "";
-
-          if (!qty || !name) return;
-
-          if (comboDetails[name]) {
-            combos.push(qty > 1 ? `${name} x${qty}` : name);
-          }
-
-          if (bundleDetails[name]) {
-            bundles.push(qty > 1 ? `${name} x${qty}` : name);
-          }
-        });
-
-        return {
-          hasCombo: combos.length > 0 ? "Yes" : "No",
-          comboNames: combos.join(", "),
-          hasBundle: bundles.length > 0 ? "Yes" : "No",
-          bundleNames: bundles.join(", "),
-        };
-      }
       function getNumericTotal(total) {
         const n = Number(total ?? 0);
         return Number.isFinite(n) ? n : 0;
@@ -1064,20 +882,7 @@
           `;
           return;
         }
-      function renderOrders(orders) {
-        tbody.innerHTML = "";
 
-        if (!orders.length) {
-          tbody.innerHTML = `
-            <tr class="empty-row">
-              <td colspan="${3 + PRODUCTS.length + 2}">No orders found.</td>
-            </tr>
-          `;
-          return;
-        }
-
-        orders.forEach((order) => {
-          const tr = document.createElement("tr");
         orders.forEach((order) => {
           const tr = document.createElement("tr");
 
@@ -1109,39 +914,7 @@
             escapeHtml(`$${getNumericTotal(order.total).toFixed(2)}`),
             order.done ? "Yes ✅" : "",
           ];
-          if (order.done) tr.classList.add("done");
 
-          const tabType = String(order.tabType || "").toUpperCase();
-          if (tabType === "EMS") tr.classList.add("tab-ems");
-          if (tabType === "DOJ") tr.classList.add("tab-doj");
-          if (tabType === "PD") tr.classList.add("tab-pd");
-
-          const counts = parseItems(order.items || []);
-
-          const customerHtml = (() => {
-            const base = escapeHtml(order.customer || "-");
-            if (tabType === "EMS" || tabType === "DOJ" || tabType === "PD") {
-              return `${base}<span class="tab-badge ${tabType.toLowerCase()}">${tabType} TAB</span>`;
-            }
-            return base;
-          })();
-
-          const cells = [
-            escapeHtml(formatEST(order.timestamp)),
-            escapeHtml(order.employee || "-"),
-            customerHtml,
-            ...PRODUCTS.map((p) => {
-              const n = Number(counts[p] || 0);
-              return n > 0 ? escapeHtml(n) : "";
-            }),
-            escapeHtml(`$${getNumericTotal(order.total).toFixed(2)}`),
-            order.done ? "Yes ✅" : "",
-          ];
-
-          tr.innerHTML = cells.map((v) => `<td>${v}</td>`).join("");
-          tbody.appendChild(tr);
-        });
-      }
           tr.innerHTML = cells.map((v) => `<td>${v}</td>`).join("");
           tbody.appendChild(tr);
         });
@@ -1191,96 +964,7 @@
         collection(db, "orders"),
         orderBy("timestamp", "desc")
       );
-      function convertOrdersToCSV(orders) {
-        const header = [
-          "Date",
-          "Employee",
-          "Customer",
-          ...PRODUCTS,
-          "Total",
-          "Done?",
-          "Has Combo?",
-          "Has Bundle?",
-          "Combo Name",
-          "Bundle Name",
-        ];
 
-        const rows = orders.map((order) => {
-          const counts = parseItems(order.items || []);
-          const comboBundle = getComboBundleInfo(order.items || []);
-
-          return [
-            formatEST(order.timestamp),
-            order.employee || "",
-            order.customer || "",
-            ...PRODUCTS.map((p) => Number(counts[p] || 0)),
-            getNumericTotal(order.total).toFixed(2),
-            order.done ? "Yes" : "No",
-            comboBundle.hasCombo,
-            comboBundle.hasBundle,
-            comboBundle.comboNames,
-            comboBundle.bundleNames,
-          ];
-        });
-
-        return [
-          header.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(","),
-          ...rows.map((row) =>
-            row.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")
-          ),
-        ].join("\n");
-      }
-
-      const qRef = query(
-        collection(db, "orders"),
-        orderBy("timestamp", "desc")
-      );
-
-      onSnapshot(
-        qRef,
-        (snapshot) => {
-          ordersData = snapshot.docs.map((d) => ({
-            id: d.id,
-            ...d.data(),
-          }));
-
-          renderOrders(getVisibleOrders(ordersData));
-        },
-        (err) => {
-          console.error("[orders-view] Firestore error:", err?.message || err);
-        }
-      );
-
-      downloadBtn.addEventListener("click", () => {
-        try {
-          const visibleOrders = getVisibleOrders(ordersData);
-
-          if (!visibleOrders.length) {
-            alert("No orders to export!");
-            return;
-          }
-
-          const csv = convertOrdersToCSV(visibleOrders);
-          const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-          const url = URL.createObjectURL(blob);
-
-          const link = document.createElement("a");
-          link.href = url;
-          link.download = `SnrBuns_Orders_${new Date()
-            .toISOString()
-            .slice(0, 10)}.csv`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-        } catch (error) {
-          console.error("[orders-view] CSV download failed:", error);
-          alert("CSV download failed. Check the browser console for details.");
-        }
-      });
-    </script>
-  </body>
       onSnapshot(
         qRef,
         (snapshot) => {
