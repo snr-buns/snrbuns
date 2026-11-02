@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 
-
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <title>Snr. Buns - Order Sheet</title>
   <head>
     <meta charset="UTF-8" />
 
@@ -126,62 +119,33 @@
         </nav>
       </aside>
 
-    <!-- Main Content -->
-    <main class="main">
-      <h1>🔪 Order Sheet</h1>
-        <div class="table-container">
-        <table id="ordersTable" aria-label="Order Sheet">
-          <thead>
-  <!-- Row 1: section bands -->
-  <tr class="group-row">
-    <th rowspan="2">Date</th>
-    <th rowspan="2">Employee</th>
-    <th rowspan="2">Customer</th>
+      <main class="main orders-main">
+        <header class="orders-header">
+          <span class="page-eyebrow">SNR BUNS STAFF PORTAL</span>
 
-    <th class="group" colspan="6">BURGERS</th>
-    <th class="group" colspan="3">WRAPS</th>
-    <th class="group" colspan="2">SIDES</th>
-    <th class="group" colspan="2">DRINKS</th>
-    <th class="group" colspan="3">DESSERTS</th>
+          <h1 class="orders-page-title">ORDER SHEET</h1>
+        </header>
 
-    <th rowspan="2">Total</th>
-    <th rowspan="2">Free Dessert?</th>
-    <th rowspan="2">Done?</th>
-  </tr>
+        <div class="orders-table-frame">
+          <div class="table-container">
+            <table id="ordersTable" aria-label="Order Sheet">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Employee</th>
+                  <th>Customer</th>
+                  <th>Items Ordered</th>
+                  <th>Total</th>
+                  <th>Done?</th>
+                </tr>
+              </thead>
 
-  <!-- Row 2: individual items (order matters) -->
-  <tr>
-    <!-- BURGERS -->
-    <th>Heart Stopper</th>
-    <th>Money Shot</th>
-    <th>The Simply</th>
-    <th>Double Shot</th>
-    <th>The Bleeder</th>
-    <th>The Prickley</th>
-    <th>Chicken Wrap</th>
-    <th>Chicken Mexican</th>
-    <th>Goat Wrap</th>
-
-    <!-- SIDES -->
-    <th>Fries</th>
-    <th>Onion Rings</th>
-
-    <!-- DRINKS -->
-    <th>Soda</th>
-    <th>Coffee</th>
-
-    <!-- DESSERTS -->
-    <th>Rim Job</th>
-    <th>Cream Pie</th>
-    <th>Ice Cream</th>
-  </tr>
-</thead>
-
-          <tbody id="ordersBody"></tbody>
-        </table>
-      </div>
-    </main>
-  </div>
+              <tbody id="ordersBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
 
     <div id="notification"></div>
 
@@ -229,73 +193,122 @@
 
       const noBtn = modal.querySelector(".no-btn");
 
-/* -------- Combos (non-configurable) -------- */
-const comboDetails = {
-  "Big Buns Deal": {
-    price: 1700,
-    components: [
-      { name: "The Simply", quantity: 10 },
-      { name: "Fries", quantity: 5 },
-      { name: "Soda", quantity: 15 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "The Bleeder Box": {
-    price: 600,
-    components: [
-      { name: "The Bleeder", quantity: 5 },
-      { name: "Soda", quantity: 5 },
-      { name: "Rim Job", quantity: 1 }
-    ]
-  },
-  "Filthy Rich Combo": {
-    price: 800,
-    components: [
-      { name: "Money Shot", quantity: 5 },
-      { name: "Soda", quantity: 5 },
-    ]
-  },
-  "Patty Pounder Combo": {
-    price: 1100,
-    components: [
-      { name: "The Prickley", quantity: 10 },
-      { name: "Soda", quantity: 10 },
-    ]
-  }
-};
+      const comboDetails = {
+        "The Heartstopper Meal": {
+          price: 1400,
 
-/* -------- Daisy config (expandable) -------- */
-const DAISY_NAME = "Daisy Family Box";
-const DAISY_BURGERS_PER_BOX = 15;
-const DAISY_EXTRAS = [
-  { name: "Coffee", quantity: 20 },
-  { name: "Cream Pie", quantity: 5 }
-];
+          components: [
+            { name: "Heart Stopper", quantity: 5 },
 
-/* -------- Menu columns -------- */
-const PRODUCTS = [
-  // BURGERS
-  "Heart Stopper",
-  "Money Shot",
-  "The Simply",
-  "Double Shot",
-  "The Bleeder",
-  "The Prickley",
-  // WRAPS
-  "Chicken Wrap",
-  "Chicken Mexican",
-  "Goat Wrap",
-  // SIDES
-  "Fries",
-  "Onion Rings",
-  // DRINKS
-  "Soda",
-  "Coffee",
-  // DESSERTS
-  "Rim Job",
-  "Cream Pie",
-  "Ice Cream"
-];
+            { name: "Onion Rings", quantity: 5 },
+
+            { name: "Soda", quantity: 15 },
+          ],
+        },
+
+        "Bleeder Box": {
+          price: 500,
+
+          components: [
+            { name: "The Bleeder", quantity: 5 },
+
+            { name: "Soda", quantity: 5 },
+          ],
+        },
+
+        "Patty Pounder": {
+          price: 1200,
+
+          components: [
+            { name: "The Prickley", quantity: 10 },
+
+            { name: "Soda", quantity: 15 },
+          ],
+        },
+      };
+
+      const bundleDetails = {
+        "Fries Bundle": {
+          price: 250,
+
+          components: [{ name: "Fries", quantity: 5 }],
+        },
+
+        "Onion Bundle": {
+          price: 250,
+
+          components: [{ name: "Onion Rings", quantity: 5 }],
+        },
+
+        "Nuggies Box": {
+          price: 400,
+
+          components: [{ name: "Chicken Nuggets", quantity: 5 }],
+        },
+
+        "Cream Pie Bundle": {
+          price: 250,
+
+          components: [{ name: "Cream Pie", quantity: 5 }],
+        },
+
+        "Rim Job Bundle": {
+          price: 250,
+
+          components: [{ name: "Rim Job", quantity: 5 }],
+        },
+
+        "Ice Cream Bundle": {
+          price: 250,
+
+          components: [{ name: "Ice Cream", quantity: 5 }],
+        },
+
+        "Drinks Bundle": {
+          price: 150,
+
+          components: [{ name: "Soda", quantity: 5 }],
+        },
+      };
+
+      const PRODUCTS = [
+        "Torpedo Burger",
+        "Heart Stopper",
+
+        "Money Shot",
+
+        "The Simply",
+
+        "Double Shot",
+
+        "The Glorious",
+
+        "The Bleeder",
+
+        "The Prickley",
+
+        "Chicken Wrap",
+
+        "Chicken Mexican",
+
+        "Goat Wrap",
+
+        "Fries",
+
+        "Onion Rings",
+
+        "Chicken Nuggets",
+
+        "Soda",
+
+        "Coffee",
+
+        "Rim Job",
+
+        "Cream Pie",
+
+        "Ice Cream",
+      ];
 
       const q = query(
         collection(db, "orders"),
@@ -397,29 +410,87 @@ const PRODUCTS = [
             await updateDoc(doc(db, "orders", id), { done: checkbox.checked });
           });
 
-    // Date / Employee / Customer
-    [formattedDate, order.employee || "-", order.customer || "-"].forEach(v => {
-      const td = document.createElement("td");
-      td.textContent = v;
-      tr.appendChild(td);
-    });
+          const dateTd = document.createElement("td");
 
-    // Menu counts
-    PRODUCTS.forEach(p => {
-      const td = document.createElement("td");
-      const n = Number(counts[p] || 0);
-      td.textContent = n > 0 ? n : "";
-      tr.appendChild(td);
-    });
+          dateTd.textContent = formattedDate;
 
-    // Total / Free Dessert / Done
-    const totalTd = document.createElement("td");
-    totalTd.textContent = `$${Number(order.total ?? 0).toFixed(2)}`;
-    tr.appendChild(totalTd);
+          tr.appendChild(dateTd);
 
-    const freeTd = document.createElement("td");
-    freeTd.textContent = order.freeDessert ? "Yes 🍰" : "";
-    tr.appendChild(freeTd);
+          const employeeTd = document.createElement("td");
+
+          employeeTd.textContent = order.employee || "-";
+
+          tr.appendChild(employeeTd);
+
+          const customerTd = document.createElement("td");
+
+          customerTd.textContent = order.customer || "-";
+
+          if (tabType === "EMS" || tabType === "DOJ" || tabType === "PD") {
+            const badge = document.createElement("span");
+
+            badge.className = `tab-badge ${tabType.toLowerCase()}`;
+
+            badge.textContent = `${tabType} TAB`;
+
+            customerTd.appendChild(badge);
+          }
+
+          tr.appendChild(customerTd);
+
+          // Display ordered products together instead of in 18 separate columns.
+          // parseItems already expands combos and bundles into their components.
+          const itemsTd = document.createElement("td");
+          itemsTd.className = "order-items-cell";
+          const itemsList = document.createElement("div");
+          itemsList.className = "order-items-list";
+          const activeProducts = PRODUCTS.filter(
+            (p) => Number(counts[p] || 0) > 0
+          );
+
+          // Show recognised menu products (including expanded combos and bundles).
+          activeProducts.forEach((p) => {
+            const item = document.createElement("span");
+            item.className = "order-item-chip";
+            item.textContent = `${counts[p]}× ${p}`;
+            itemsList.appendChild(item);
+          });
+
+          // Do not silently hide products from older orders, memberships,
+          // or products whose names have changed in the menu.
+          const savedItems = Array.isArray(order.items) ? order.items : [];
+          savedItems.forEach((saved) => {
+            const name = String(saved?.name || "").trim();
+            const qty = Number(saved?.quantity ?? 1);
+            if (!name || !Number.isFinite(qty) || qty <= 0) return;
+            if (
+              PRODUCTS.includes(name) ||
+              comboDetails[name] ||
+              bundleDetails[name]
+            )
+              return;
+
+            const item = document.createElement("span");
+            item.className = "order-item-chip";
+            item.textContent = `${qty}× ${name}`;
+            itemsList.appendChild(item);
+          });
+
+          if (!itemsList.children.length) {
+            itemsList.textContent = savedItems.length
+              ? "Order items could not be read"
+              : "No items saved on this order";
+          }
+          itemsTd.appendChild(itemsList);
+          tr.appendChild(itemsTd);
+
+          const totalTd = document.createElement("td");
+
+          totalTd.textContent = `$${Number(order.total ?? 0).toLocaleString(
+            "en-US"
+          )}`;
+
+          tr.appendChild(totalTd);
 
           const doneTd = document.createElement("td");
 

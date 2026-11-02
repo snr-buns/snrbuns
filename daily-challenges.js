@@ -1,5 +1,6 @@
 
 export const DAILY_COMBOS = [
+  "Eat My Meat",
   "The Heartstopper Meal",
   "Bleeder Box",
   "Patty Pounder"

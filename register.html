@@ -67,6 +67,7 @@
         </p>
 
         <div class="item-grid">
+          <!-- Combos -->
           <div
             class="item-card"
             data-name="The Heartstopper Meal"
@@ -131,6 +132,7 @@
             </div>
           </div>
 
+          <!-- BURGERS -->
           <div
             class="item-card"
             data-name="The Bleeder"
@@ -243,6 +245,7 @@
             </div>
           </div>
 
+          <!-- WRAPS -->
           <div
             class="item-card"
             data-name="Goat Wrap"
@@ -294,6 +297,7 @@
             </div>
           </div>
 
+          <!-- SIDES -->
           <div
             class="item-card"
             data-name="Fries"
@@ -342,6 +346,7 @@
             </div>
           </div>
 
+          <!-- DESSERTS -->
           <div
             class="item-card"
             data-name="Cream Pie"
@@ -390,6 +395,7 @@
             </div>
           </div>
 
+          <!-- DRINKS -->
           <div
             class="item-card"
             data-name="Soda"
@@ -636,6 +642,7 @@
         where,
         onSnapshot,
       } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
       const db = getFirestore();
 
       // =====================================================
@@ -968,28 +975,44 @@
 
       function computeIngredientsNeeded(items) {
         const totalNeeded = {};
+
         items.forEach((item) => {
           const qty = Number(item.quantity || 1);
-          const components =
-            comboDetails[item.name]?.components ||
-            bundleDetails[item.name]?.components;
-          if (components) {
-            components.forEach((comp) => {
+
+          if (comboDetails[item.name]) {
+            comboDetails[item.name].components.forEach((comp) => {
               const needed = productIngredients[comp.name];
               if (!needed) return;
+
               for (const ing in needed) {
                 totalNeeded[ing] =
                   (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
               }
             });
-          } else {
-            const needed = productIngredients[item.name];
-            if (!needed) return;
-            for (const ing in needed) {
-              totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
-            }
+            return;
+          }
+
+          if (bundleDetails[item.name]) {
+            bundleDetails[item.name].components.forEach((comp) => {
+              const needed = productIngredients[comp.name];
+              if (!needed) return;
+
+              for (const ing in needed) {
+                totalNeeded[ing] =
+                  (totalNeeded[ing] || 0) + needed[ing] * comp.quantity * qty;
+              }
+            });
+            return;
+          }
+
+          const needed = productIngredients[item.name];
+          if (!needed) return;
+
+          for (const ing in needed) {
+            totalNeeded[ing] = (totalNeeded[ing] || 0) + needed[ing] * qty;
           }
         });
+
         return totalNeeded;
       }
 
@@ -1005,6 +1028,7 @@
       async function getMissingIngredientsForItems(items) {
         const inventory = await getInventory();
         const totalNeeded = computeIngredientsNeeded(items);
+
         const missing = [];
         for (const ing in totalNeeded) {
           const invVal = Number(inventory[ing] || 0);
@@ -1016,20 +1040,35 @@
             );
           }
         }
+
         return { inventory, totalNeeded, missing };
       }
 
       async function deductInventoryForItems(items, force = false) {
-        const { inventory, totalNeeded, missing } =
-          await getMissingIngredientsForItems(items);
-        if (missing.length && !force)
-          throw new Error("Not enough ingredients:\n" + missing.join("\n"));
+        const inventory = await getInventory();
+        const totalNeeded = computeIngredientsNeeded(items);
+
+        const missing = [];
         for (const ing in totalNeeded) {
-          inventory[ing] = Math.max(
-            0,
-            Number(inventory[ing] || 0) - totalNeeded[ing]
-          );
+          const invVal = Number(inventory[ing] || 0);
+          if (invVal < totalNeeded[ing]) {
+            missing.push(
+              `${ingredientLabels[ing] || ing} (need ${
+                totalNeeded[ing]
+              }, have ${invVal})`
+            );
+          }
         }
+
+        if (missing.length && !force) {
+          throw new Error("Not enough ingredients:\n" + missing.join("\n"));
+        }
+
+        for (const ing in totalNeeded) {
+          inventory[ing] = Number(inventory[ing] || 0) - totalNeeded[ing];
+          if (inventory[ing] < 0) inventory[ing] = 0;
+        }
+
         await saveInventory(inventory);
       }
 
@@ -1047,10 +1086,14 @@
         const key = loyaltyKey(customerName);
         const id = passDocId(key, passType);
         const ref = doc(db, "passes", id);
+
         const snap = await getDoc(ref);
         const existing = snap.exists() ? snap.data() : {};
-        const start = new Date();
+
+        const now = new Date();
+        const start = now;
         const endDate = addDays(start, 30);
+
         await setDoc(
           ref,
           {
@@ -1067,6 +1110,7 @@
           },
           { merge: true }
         );
+
         return id;
       }
 

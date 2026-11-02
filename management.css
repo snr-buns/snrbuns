@@ -25,7 +25,7 @@ body.management-page {
 }
 
 .management-page .hq-eyebrow {
-  font-size: 0.75rem;
+  font-size: .75rem;
   letter-spacing: 2px;
   font-weight: 900;
   color: #ffe5a0;
@@ -38,8 +38,8 @@ body.management-page {
   line-height: 1.08;
   margin: 0 0 8px;
   color: #fff8e8;
-  font-family: "Lilita One", "Arial Black", sans-serif;
-  letter-spacing: 0.4px;
+  font-family: 'Lilita One', 'Arial Black', sans-serif;
+  letter-spacing: .4px;
   text-shadow: 0 2px 0 #661515;
 }
 
@@ -71,17 +71,17 @@ body.management-page {
   color: #991f1f;
   border: 2px solid #e7b72d;
   border-radius: 12px;
-  font-size: 0.84rem;
+  font-size: .84rem;
   font-weight: 900;
   text-decoration: none;
-  transition: 0.15s ease;
+  transition: .15s ease;
 }
 
 .management-page .hq-tabs a:hover,
 .management-page .hq-tabs a:focus-visible {
   background: #f6c945;
   color: #552b18;
-  transform: translateY(-1px);
+  transform: translateY(-1px)
 }
 
 .management-page .hq-link,
@@ -97,9 +97,9 @@ body.management-page {
   padding: 11px 17px;
   font-weight: 850;
   line-height: 1.25;
-  font-size: 0.85rem;
+  font-size: .85rem;
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition: background-color .15s, transform .15s, box-shadow .15s;
 }
 
 .management-page .hq-btn {
@@ -111,13 +111,13 @@ body.management-page {
 .management-page .hq-btn:hover:not(:disabled) {
   background: #991f1f;
   color: #fff;
-  transform: translateY(-1px);
+  transform: translateY(-1px)
 }
 
 .management-page .hq-btn:disabled {
-  opacity: 0.55;
+  opacity: .55;
   cursor: not-allowed;
-  box-shadow: none;
+  box-shadow: none
 }
 
 .management-page .hq-btn.secondary,
@@ -156,8 +156,8 @@ body.management-page {
 }
 
 .management-page .hq-panel h2 {
-  font-family: "Lilita One", "Arial Black", sans-serif;
-  letter-spacing: 0.15px;
+  font-family: 'Lilita One', 'Arial Black', sans-serif;
+  letter-spacing: .15px;
   font-size: 1.65rem;
   color: #991f1f;
   margin: 0 0 4px;
@@ -166,7 +166,7 @@ body.management-page {
 .management-page .hq-panel p {
   margin: 7px 0 13px;
   color: #766154;
-  font-size: 0.92rem;
+  font-size: .92rem;
 }
 
 .management-page .hq-flex {
@@ -200,7 +200,7 @@ body.management-page {
   text-align: left;
   vertical-align: middle;
   color: #4d3528;
-  font-size: 0.87rem;
+  font-size: .87rem;
 }
 
 .management-page .hq-table tbody tr:last-child td {
@@ -214,8 +214,8 @@ body.management-page {
 .management-page .hq-table th {
   background: #ffedba;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.71rem;
+  letter-spacing: .5px;
+  font-size: .71rem;
   font-weight: 900;
   color: #87241e;
   white-space: nowrap;
@@ -226,7 +226,7 @@ body.management-page {
   font-variant-numeric: tabular-nums;
 }
 
-.management-page .hq-table input[type="number"] {
+.management-page .hq-table input[type=number] {
   width: 116px;
   max-width: 100%;
   padding: 10px 12px;
@@ -243,7 +243,7 @@ body.management-page {
   min-width: 180px;
   color: #734530;
   font-weight: 800;
-  font-size: 0.84rem;
+  font-size: .84rem;
 }
 
 .management-page .hq-field input,
@@ -299,7 +299,7 @@ body.management-page {
 }
 
 .management-page .hq-note {
-  font-size: 0.79rem;
+  font-size: .79rem;
   color: #806b5c;
 }
 
@@ -311,11 +311,11 @@ body.management-page {
 }
 
 .management-page .hq-feedback.error {
-  color: #ac2222;
+  color: #ac2222
 }
 
 .management-page .hq-feedback.success {
-  color: #247039;
+  color: #247039
 }
 
 .management-page .hq-modal-actions {
@@ -328,7 +328,7 @@ body.management-page {
 .management-page .hq-modal[hidden],
 .management-page #managementContent[hidden],
 .management-page #reviewArea[hidden] {
-  display: none !important;
+  display: none !important
 }
 
 .management-page .hq-modal {
@@ -392,13 +392,13 @@ body.management-page {
   background: #ffedba;
 }
 
-.management-page .hq-calc-table input[type="number"] {
+.management-page .hq-calc-table input[type=number] {
   width: 71px;
   padding: 8px 5px;
   text-align: center;
 }
 
-.management-page .hq-calc-table input[type="checkbox"] {
+.management-page .hq-calc-table input[type=checkbox] {
   width: 18px;
   height: 18px;
   accent-color: #c62828;
@@ -429,7 +429,7 @@ body.management-page {
 }
 
 .management-page .hq-separator {
-  font-size: 0.74rem;
+  font-size: .74rem;
   letter-spacing: 1px;
   color: #9f6038;
   text-transform: uppercase;
@@ -509,28 +509,28 @@ body.management-page.dark-mode {
   border-color: #987331;
 }
 
-@media (max-width: 650px) {
+@media(max-width:650px) {
   .management-page .hq-main {
-    padding: 18px 11px 45px;
+    padding: 18px 11px 45px
   }
 
   .management-page .hq-header {
-    padding: 23px 19px;
+    padding: 23px 19px
   }
 
   .management-page .hq-panel,
   .management-page .hq-dialog {
-    padding: 18px 14px;
+    padding: 18px 14px
   }
 
   .management-page .hq-table th,
   .management-page .hq-table td {
-    padding: 10px 9px;
+    padding: 10px 9px
   }
 
   .management-page .hq-btn,
   .management-page .hq-link {
-    padding: 10px 12px;
+    padding: 10px 12px
   }
 
   .management-page .hq-tabs a {
@@ -538,6 +538,7 @@ body.management-page.dark-mode {
     text-align: center;
   }
 }
+
 
 /* ==========================================
    SNR BUNS HQ - STAFF DASHBOARD STYLING
@@ -632,6 +633,7 @@ body.management-page.dark-mode {
   border-radius: 15px;
 }
 
+
 /* ==========================================
    SNR BUNS HQ - FINAL ALIGNMENT FIXES
 ========================================== */
@@ -721,7 +723,7 @@ body.management-page {
 }
 
 .management-page .hq-eyebrow {
-  font-size: 0.75rem;
+  font-size: .75rem;
   letter-spacing: 2px;
   font-weight: 900;
   color: #ffe5a0;
@@ -734,8 +736,8 @@ body.management-page {
   line-height: 1.08;
   margin: 0 0 8px;
   color: #fff8e8;
-  font-family: "Lilita One", "Arial Black", sans-serif;
-  letter-spacing: 0.4px;
+  font-family: 'Lilita One', 'Arial Black', sans-serif;
+  letter-spacing: .4px;
   text-shadow: 0 2px 0 #661515;
 }
 
@@ -767,17 +769,17 @@ body.management-page {
   color: #991f1f;
   border: 2px solid #e7b72d;
   border-radius: 12px;
-  font-size: 0.84rem;
+  font-size: .84rem;
   font-weight: 900;
   text-decoration: none;
-  transition: 0.15s ease;
+  transition: .15s ease;
 }
 
 .management-page .hq-tabs a:hover,
 .management-page .hq-tabs a:focus-visible {
   background: #f6c945;
   color: #552b18;
-  transform: translateY(-1px);
+  transform: translateY(-1px)
 }
 
 .management-page .hq-link,
@@ -793,9 +795,9 @@ body.management-page {
   padding: 11px 17px;
   font-weight: 850;
   line-height: 1.25;
-  font-size: 0.85rem;
+  font-size: .85rem;
   cursor: pointer;
-  transition: background-color 0.15s, transform 0.15s, box-shadow 0.15s;
+  transition: background-color .15s, transform .15s, box-shadow .15s;
 }
 
 .management-page .hq-btn {
@@ -807,13 +809,13 @@ body.management-page {
 .management-page .hq-btn:hover:not(:disabled) {
   background: #991f1f;
   color: #fff;
-  transform: translateY(-1px);
+  transform: translateY(-1px)
 }
 
 .management-page .hq-btn:disabled {
-  opacity: 0.55;
+  opacity: .55;
   cursor: not-allowed;
-  box-shadow: none;
+  box-shadow: none
 }
 
 .management-page .hq-btn.secondary,
@@ -852,8 +854,8 @@ body.management-page {
 }
 
 .management-page .hq-panel h2 {
-  font-family: "Lilita One", "Arial Black", sans-serif;
-  letter-spacing: 0.15px;
+  font-family: 'Lilita One', 'Arial Black', sans-serif;
+  letter-spacing: .15px;
   font-size: 1.65rem;
   color: #991f1f;
   margin: 0 0 4px;
@@ -862,7 +864,7 @@ body.management-page {
 .management-page .hq-panel p {
   margin: 7px 0 13px;
   color: #766154;
-  font-size: 0.92rem;
+  font-size: .92rem;
 }
 
 .management-page .hq-flex {
@@ -896,7 +898,7 @@ body.management-page {
   text-align: left;
   vertical-align: middle;
   color: #4d3528;
-  font-size: 0.87rem;
+  font-size: .87rem;
 }
 
 .management-page .hq-table tbody tr:last-child td {
@@ -910,8 +912,8 @@ body.management-page {
 .management-page .hq-table th {
   background: #ffedba;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-size: 0.71rem;
+  letter-spacing: .5px;
+  font-size: .71rem;
   font-weight: 900;
   color: #87241e;
   white-space: nowrap;
@@ -922,7 +924,7 @@ body.management-page {
   font-variant-numeric: tabular-nums;
 }
 
-.management-page .hq-table input[type="number"] {
+.management-page .hq-table input[type=number] {
   width: 116px;
   max-width: 100%;
   padding: 10px 12px;
@@ -939,7 +941,7 @@ body.management-page {
   min-width: 180px;
   color: #734530;
   font-weight: 800;
-  font-size: 0.84rem;
+  font-size: .84rem;
 }
 
 .management-page .hq-field input,
@@ -995,7 +997,7 @@ body.management-page {
 }
 
 .management-page .hq-note {
-  font-size: 0.79rem;
+  font-size: .79rem;
   color: #806b5c;
 }
 
@@ -1007,11 +1009,11 @@ body.management-page {
 }
 
 .management-page .hq-feedback.error {
-  color: #ac2222;
+  color: #ac2222
 }
 
 .management-page .hq-feedback.success {
-  color: #247039;
+  color: #247039
 }
 
 .management-page .hq-modal-actions {
@@ -1024,7 +1026,7 @@ body.management-page {
 .management-page .hq-modal[hidden],
 .management-page #managementContent[hidden],
 .management-page #reviewArea[hidden] {
-  display: none !important;
+  display: none !important
 }
 
 .management-page .hq-modal {
@@ -1088,13 +1090,13 @@ body.management-page {
   background: #ffedba;
 }
 
-.management-page .hq-calc-table input[type="number"] {
+.management-page .hq-calc-table input[type=number] {
   width: 71px;
   padding: 8px 5px;
   text-align: center;
 }
 
-.management-page .hq-calc-table input[type="checkbox"] {
+.management-page .hq-calc-table input[type=checkbox] {
   width: 18px;
   height: 18px;
   accent-color: #c62828;
@@ -1125,7 +1127,7 @@ body.management-page {
 }
 
 .management-page .hq-separator {
-  font-size: 0.74rem;
+  font-size: .74rem;
   letter-spacing: 1px;
   color: #9f6038;
   text-transform: uppercase;
@@ -1205,28 +1207,28 @@ body.management-page.dark-mode {
   border-color: #987331;
 }
 
-@media (max-width: 650px) {
+@media(max-width:650px) {
   .management-page .hq-main {
-    padding: 18px 11px 45px;
+    padding: 18px 11px 45px
   }
 
   .management-page .hq-header {
-    padding: 23px 19px;
+    padding: 23px 19px
   }
 
   .management-page .hq-panel,
   .management-page .hq-dialog {
-    padding: 18px 14px;
+    padding: 18px 14px
   }
 
   .management-page .hq-table th,
   .management-page .hq-table td {
-    padding: 10px 9px;
+    padding: 10px 9px
   }
 
   .management-page .hq-btn,
   .management-page .hq-link {
-    padding: 10px 12px;
+    padding: 10px 12px
   }
 
   .management-page .hq-tabs a {
@@ -1237,7 +1239,7 @@ body.management-page.dark-mode {
 
 /* Daily challenge completion list */
 .management-page .hq-challenge-subtitle {
-  font-family: "Lilita One", sans-serif;
+  font-family: 'Lilita One', sans-serif;
   color: #c62828;
   font-size: 1.4rem;
   margin: 20px 0 8px;
@@ -1269,7 +1271,7 @@ body.management-page.dark-mode {
 
 .management-page .hq-paid,
 .management-page .hq-pending {
-  font: 700 0.75rem Arial, sans-serif;
+  font: 700 .75rem Arial, sans-serif;
   padding: 7px 10px;
   border-radius: 6px;
 }
@@ -1289,6 +1291,7 @@ body.management-page.dark-mode {
   color: #f4e3cc;
 }
 
+
 /* =========================================
    SNR BUNS CUSTOM CONFIRMATION POPUPS
 ========================================= */
@@ -1302,13 +1305,13 @@ body.management-page.dark-mode {
   background: #fffdf7;
   border: 3px solid #f6c945;
   border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 20px 60px rgba(0,0,0,.25);
   color: #432e23;
   text-align: center;
 }
 
 .management-page .snr-confirm-dialog::backdrop {
-  background: rgba(28, 16, 12, 0.65);
+  background: rgba(28, 16, 12, .65);
   backdrop-filter: blur(3px);
 }
 
@@ -1328,7 +1331,7 @@ body.management-page.dark-mode {
 
 .management-page .snr-confirm-dialog p {
   font-family: "Manrope", sans-serif;
-  font-size: 0.9rem;
+  font-size: .9rem;
   line-height: 1.7;
   font-weight: 500;
   white-space: pre-wrap;
@@ -1349,10 +1352,10 @@ body.management-page.dark-mode {
   border: none;
   border-radius: 11px;
   font-family: "Manrope", sans-serif;
-  font-size: 0.9rem;
+  font-size: .9rem;
   font-weight: 700;
   cursor: pointer;
-  transition: 0.2s;
+  transition: .2s;
 }
 
 .management-page #snrConfirmCancel {
@@ -1391,7 +1394,7 @@ body.management-page.dark-mode {
   border-radius: 12px;
   color: #432e23;
   font-family: "Manrope", sans-serif;
-  font-size: 0.9rem;
+  font-size: .9rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1403,7 +1406,7 @@ body.management-page.dark-mode {
 .management-page #manualChallengeCombo:focus {
   outline: none;
   border-color: #c62828;
-  box-shadow: 0 0 0 4px rgba(198, 40, 40, 0.12);
+  box-shadow: 0 0 0 4px rgba(198,40,40,.12);
 }
 
 .management-page #manualChallengeCombo option {
